@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body>
+
+<div ng-app="GoPoleis" ng-controller="myCtrl"> 
+
+    <h1>Select the card to be removed from the database:</h1>
+    <br>
+
+    <ul>
+	<label ng-repeat="card in results"  id="radio.id">
+	    <input type="radio" name="cards"/>{{card.name}} <br><br>
+	</label>
+    </ul>
+
+
+
+
+
+
+ 
+</div>
+
+<script>
+var app = angular.module("GoPoleis", []);
+app.controller('myCtrl', function($scope, $http) {
+    $http({
+    method : "GET",
+    url : "/getAllCards"
+
+    }).then(function mySucces(response) {
+	    $scope.results  = response.data;
+	}, function myError(response) {
+	    $scope.results  = response.statusText;
+    });
+
+});
+</script>
+
+</body>
+</html>

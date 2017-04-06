@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl"> 
+
+	<h1>These are the heritages in the database:</h1>
+	<ul>
+	    <li ng-repeat="elements in results">{{elements.heritage}}</li>
+	</ul>
+
+</div>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $http) {
+  $http({
+    method : "GET",
+    //url : "http://77.81.226.246:8000/getHeritagesGame1"
+    //url : "getHeritagesGame1"
+    url : "/getHeritagesGame1"
+    
+  }).then(function mySucces(response) {
+      $scope.results = response.data;
+    }, function myError(response) {
+      $scope.results = response.statusText;
+  });
+});
+</script>
+
+</body>
+</html>

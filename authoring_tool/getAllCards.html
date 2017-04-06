@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+table, th , td  {
+  border: 2px solid grey;
+  border-collapse: collapse;
+  padding: 10px;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+table tr:nth-child(odd) {
+  background-color: #f1f1f1;
+}
+table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+button{
+  width: 200px;
+  height: 60px;
+}
+</style>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<body>
+
+<div ng-app="GoPoleis" ng-controller="myCtrl"> 
+
+    <h1>These are the informations of all the cards in the database:</h1>
+    <br>
+
+    <table>
+	<tr>
+	    <th>CODE</td>
+	    <th>COST</td>
+	    <th>NAME</td>
+	    <th>DESCRIPTION</td>
+	</tr>
+	<tr ng-repeat="card in results">
+	    <td>{{ card.code }}</td>
+	    <td>{{ card.cost }}</td>
+	    <td>{{ card.name }}</td>
+	    <td>{{ card.description }}</td>
+	</tr>
+    </table>
+    <br><br>
+
+    <div id="buttons" align="center">
+	<button onClick="parent.location='addCard.html'">
+	    <img class="png-icon" name="btnAdd" src="/images/buttons/add-button.png" style="width: 40px; height: 40px; padding: 10px; vertical-align: middle; ">Add a new card
+	</button>
+
+	<button onClick="parent.location='delCard.html'">
+	    <img class="png-icon" name="btnDel" src="/images/buttons/remove-button.png" style="width: 40px; height: 40px; padding: 10px; vertical-align: middle;">Delete a card
+	</button>
+    </div>
+    <br><br>
+
+
+
+
+
+ 
+</div>
+
+<script>
+var app = angular.module("GoPoleis", []);
+app.controller('myCtrl', function($scope, $http) {
+  $http({
+    method : "GET",
+    url : "/getAllCards"
+
+  }).then(function mySucces(response) {
+      $scope.results  = response.data;
+    }, function myError(response) {
+      $scope.results  = response.statusText;
+  });
+
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Example - example-ngValue-directive-production</title>
+  
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  
+
+  
+</head>
+<body ng-app="GoPoleis">
+
+  <script>
+   angular.module('GoPoleis', [])
+     .controller('myCtrl', function($scope, $http) {
+	
+	//$scope.names = ['pizza', 'unicorns', 'robots'];
+	$scope.my = { favorite: '' };
+
+
+    $http({
+    method : "GET",
+    url : "/getAllCards"
+
+    }).then(function mySucces(response) {
+	    $scope.results  = response.data;
+	}, function myError(response) {
+	    $scope.results  = response.statusText;
+    });
+
+
+
+
+
+       
+     });
+  </script>
+
+  <form ng-controller="myCtrl">
+   <h1>Select the card to be removed from the database:</h1>
+    <br>
+     <label ng-repeat="card in results" for="{{card}}">
+       
+       <input type="radio"
+              ng-model="my.favorite"
+              ng-value="card.name"
+              id="{{card.name}}"
+              card.name="favorite">
+       {{card.name}} <br>
+     </label>
+   <div>You selected:  {{my.favorite}}</div>
+  </form>
+
+
+</body>
+</html>

@@ -252,14 +252,152 @@ module.exports = {
 
 
 
-			//Inizio Authoring Tool--------
+		//Inizio Authoring Tool------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+			
+			app.get('/addCulturalOrganization/:co_email/:co_password/:co_role/:co_supervisor', function(req,res){
+				todo.addCulturalOrganization(req.params.co_email,req.params.co_password,req.params.co_role,req.params.co_supervisor,res);
+			});
+			
+			app.get('/delCulturalOrganization/:co_email', function(req,res){
+				todo.delCulturalOrganization(req.params.co_email,res);
+			});
+			
+			app.get('/getCulturalOrganization/:co_email',function(req,res){
+				todo.getCulturalOrganization(req.params.co_email,res);
+			});
+			
+			app.get('/getAllCulturalOrganizations/',function(req,res){
+				todo.getAllCulturalOrganizations(res);
+			});
+			
+			app.get('/getCard/:card_code',function(req,res){
+				todo.getCard(req.params.card_code,res);
+			});
 
+			app.get('/addCard/:card_code/:card_name/:card_path/:card_description/:card_cardvalue/:card_destructionvalue/:card_rarity', function(req,res){
+				todo.addCard(req.params.card_code,req.params.card_name,req.params.card_path,req.params.card_description,req.params.card_cardvalue,req.params.card_destructionvalue,req.params.card_rarity,res);
+			});
+
+			app.get('/updCard/:card_name/:card_path/:card_description/:card_cardvalue/:card_destructionvalue/:card_rarity/:card_code',function(req,res){
+				todo.updCard(req.params.card_name,req.params.card_path,req.params.card_description,req.params.card_cardvalue,req.params.card_destructionvalue,req.params.card_rarity,req.params.card_code,res);
+			});
+
+			app.get('/delCard/:card_code', function(req,res){
+				todo.delCard(req.params.card_code,res);
+			});
+
+			app.get('/getAllMedals/',function(req,res){
+				todo.getAllMedals(res);
+			});
+			
+			app.get('/getMedal/:medal_name',function(req,res){
+				todo.getMedal(req.params.medal_name,res);
+			});
+
+			app.get('/addMedal/:medal_code/:medal_name/:medal_category/:medal_num/:medal_path', function(req,res){
+				todo.addMedal(req.params.medal_code,req.params.medal_name,req.params.medal_category,req.params.medal_num,req.params.medal_path,res);
+			});
+			
+			app.get('/updMedal/:medal_name/:medal_category/:medal_num/:medal_path/:medal_code',function(req,res){
+				todo.updMedal(req.params.medal_name,req.params.medal_category,req.params.medal_num,req.params.medal_path,req.params.medal_code,res);
+			});
+
+			app.get('/delMedal/:medal_code', function(req,res){
+				todo.delMedal(req.params.medal_code,res);
+			});
+			
+			app.get('/getOperatorCHs/:operator_email', function(req,res){
+				todo.getOperatorCHs(req.params.operator_email,res);
+			});
+			
+			app.get('/getCH/:ch_code',function(req,res){
+				todo.getCH(req.params.ch_code,res);
+			});
+			
+			app.get('/addCH/:ch_code/:ch_name/:ch_description/:ch_path/:ch_g1/:ch_g2/:ch_g3/:ch_g4/:ch_latitude/:ch_longitude/:ch_region/:ch_province/:ch_historicalperiod/:ch_structuretype/:ch_culturalorganization', function(req,res){
+				todo.addCH(req.params.ch_code,req.params.ch_name,req.params.ch_description,req.params.ch_path,req.params.ch_g1,req.params.ch_g2,req.params.ch_g3,req.params.ch_g4,req.params.ch_latitude,req.params.ch_longitude,req.params.ch_region,req.params.ch_province,req.params.ch_historicalperiod,req.params.ch_structuretype,req.params.ch_culturalorganization,res);
+			});
+			
+			app.get('/updCH/:ch_name/:ch_description/:ch_path/:ch_g1/:ch_g2/:ch_g3/:ch_g4/:ch_latitude/:ch_longitude/:ch_region/:ch_province/:ch_historicalperiod/:ch_structuretype/:ch_culturalorganization/:ch_code', function(req,res){
+				todo.updCH(req.params.ch_name,req.params.ch_description,req.params.ch_path,req.params.ch_g1,req.params.ch_g2,req.params.ch_g3,req.params.ch_g4,req.params.ch_latitude,req.params.ch_longitude,req.params.ch_region,req.params.ch_province,req.params.ch_historicalperiod,req.params.ch_structuretype,req.params.ch_culturalorganization,req.params.ch_code,res);
+			});
+			
+			app.get('/delCH/:ch_code', function(req,res){
+				todo.delCH(req.params.ch_code,res);
+			});
+			
+			app.get('/getGame1CHs/:operator_email', function(req,res){
+				todo.getGame1CHs(req.params.operator_email,res);
+			});
+			
+			app.get('/getCHSiteInformation/:chsi_code', function(req,res){
+				todo.getCHSiteInformation(req.params.chsi_code,res);
+			});
+			
+			app.get('/addCHSiteInformation/:chsi_code/:chsi_title/:chsi_description/:chsi_path/:chsi_heritage', function(req,res){
+				todo.addCHSiteInformation(req.params.chsi_code,req.params.chsi_title,req.params.chsi_description,req.params.chsi_path,req.params.chsi_heritage,res);
+			});
+			
+			app.get('/updCHSiteInformation/:chsi_title/:chsi_description/:chsi_path/:chsi_heritage/:chsi_code', function(req,res){
+				todo.updCHSiteInformation(req.params.chsi_title,req.params.chsi_description,req.params.chsi_path,req.params.chsi_heritage,req.params.chsi_code,res);
+			});
+			
+			app.get('/getCHTreasureChests/:ch_code', function(req,res){
+				todo.getCHTreasureChests(req.params.ch_code,res);
+			});
+			
+			app.get('/getTreasureChest/:chest_code', function(req,res){
+				todo.getTreasureChest(req.params.chest_code,res);
+			});
+			
+			app.get('/addTreasureChest/:chest_code/:chest_title/:chest_description/:chest_latitude/:chest_longitude/:chest_heritage', function(req,res){
+				todo.addTreasureChest(req.params.chest_code,req.params.chest_title,req.params.chest_description,req.params.chest_latitude,req.params.chest_longitude,req.params.chest_heritage,res);
+			});
+			
+			app.get('/updTreasureChest/:chest_title/:chest_description/:chest_latitude/:chest_longitude/:chest_heritage/:chest_code', function(req,res){
+				todo.updTreasureChest(req.params.chest_title,req.params.chest_description,req.params.chest_latitude,req.params.chest_longitude,req.params.chest_heritage,req.params.chest_code,res);
+			});
+			
+			app.get('/delTreasureChest/:chest_code', function(req,res){
+				todo.delTreasureChest(req.params.chest_code,res);
+			});
+			
+			app.get('/getGame2CHs/:operator_email', function(req,res){
+				todo.getGame2CHs(req.params.operator_email,res);
+			});
+			
+			app.get('/getGame3CHs/:operator_email', function(req,res){
+				todo.getGame3CHs(req.params.operator_email,res);
+			});
+			
+			app.get('/getGame4CHs/:operator_email', function(req,res){
+				todo.getGame4CHs(req.params.operator_email,res);
+			});
+			
+/*			app.get('/getCHInfopoints/:ch_code', function(req,res){
+				todo.getCHInfopoints(req.params.ch_code,res);
+			});*/
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			//Query di prova
 			app.get('/getProva/:email',function(req,res){
 				todo.getProva(req.params.email,res);
 			});
 
 
-			//Fine Authoring Tool --------
+		//Fine Authoring Tool ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 

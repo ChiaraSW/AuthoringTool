@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+<body ng-app="GoPoleis" >
+
+	<div class="col-sm-9" ng-controller="addMedalController">
+				        
+		<h1 style="margin:20px;"><u>Create a Medal</u>:</h1><br><br>        
+        
+     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
+	     	<label for="name" style="display: inline-block; vertical-align: bottom;">
+	     		Name: 
+			</label>
+			<input type="text" class="form-control" ng-model="addMedal.name" style="width:450px; display: inline-block;">
+		</fieldset>
+		
+		<fieldset style="margin-top:30px; margin-left:20px;"> 	
+	     	<label for="image" style="display: inline-block;">
+	     		Image:  
+			</label>
+		</fieldset>
+		
+		<fieldset style="margin-top:30px; margin-left:20px;"> 	
+	     	<label for="category" style="display: inline-block;">
+	     		Category:  
+			</label>
+			<select ng-model="addMedal.category" class="form-control" style="width:450px; display: inline-block;">
+				<option ng-repeat="x in category">{{x}}</option>
+			</select>	
+		</fieldset>
+		
+		<fieldset style="margin-top:30px; margin-left:20px;"> 	
+	     	<label for="numOfPlaces" style="display: inline-block; vertical-align: bottom;">
+	     		Number of places to visit to obtain this medal: 
+			</label>
+			<input type="text" class="form-control" ng-model="addMedal.numOfPlaces" style="width:200px; display: inline-block;">
+		</fieldset>
+
+		<fieldset style="margin-top:60px; margin-left:200px;"> 			
+			<input type="submit" name="btnAddMedal" class="btn btn-info" ng-click="executeAddMedal()" value="Create"/>  
+			<a href="Medals_Template.html" target="_self">Cancel</a>
+		</fieldset>
+
+	</div>
+	
+</body>
+</html>
+<script>
+	var app = angular.module("GoPoleis", []);
+	app.controller('addMedalController', function($scope, $http, $window) {
+
+		$scope.category = ["Region", "Historical Period", "Type of Structure"];		//Fai la query per prendere i valori
+		$scope.addMedal={};
+		
+		$scope.executeAddMedal = function(){	
+			$http({
+				method: 'GET',
+				url: '/addMedal/00121/'+$scope.addMedal.name+'/'+$scope.addMedal.category+'/'+$scope.addMedal.numOfPlaces+'/..%2F..%2Fimages%2Fmedals%2Fnoimage.png' //SISTEMARE!!
+			}).then(function successCallback(response) {	
+				window.open("Medals_Template.html", "_self");   
+			}, function errorCallback(response) {
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+			
+		}
+		
+			
+	});
+</script>

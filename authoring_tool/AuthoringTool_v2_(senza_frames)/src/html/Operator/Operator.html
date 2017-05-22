@@ -1,0 +1,72 @@
+<div class="double-column" align="left">
+	
+	<div class="row" style="margin: 0px; heigth: 876px;">
+	
+		<div class="col-sm-8">
+   			
+		    <form name="form" role="form">
+		    	
+		    	<div class="row">
+		    	
+		    		<div class="col-sm-3">
+
+
+				    	<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="CulturalHeritages" 
+				    		ng-click="CulturalHeritages_subButtons=true; Game1_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getCulturalHeritages();">
+							Cultural Heritages'<br>Template
+						</button>	
+						<div class='sub_container' align="center" ng-show="CulturalHeritages_subButtons">
+							<button id="addCH" type="button" class="btn sub-btn btn-success" ng-click="addCulturalHeritage();">Add a Cultural Heritage</button>
+							<button id="delCH" type="button" class="btn sub-btn btn-danger" ng-click="delCulturalHeritage();">Delete a Cultural Heritage</button>
+						</div>
+						
+ 						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Game1"
+							ng-click="CulturalHeritages_subButtons=false; Game1_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getGame1();">
+							Game 1<br>- Treasures' portal -<br>Template
+						</button>
+						<div class='sub_container' align="center" ng-show="Game1_subButtons">
+ 							<button id="siteInfo" type="button" class="btn sub-btn btn-info" ng-click="siteInfo();">Site information</button>
+							<button id="chests" type="button" class="btn sub-btn btn-info" ng-click="chests();">Chests' Template</button>
+						</div>
+
+						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Game2"
+							ng-click="CulturalHeritages_subButtons=false; Game1_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getGame2();">
+							Game 2<br>- Travels' portal -<br>Template
+						</button>
+
+						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Game3"
+							ng-click="CulturalHeritages_subButtons=false; Game1_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getGame3();">
+							Game 3<br>- Puzzles' portal -<br>Template
+						</button>
+						<div class='sub_container' align="center" ng-show="Game3_subButtons">
+ 							<button id="addStory" type="button" class="btn sub-btn btn-success" ng-click="addStory();">Add a Story</button>
+							<button id="delStory" type="button" class="btn sub-btn btn-danger" ng-click="delStory();">Delete a Story</button>
+						</div>
+						
+						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Game4"
+							ng-click="CulturalHeritages_subButtons=false; Game1_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getGame4();">
+							Game 4<br>- Knowledge's portal -<br>Template
+						</button>
+						<div class='sub_container' align="center" ng-show="Game4_subButtons">
+ 							<button id="reviewsList" type="button" class="btn sub-btn btn-info" ng-click="reviewsList();">Reviews' list</button>
+							<button id="infopoints" type="button" class="btn sub-btn btn-info" ng-click="infopoints();">Infopoints' Template</button>
+							<button id="enciclopedicPage" type="button" class="btn sub-btn btn-info" ng-click="enciclopedicPage();">Enciclopedic page Template</button>
+						</div>			
+						
+			        </div>
+			        <div class="col-sm-9">
+			        
+				        <iframe id="mainFrame"  src="src/html/Operator/WhitePage.html" style="height: 876px; width: 1584px; border: none;">
+				        </iframe>
+
+			        </div>
+			        
+				</div>
+		
+		    </form>
+		    
+	    </div>
+	    
+    </div>
+    
+</div>

@@ -110,7 +110,7 @@ function Todo(){
 	//game1: ottieni i tesori trovati dall'utente(saranno i marker verdi nella mappa)
 	/*this.getTreasureElements = function(email,code,res){
 		connection.acquire(function(err,con){
-			con.query('select t.code,t.latitude,t.longitude,t.info,g.found from (Gt g,Treasure t,User u) where u.email=? AND u.game1=g.game1 AND t.heritage=? AND t.code=g.treasure',[email,code], function(err,result){
+			con.query('SELECT t.code,t.latitude,t.longitude,t.info,g.found from (Gt g,Treasure t,User u) where u.email=? AND u.game1=g.game1 AND t.heritage=? AND t.code=g.treasure',[email,code], function(err,result){
 				con.release();
 				res.send(result);
 			});
@@ -120,7 +120,7 @@ function Todo(){
 	//game1: ottieni i tesori trovati dall'utente(saranno i marker verdi nella mappa)
 	this.getTreasureElements = function(name,res){
 		connection.acquire(function(err,con){
-			con.query('select code,latitude,longitude,info from Treasure WHERE heritage=?',name, function(err,result){
+			con.query('SELECT code,latitude,longitude,info from Treasure WHERE heritage=?',name, function(err,result){
 				con.release();
 				res.send(result);
 			});
@@ -221,7 +221,7 @@ function Todo(){
 	//game1:ottieni tutte le carte
 	this.getMyCards = function(game,res){
 		connection.acquire(function(err,con){
-			con.query('select * from Card where code IN (select card from G1c where game1=?) ',game, function(err,result){
+			con.query('SELECT  * from Card where code IN (select card from G1c where game1=?) ',game, function(err,result){
 				con.release();
 				res.send(result);
 			});
@@ -630,8 +630,309 @@ function Todo(){
 
 	
 
-	//Inizio Authoring Tool--------
+	//Inizio Authoring Tool--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+	this.addCulturalOrganization = function(co_email, co_password, co_role, co_supervisor, res){
+		connection.acquire(function(err,con){
+			con.query('INSERT into Culturalorganization (email, password, role, supervisor) value (?,?,?,?)', [co_email, co_password, co_role, co_supervisor], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.delCulturalOrganization = function(co_email, res){
+		connection.acquire(function(err,con){
+			con.query('DELETE from Culturalorganization WHERE email=?', [co_email], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getCulturalOrganization = function(co_email,res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * from Culturalorganization WHERE email = ?', [co_email], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getAllCulturalOrganizations = function(res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * from Culturalorganization', function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getCard= function(card_code, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * from Card WHERE code=?', [card_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.addCard = function(card_code, card_name, card_path, card_description, card_cardvalue, card_destructionvalue, card_rarity, res){
+		connection.acquire(function(err,con){
+			con.query('INSERT into Card (code, name, path, description, cardvalue, destructionvalue, rarity) value (?,?,?,?,?,?,?)', [card_code, card_name, card_path, card_description, card_cardvalue, card_destructionvalue, card_rarity], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.updCard = function(card_name, card_path, card_description, card_cardvalue, card_destructionvalue, card_rarity, card_code, res){
+		connection.acquire(function(err,con){
+			con.query('UPDATE Card set name=?, path=?, description=?, cardvalue=?, destructionvalue=?, rarity=? WHERE code=?', [card_name, card_path, card_description, card_cardvalue, card_destructionvalue, card_rarity, card_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};	
+
+	this.delCard = function(card_code, res){
+		connection.acquire(function(err,con){
+			con.query('DELETE from Card WHERE code=?', [card_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+
+	this.getAllMedals= function(res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * from Medal', function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getMedal= function(medal_name, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * from Medal WHERE name=?', [medal_name], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+
+	this.addMedal = function(medal_code, medal_name, medal_category, medal_num, medal_path, res){
+		connection.acquire(function(err,con){
+			con.query('INSERT into Medal (code, name, category, num, path) value (?,?,?,?,?)', [medal_code, medal_name, medal_category, medal_num, medal_path], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+		
+	this.updMedal = function(medal_name, medal_category, medal_num, medal_path, medal_code, res){
+		connection.acquire(function(err,con){
+			con.query('UPDATE Medal set name=?, category=?, num=?, path=? WHERE code=?', [medal_name, medal_category, medal_num, medal_path, medal_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};		
+	
+	this.delMedal = function(medal_code, res){
+		connection.acquire(function(err,con){
+			con.query('DELETE from Medal WHERE code=?', [medal_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+
+	this.getOperatorCHs = function(operator_email, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * FROM Heritage WHERE culturalorganization = ?', [operator_email], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getCH= function(ch_code, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * from Heritage WHERE code=?', [ch_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.addCH = function(ch_code, ch_name, ch_description, ch_path, ch_g1, ch_g2, ch_g3, ch_g4, ch_latitude, ch_longitude, ch_region, ch_province, ch_historicalperiod, ch_structuretype, ch_culturalorganization, res){
+		connection.acquire(function(err,con){
+			con.query('INSERT into Heritage (code, name, description, path, g1, g2, g3, g4, latitude, longitude, region, province, historicalperiod, structuretype, culturalorganization) value (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [ch_code, ch_name, ch_description, ch_path, ch_g1, ch_g2, ch_g3, ch_g4, ch_latitude, ch_longitude, ch_region, ch_province, ch_historicalperiod, ch_structuretype, ch_culturalorganization], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.updCH = function(ch_name, ch_description, ch_path, ch_g1, ch_g2, ch_g3, ch_g4, ch_latitude, ch_longitude, ch_region, ch_province, ch_historicalperiod, ch_structuretype, ch_culturalorganization, ch_code, res){
+		connection.acquire(function(err,con){
+			con.query('UPDATE Heritage set name=?, description=?, path=?, g1=?, g2=?, g3=?, g4=?, latitude=?, longitude=?, region=?, province=?, historicalperiod=?, structuretype=?, culturalorganization=? WHERE code=?', [ch_name, ch_description, ch_path, ch_g1, ch_g2, ch_g3, ch_g4, ch_latitude, ch_longitude, ch_region, ch_province, ch_historicalperiod, ch_structuretype, ch_culturalorganization, ch_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.delCH = function(ch_code, res){
+		connection.acquire(function(err,con){
+			con.query('DELETE from Heritage WHERE code=?', [ch_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getGame1CHs = function(operator_email, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * FROM Heritage WHERE culturalorganization = ?  and g1 = 1', [operator_email], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getCHSiteInformation = function(chsi_code, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * FROM Siteinformation WHERE heritage = ? ', [chsi_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.addCHSiteInformation = function(chsi_code, chsi_title, chsi_description, chsi_path, chsi_heritage, res){
+		connection.acquire(function(err,con){
+			con.query('INSERT into Siteinformation (code, title, description, path, heritage) value (?,?,?,?,?)', [chsi_code, chsi_title, chsi_description, chsi_path, chsi_heritage], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.updCHSiteInformation = function(chsi_title, chsi_description, chsi_path, chsi_heritage, chsi_code, res){
+		connection.acquire(function(err,con){
+			con.query('UPDATE Siteinformation set title=?, description=?, path=?, heritage=? WHERE code=?', [chsi_title, chsi_description, chsi_path, chsi_heritage, chsi_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getCHTreasureChests = function(ch_code, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT h.name, t.code, t.title, t.description, t.latitude, t.longitude, t.heritage FROM (Heritage h, Treasure t)  WHERE h.code = ? AND h.code = t.heritage ', [ch_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getTreasureChest = function(chest_code, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * FROM Treasure t WHERE code = ? ', [chest_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+
+	this.addTreasureChest = function(chest_code, chest_title, chest_description, chest_latitude, chest_longitude, chest_heritage, res){
+		connection.acquire(function(err,con){
+			con.query('INSERT into Treasure (code, title, description, latitude, longitude, heritage) value (?,?,?,?,?,?)', [chest_code, chest_title, chest_description, chest_latitude, chest_longitude, chest_heritage], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.updTreasureChest = function(chest_title, chest_description, chest_latitude, chest_longitude, chest_heritage, chest_code, res){
+		connection.acquire(function(err,con){
+			con.query('UPDATE Treasure set title=?, description=?, latitude=?, longitude=?, heritage=? WHERE code=?', [chest_title, chest_description, chest_latitude, chest_longitude, chest_heritage, chest_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.delTreasureChest = function(chest_code, res){
+		connection.acquire(function(err,con){
+			con.query('DELETE from Treasure WHERE code=?', [chest_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+
+	this.getGame2CHs = function(operator_email, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * FROM Heritage WHERE culturalorganization = ?  and g2 = 1', [operator_email], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getGame3CHs = function(operator_email, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * FROM Heritage WHERE culturalorganization = ?  and g3 = 1', [operator_email], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+	this.getGame4CHs = function(operator_email, res){
+		connection.acquire(function(err,con){
+			con.query('SELECT * FROM Heritage WHERE culturalorganization = ?  and g4 = 1', [operator_email], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};
+	
+/*	this.getCHInfopoints = function(ch_code, res){			//MODIFICARE LA QUERY
+		connection.acquire(function(err,con){
+			con.query('SELECT h.name, t.code, t.title, t.description, t.latitude, t.longitude, t.heritage FROM (Heritage h, Treasure t)  WHERE h.code = ? AND h.code = t.heritage ', [ch_code], function(err,result){
+				con.release();
+				res.send(result);
+			});
+		});
+	};*/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	//Query di prova
 	this.getProva = function(email,res){
 		connection.acquire(function(err,con){
 			con.query('SELECT session from User where email = ?', email, function(err,result){
@@ -641,7 +942,7 @@ function Todo(){
 		});
 	};
 	
-	//Fine Authoring Tool --------
+	//Fine Authoring Tool --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 

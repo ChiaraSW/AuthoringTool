@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+
+<body ng-app="GoPoleis" >
+
+	 <div class="col-sm-9" ng-controller="delCardController">
+		<div>
+			<h1 style="margin:20px;"><u>Cards</u></h1>
+			<fieldset style="margin-top:50px; margin-left:20px;""> 	
+	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
+		        	<span class="glyphicon glyphicon-search"></span>
+		        	Search: 
+		        </label>
+	      		<input type="text" ng-model="searchBoxCards.name" class="form-control" style="width:250px; display: inline-block; vertical-align: bottom;"/>
+	        </fieldset>
+	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
+	       		<li ng-repeat="card in results | filter:searchBoxCards" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+	       			ng-model="getAllCards.selection" ng-value="card.name" id="{{card.name}}">	
+	       			<span class="glyphicon glyphicon-trash" ng-click="delCard(card.code)"></span>        	
+	        		<h4 card.name="selection">
+	        			<img ng-src="{{card.path}}" style="height: 80px; width: 80px;"/>
+	        			{{ card.name }}
+	        		</h4>	
+	       		</li>
+	        </ul>
+        </div>
+
+	</div> 
+
+</body>
+</html>
+<script>
+	var app = angular.module("GoPoleis", []);
+	app.controller('delCardController', function($scope, $http, $window) {
+
+			$http({
+				method : "GET",
+				url : "/getAllCards"
+			}).then(function mySucces(response) {
+				$scope.results  = response.data;
+			}, function myError(response) {
+				$scope.results  = response.statusText;
+			});
+			
+			$scope.delCard = function (cardCode) {
+                if ($window.confirm("Are you sure you want to delete this card?")) {
+                	$scope.delCard={};
+	   				$http({
+	   					method : "GET",
+	   					url : "/delCard/"+cardCode
+	   				}).then(function mySucces(response) {
+	   					results  = response.data;	 
+	   					alert("Successful delete");
+	   					window.open("Cards_Template.html", "_self"); 
+	   				}, function myError(response) {
+	   					$scope.results  = response.statusText;
+	   				});
+                } 
+            }	
+			
+	});
+</script>

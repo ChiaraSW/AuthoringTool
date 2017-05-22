@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+
+<body ng-app="GoPoleis" >
+
+	<div class="col-sm-9" ng-controller="getCardsController">
+		<div ng-show="getCardsPage">
+			<h1 style="margin:20px;"><u>Cards</u></h1>
+			<fieldset style="margin-top:50px; margin-left:20px;""> 	
+	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
+		        	<span class="glyphicon glyphicon-search"></span>
+		        	Search: 
+		        </label>
+	      		<input type="text" ng-model="searchBoxCards.name" class="form-control" style="width:250px; display: inline-block; vertical-align: bottom;"/>
+	        </fieldset>
+	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
+	       		<li ng-repeat="card in results | filter:searchBoxCards" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+	       			ng-model="getAllCards.selection" ng-value="card.name" id="{{card.name}}" ng-click="updCard(card.code)">	        	
+	        		<h4 medal.name="selection">
+	        			<img ng-src="{{card.path}}" style="height: 80px; width: 80px;"/>
+	        			{{ card.name }}
+	        		</h4>	
+	       		</li>
+	        </ul>
+        </div>
+        
+        
+       <div ng-show="updCardPage">
+			        
+			<h1 style="margin:20px;"><u>Update Card</u>: [{{updCard.name}}]</h1><br><br>        
+	        
+	     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
+		     	<label for="name" style="display: inline-block; vertical-align: bottom;">
+		     		Name: 
+				</label>
+				<input type="text" class="form-control" ng-model="updCard.name" style="width:450px; display: inline-block;">
+			</fieldset>
+			
+ 			<fieldset style="margin-top:30px; margin-left:20px;"> 	
+		     	<label for="image" style="display: inline-block;">
+		     		Image:  
+				</label>
+				<img ng-src="{{updCard.path}}" ng-model="updCard.path" style="width: 200px; heigth:200px; border: 1px solid black; "/>
+			</fieldset>
+			
+			<fieldset style="margin-top:30px; margin-left:20px;"> 	
+		     	<label for="description" style="display: inline-block; vertical-align: bottom;">
+		     		Short description: 
+				</label>
+				<input type="text" class="form-control" ng-model="updCard.description" style="width:450px; display: inline-block;">
+			</fieldset>
+			
+			<fieldset style="margin-top:30px; margin-left:20px;"> 	
+		     	<label for="cardValue" style="display: inline-block; vertical-align: bottom;">
+		     		Card's value in coins: 
+				</label>
+				<input type="text" class="form-control" ng-model="updCard.cardValue" style="width:100px; display: inline-block;">
+			</fieldset>
+			
+			<fieldset style="margin-top:30px; margin-left:20px;"> 	
+		     	<label for="destructionValue" style="display: inline-block; vertical-align: bottom;">
+		     		Coins obtained in case of destruction of a dual card: 
+				</label>
+				<input type="text" class="form-control" ng-model="updCard.destructionValue" style="width:100px; display: inline-block;">
+			</fieldset>
+			
+			<fieldset style="margin-top:30px; margin-left:20px;"> 	
+		     	<label for="rarity" style="display: inline-block;">
+		     		Rarity:  
+				</label>
+				<select ng-model="updCard.rarity" class="form-control" style="width:250px; display: inline-block;">
+					<option ng-repeat="x in rarity">{{x}}</option>
+				</select>	
+			</fieldset>
+
+			<fieldset style="margin-top:60px; margin-left:20px;"> 			
+				<input type="submit" name="btnUpdCard" class="btn btn-info" ng-click="executeUpdCard()" value="Update"/>  
+				<a href="Cards_Template.html" target="_self">Cancel</a>
+			</fieldset>
+	
+	        
+		</div>
+        
+	</div>
+
+</body>
+</html>
+<script>
+	var app = angular.module("GoPoleis", []);
+	app.controller('getCardsController', function($scope, $http, $window) {
+		$scope.getCardsPage=true;
+		$scope.updCardPage=false;
+	
+			$http({
+				method : "GET",
+				url : "/getAllCards"
+			}).then(function mySucces(response) {
+				$scope.results  = response.data;
+			}, function myError(response) {
+				$scope.results  = response.statusText;
+			});
+			
+			$scope.updCard = function(cardCode){ 
+				$scope.getCardsPage=false;
+				$scope.updCardPage=true;
+				$scope.updCard={};
+				
+				$scope.rarity = ["Common", "Uncommon", "Epic"];			//Fai la query per prendere i valori
+
+				$http({
+					method : "GET",
+					url : "/getCard/"+cardCode
+				}).then(function mySucces(response) {
+					results  = response.data;	
+					if (results.length > 0){
+						$scope.updCard.name=results[0].name;
+						$scope.updCard.path=results[0].path;
+						$scope.updCard.description = results[0].description;
+						$scope.updCard.cardValue = results[0].cardvalue;					
+						$scope.updCard.destructionValue = results[0].destructionvalue;	
+						$scope.updCard.rarity = results[0].rarity;	
+					}
+				}, function myError(response) {
+					$scope.results  = response.statusText;
+				});	
+				
+				$scope.executeUpdCard = function(){	
+					$http({
+						method: 'GET',					
+						url: '/updCard/'+$scope.updCard.name+'/..%2F..%2Fimages%2Fcards%2Fnoimage.png/'+$scope.updCard.description+'/'+$scope.updCard.cardValue+'/'+$scope.updCard.destructionValue+'/'+$scope.updCard.rarity+'/'+cardCode	 //SISTEMARE!!
+					}).then(function successCallback(response) {	
+						window.open("Cards_Template.html", "_self");   
+					}, function errorCallback(response) {
+						// called asynchronously if an error occurs
+						// or server returns response with an error status.
+					});
+					
+				}
+			}
+			
+	});
+</script>

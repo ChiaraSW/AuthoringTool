@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+
+<body ng-app="GoPoleis" >
+
+	 <div class="col-sm-9" ng-controller="SiteInformationController">
+	 
+	 	<h1 style="margin:20px;"><u>Site Information for</u>: [ {{chName}} ]</h1>
+	 	<p id="chCode" ng-show="false" ng-module="chCode"></p>
+		<p id="chName" ng-show="false" ng-module="chName"></p>   
+	        
+		<form name="form" role="form" id="uploadCHForm" enctype="multipart/form-data" action="/upload" method="post">    
+		
+			<div class="form-group" ng-class="{ 'has-error': form.title.$dirty && form.title.$error.required }" >
+		     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
+			     	<label for="title" style="display: inline-block; vertical-align: bottom;">
+			     		Title: 
+					</label>
+					<input type="text" class="form-control" ng-model="si.title" style="width:850px; display: inline-block;" required>
+				</fieldset>
+			</div>
+			
+			<div class="form-group" ng-class="{ 'has-error': form.description.$dirty && form.description.$error.required }" >
+		     	<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="description" style="display: inline-block; vertical-align: top;">
+			     		Description:  
+					</label>
+					<textarea class="form-control" ng-model="si.description" style="resize:none; display:inline-block; width:850px;" required></textarea>
+				</fieldset>
+			</div>
+ 	
+			<div class="form-group" ng-class="{ 'has-error': form.image.$dirty && form.image.$error.required }" >
+				<fieldset style="margin-top:30px; margin-left:20px;"> 	
+					<p id="imgCode" ng-show="false" ng-model="imgCode"></p> 
+			     	<label for="image" style="display:inline-block;">
+			     		Image:  
+					</label>
+					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
+							style="display:inline-block; margin-left:20px;" ngf-max-size="2MB" ng-required="checkImage()"/>
+					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
+				</fieldset>
+			</div>
+			
+			<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+	            <button type="submit" name="btnAddSI" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddSI()" ng-show="publish">Publish</button>
+	            <button type="submit" name="btnUpdSI" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeUpdSI()" ng-show="update">Update</button>
+	            <img ng-if="vm.dataLoading"/>
+				<a href="Game1_Template.html" ng-click="cancel()">Cancel</a>
+	        </div>	
+			
+        </form>
+
+	</div> 
+
+</body>
+</html>
+<script>
+	var app = angular.module("GoPoleis", []);
+	app.controller('SiteInformationController', function($scope, $http, $window, $timeout) {
+		
+		var chsi_code = 0;
+		$scope.chCode = parent.window.getCode();
+		$scope.si = {};
+		$scope.publish = false;
+		$scope.update = false;
+		var type;
+		var imageSelected=false;
+		var imgCode;
+		
+	
+		$http({
+			method : "GET",
+			url : "/getCH/"+$scope.chCode
+		}).then(function mySucces(response) {
+			results  = response.data;	
+			if (results.length > 0){
+				$scope.chName = results[0].name;
+				
+				$http({
+					method : "GET",
+					url : "/getCHSiteInformation/"+$scope.chCode
+				}).then(function mySucces(response) {
+					results  = response.data;	
+					if (results.length > 0){
+						chsi_code = results[0].code;
+						$scope.si.title = results[0].title;
+						$scope.si.description = results[0].description;
+						$scope.thumbnail = { dataUrl: results[0].path+results[0].filename };	
+						imgCode=results[0].imageCode;
+						$scope.publish = false;
+						$scope.update = true;
+					}
+					else{
+						$scope.publish = true;
+						$scope.update = false;
+					}
+				}, function myError(response) {
+					$scope.results  = response.statusText;
+				});
+				
+			}
+		}, function myError(response) {
+			$scope.results  = response.statusText;
+		});
+		
+		$scope.checkImage = function(){
+	       if($scope.publish){	return true;	}
+	       else{	return false;	}
+	    };
+
+
+		$scope.thumbnail = { dataUrl: '../../images/noimage.png' };
+	    $scope.fileReaderSupported = window.FileReader != null;
+	    $scope.imgChanged = function(files){
+	        if (files != null) {
+	            var file = files[0];
+		        if ($scope.fileReaderSupported && file.type.indexOf('image') > -1) {
+		            $timeout(function() {
+		                var fileReader = new FileReader();
+		                fileReader.readAsDataURL(file);
+		                fileReader.onload = function(e) {
+		                    $timeout(function(){
+		 							$scope.thumbnail.dataUrl = e.target.result;
+		                    });
+		                }
+		            });
+		        }	        
+	    	}
+	        type = file.name.split('.')[file.name.split('.').length -1];
+	        imageSelected=true;
+	    };
+	    
+		$scope.executeAddSI = function(){	
+			
+			if(imageSelected){
+				$scope.imgCode="siteInformations-" + Date.now();
+
+				//Upload image on server
+				$http({
+					method: 'POST',
+					url: '/upload'
+				}).then(function successCallback(response) {	
+				}, function errorCallback(response) {  //return an error because the upload is performed by the server
+					
+					//Query: INSERT Image on DB
+					$http({
+						method: 'GET',
+						url: '/addImage/0/..%2F..%2Fimages%2FsiteInformations%2F/' + $scope.imgCode + '.' + type 
+					}).then(function successCallback(response) {	
+						
+						imgCode = response.data.insertId;
+						
+						//Query: INSERT Siteinformation on DB
+						$http({
+							method: 'GET',
+							url: '/addCHSiteInformation/0/'+$scope.si.title+'/'+$scope.si.description+'/'+imgCode+'/'+$scope.chCode
+						}).then(function successCallback(response) {	
+							window.open("Game1_Template.html", "_self");   
+						}, function errorCallback(response) {
+							alert("Error on the query: Siteinformation INSERT");
+						});
+					
+					}, function errorCallback(response) {			
+						alert("Error on the query: Image INSERT");
+					});
+				});					
+			}
+			else{
+				alert("You should select an image.");
+			}
+		}
+		
+		$scope.executeUpdSI = function(){	
+			
+			if(imageSelected){
+				$scope.imgCode="siteInformations-" + Date.now();
+
+				//Upload image on server
+				$http({
+					method: 'POST',
+					url: '/upload'
+				}).then(function successCallback(response) {	
+				}, function errorCallback(response) {  //return an error because the upload is performed by the server
+					
+					//Query: UPDATE Image on DB
+					$http({
+						method: 'GET',
+						url: '/updImage/..%2F..%2Fimages%2FsiteInformations%2F/' + $scope.imgCode + '.' + type +'/'+imgCode
+					}).then(function successCallback(response) {	
+						updateSI();
+					}, function errorCallback(response) {			
+						alert("Error on the query: Image UPDATE");
+					});
+
+				});					
+			}
+			else{
+				
+				//Fake POST
+	    		$http({
+					method: 'POST',
+					url: '/'
+				}).then(function successCallback(response) {	
+				}, function errorCallback(response) {  //return an error because the upload is performed by the server							
+					updateSI();			
+				});
+			}
+			
+			function updateSI() {
+				//Query: UPDATE Siteinformation on DB
+				$http({
+					method: 'GET',
+					url: '/updCHSiteInformation/'+$scope.si.title+'/'+$scope.si.description+'/'+imgCode+'/'+$scope.chCode+'/'+chsi_code
+				}).then(function successCallback(response) {	
+					window.open("Game1_Template.html", "_self");   
+				}, function errorCallback(response) {
+					alert("Error on the query: Siteinformation UPDATE");
+				});	   			
+			}
+			
+		}
+
+		$scope.cancel = function(){ 
+			window.location.reload();
+			parent.window.enableGame1SubButtons(false, null);
+		}	
+			
+	});
+</script>

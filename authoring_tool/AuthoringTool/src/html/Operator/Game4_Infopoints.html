@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCrHxpT62yPIguYjilGuX_pGkOqQYvS-NQ&sensor=false"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js" type="text/javascript"></script>
+	
+	<link data-require="bootstrap-css@3.1.1" data-semver="3.1.1" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <script>document.write('<base href="' + document.location + '" />');</script>
+    <script data-require="jquery@*" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script data-require="angular.js@1.2.x" src="https://code.angularjs.org/1.2.22/angular.js" data-semver="1.2.22"></script>
+    <script data-require="angular-route@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-route.js"></script>
+    <script data-require="angular-resource@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-resource.js"></script>
+    <script data-require="angular-bootstrap@0.11.0" data-semver="0.11.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
+    <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	   
+    <script src="https://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.debug.js"></script>
+    <script type="text/javascript" src="ng-map/ng-map.min.js"></script> 
+     
+</head>
+
+<body ng-app="GoPoleis" >
+
+	 <div class="col-sm-9" ng-controller="InfopointsController">
+		<div>
+			<p id="chCode" ng-show="false" ng-module="chCode"></p>
+			<p id="chName" ng-show="false" ng-module="chName"></p>
+			<h1 style="margin:20px;"><u>Infopoints for</u>: [ {{chName}} ]</h1>
+			
+ 			<script type="text/ng-template" id="IPmap.html">
+        		<div class="modal-content" style="margin-left: -300px; height: 760px; width: 1200px;">		
+					<div class="modal-body">
+						<fieldset ng-show="AddIPTitle"> 	
+		     				<label for="string1" style="display: inline-block;">
+		     					Right-click to add a new Infopoint.  
+							</label>
+						</fieldset>
+
+						<fieldset ng-show="UpdIPTitle"> 	
+		     				<label for="string2" style="display: inline-block;">
+		     					Drag the marker to update its coordinates.  
+							</label>
+						</fieldset>
+
+						<map ng-show="addMap" style="display: block; height: 500px; zoom="8" center="[41.902650, 12.496022]" on-click="click()"></map>
+
+						<map ng-show="updMap" style="display: block; height: 500px; zoom="8" center="[41.902650, 12.496022]" on-click="click()"></map>
+
+						<fieldset style="margin-top:10px;"> 	
+		     				<label for="latitude" style="display: inline-block; vertical-align: bottom;">
+		     					Latitude: 
+							</label>
+							<input type="text" class="form-control" id="latitude" ng-model="latitude" style="width:100px; display: inline-block; margin-top:15px;" ng-readonly="true" disabled>
+							<label for="longitude" style="display: inline-block; vertical-align: bottom;">
+		     					Longitude: 
+							</label>
+							<input type="text" class="form-control" id="longitude"ng-model="longitude" style="width:100px; display: inline-block; margin-top:15px;" ng-readonly="true" disabled>
+						</fieldset>
+
+						<fieldset style="margin-top:10px;"> 	
+		     				<label for="description" style="display: inline-block; vertical-align: bottom;">
+		     					Description: 
+							</label>
+							<input type="text" class="form-control" ng-model="description" style="width:1069px; display: inline-block;">
+						</fieldset>
+
+							<button class="btn btn-secondary pull-right" ng-click="cancel()" style="width:100px; margin-left:10px; margin-top:15px;">Cancel</button>
+							<button class="btn btn-primary pull-right" ng-show="CreateBtn" ng-click="executeAddIP(description)" style="width:100px; margin-top:15px;">Create</button>
+							<button class="btn btn-primary pull-right" ng-show="UpdateBtn" ng-click="executeUpdIP(description)" style="width:100px; margin-top:15px;">Update</button>
+					</div>
+				</div> 
+			</script>
+
+ 		    <div>
+	        	<iframe id="mapFrame"  src="Game4_InfopointsMap.html" style="height:360px; width: 1500px; border: none;"></iframe>
+	        </div>
+      
+ 			<fieldset style="margin-top:10px; margin-left:20px;"> 	 	
+				<label for="search" style="display: inline-block; vertical-align: bottom;" >
+		        	<span class="glyphicon glyphicon-search"></span>
+		        	Search: 
+		        </label>
+	      		<input type="text" ng-model="searchInfopoints.description" class="form-control" style="width:250px; display: inline-block; vertical-align: bottom;"/>
+	      		<label for="string1" style="display: inline-block; vertical-align: bottom; margin-left:20px;">
+		     		Right-click on the map to add a new Infopoint: 
+				</label>
+			</fieldset>
+
+			<fieldset style="margin-top:30px; margin-left:20px;""> 	
+				<ul style="list-item-style:circle; margin-left:20px; padding-left:0px;">
+		       		<li ng-repeat="infopoint in results | filter:searchInfopoints" ng-model="getCHInfopoints.selection" ng-value="infopoint.description" id="{{infopoint.description}}">	        	
+		        		<h4 infopoint.name="selection">     			
+		        			<span class="glyphicon glyphicon-map-marker" ng-click="localizeIP(infopoint.code)"></span> 
+		        			<span class="glyphicon glyphicon-pencil" ng-click="updIPModal(infopoint.code)"></span> 
+		        			<span class="glyphicon glyphicon-trash" ng-click="delIP(infopoint.code)"></span> 
+		        			{{ infopoint.description }}
+		        		</h4>	
+		       		</li>
+		        </ul>
+			</fieldset>	
+
+			<fieldset style="margin-top:20px; margin-left:20px; margin-bottom:20px;"> 			
+				<a href="Game4_Template.html" ng-click="cancel()">Cancel</a>
+			</fieldset> 
+
+        </div>
+        
+	</div> 
+
+</body>
+</html>
+<script>
+	var ipCode;
+	
+	var app = angular.module('GoPoleis', ['ui.bootstrap','ngMap']);
+	app.controller('InfopointsController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
+	
+		var results;
+		$scope.chCode = parent.window.getCode();	
+				
+		$http({
+			method : "GET",
+			url : "/getCHInfopoints/"+$scope.chCode
+		}).then(function mySucces(response) {
+			results  = response.data;			
+		    $scope.results = [];
+			if (results.length > 0){
+				$scope.chName = results[0].name;
+				$timeout(function() {
+					$scope.results  = results;					
+			    }, 10);
+			}
+			else{
+				$http({
+					method : "GET",
+					url : "/getCH/"+$scope.chCode
+				}).then(function mySucces(response) {
+					results  = response.data;	
+					$scope.chName = results[0].name;	
+					$timeout(function() {
+						$scope.results  = null;	
+				    }, 10);
+				}, function myError(response) {
+					results  = response.statusText;
+				});	
+			}
+		}, function myError(response) {
+			$scope.results  = response.statusText;
+		});	
+		
+		$rootScope.$on('mapsInitialized', function(evt, maps){		
+			$scope.mapAdd = maps[0];
+	    	$scope.mapUpd = maps[1];
+	    });
+		
+		$window.getCode = function (){
+			return $scope.chCode;
+		};
+		
+		$window.addInfopoint = function(centerLat, centerLng, centerZoom) {   			
+			$scope.addIPModal(centerLat, centerLng, centerZoom);
+	   	};
+
+	   	$scope.addIPModal = function (centerLat, centerLng, centerZoom) {
+	   		var modalInstance = $modal.open({
+	    		templateUrl : 'IPmap.html',
+	    		controller : 'addIPCtrl'
+	    	});
+	    	modalInstance.result.then(function() {
+	    	}, function() {
+	    	});
+	    	
+	    	$timeout(function() {
+	    		google.maps.event.trigger($scope.mapAdd, 'resize');
+	    		$scope.mapAdd.setCenter(new google.maps.LatLng(centerLat,centerLng));
+	    		$scope.mapAdd.setZoom(parseInt(centerZoom));    		
+	    	}, 500);
+		};
+
+		$scope.updIPModal = function (infopointCode) {	
+			ipCode = infopointCode;
+			var result;
+			$http({			 
+				method : "GET",
+				url : "/getInfopoint/"+infopointCode
+				}).then(function mySucces(response) {
+					result  = response.data;
+				}, function myError(response) {
+					results  = response.statusText;
+			});	
+
+			var modalInstance = $modal.open({
+	    		templateUrl : 'IPmap.html',
+	    		controller : 'updIPCtrl'
+	    	});
+	    	modalInstance.result.then(function() {
+	    	}, function() {
+	    	});
+	    	
+	    	$timeout(function() {
+	    		google.maps.event.trigger($scope.mapUpd, 'resize');
+	    		$scope.mapUpd.setCenter(new google.maps.LatLng(result[0].latitude,result[0].longitude));
+	    		$scope.mapUpd.setZoom(16);    		
+	    	}, 500);
+		};
+
+		$scope.localizeIP = function (infopointCode) {	
+			ipCode =infopointCode;
+			document.getElementById('mapFrame').src = "Game4_InfopointsMap.html";
+		};
+
+		$window.getIPLocation = function (){
+			return ipCode;
+		};
+
+		$scope.delIP = function (infopointCode) {
+        	if ($window.confirm("Are you sure you want to delete this Infopoint?")) {
+ 				$http({
+ 					method : "GET",
+ 					url : "/delInfopoint/"+infopointCode
+				}).then(function mySucces(response) {
+ 					results  = response.data;	 
+ 					alert("Successful delete");
+ 					window.open("Game4_Infopoints.html", "_self"); 
+ 				}, function myError(response) {
+ 					$scope.results  = response.statusText;
+ 				});
+			} 
+		};
+
+		$scope.cancel = function(){ 
+			parent.window.enableGame4SubButtons(false, null);
+		};
+
+	});
+	
+
+	//Pop-up per l'inserimento di un nuovo Infopoint		
+	app.controller("addIPCtrl", function($scope, $log, $modalInstance, $rootScope, $http) {
+
+		var chCode = parent.window.getCode();
+		var newMarker=true;
+		
+		$rootScope.$on('mapsInitialized', function(evt, maps){		
+
+			var results;
+			var marker;
+			
+			$scope.latitude = null;
+	    	$scope.longitude = null; 
+	    	
+	    	$scope.AddIPTitle=true;
+	    	$scope.UpdIPTitle=false;
+	    	$scope.CreateBtn=true;
+	    	$scope.UpdateBtn=false;
+	    	$scope.addMap=true;
+	    	$scope.updMap=false;
+	            
+	    	$scope.map = maps[0];   
+
+	    	$http({			 
+				method : "GET",
+				url : "/getCHInfopoints/"+chCode		
+				}).then(function mySucces(response) {
+					results  = response.data;
+					for (var i=0; i<results.length; i++){				
+						var coordinates = new google.maps.LatLng( results[i].latitude,  results[i].longitude);							
+				        setMarker($scope.map, coordinates, "red", false);			
+					}
+				}, function myError(response) {
+					results  = response.statusText;
+			});	
+
+	    	//Aggiunge un marker alla mappa e gli aggiunge un dragendListener(se marker da aggiungere)
+		    function setMarker(map, coordinates, icon, draggable) {
+
+		    	marker = new google.maps.Marker({
+		        	position: coordinates,
+		        	map: map,
+		        	draggable: draggable,
+		        	icon: 'https://maps.google.com/mapfiles/ms/icons/'+icon+'-dot.png',
+				});
+		    	if (draggable){
+		    		google.maps.event.addListener(marker, 'dragend', function () {
+						$scope.latitude = marker.position.lat().toPrecision(8);
+			        	$scope.longitude = marker.position.lng().toPrecision(8);
+			        	$scope.$apply();
+		    		});
+		    	}
+		    	
+		    }
+	    	
+	    	$scope.map.addListener('rightclick', function(event) {    //aggiunge UN marker in base al rigthclick sulla mappa [rigthclick, dblclick, click]     	
+		    	if (newMarker == true){
+		    		$scope.latitude = event.latLng.lat().toPrecision(8);
+		        	$scope.longitude = event.latLng.lng().toPrecision(8);
+		        	$scope.$apply();
+		    		newMarker = false;
+		    		setMarker($scope.map, event.latLng, "green", true);  
+		    	}
+		    });
+	    	
+	    });
+
+		$scope.executeAddIP = function(description){	
+			$http({
+				method: 'GET',	
+				url: 	'/addInfopoint/0/'+description+'/..%2F..%2Fimages%2Fgame4%2Finfopoints%2F'+chCode+'%2Fnoimage.png/'+$scope.latitude+'/'+$scope.longitude+'/0/'+chCode
+			}).then(function successCallback(response) {	
+				newMarker = true;
+				window.open("Game4_Infopoints.html", "_self");   
+			}, function errorCallback(response) {
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+		}
+		
+		$scope.cancel = function() {
+			newMarker = false;
+			$modalInstance.dismiss('cancel');
+		};
+	});
+
+	//Pop-up per l'update dell'Infopoint selezionato
+	app.controller("updIPCtrl", function($scope, $log, $modalInstance, $rootScope, $http) {
+		var newMarker = true;
+		var marker = null;
+		var views = null;
+		var chCode = parent.window.getCode();
+
+		$rootScope.$on('mapsInitialized', function(evt, maps){	
+
+			var results;
+	    	$scope.mapUpd = maps[1];
+	    	
+	    	$scope.AddIPTitle=false;
+	    	$scope.UpdIPTitle=true;
+	    	$scope.CreateBtn=false;
+	    	$scope.UpdateBtn=true;
+	    	$scope.addMap=false;
+	    	$scope.updMap=true;
+	    	
+	    	$http({			 
+				method : "GET",
+				url : "/getCHInfopoints/"+chCode		
+				}).then(function mySucces(response) {
+					results  = response.data;
+
+					for (var i=0; i< results.length; i++){				
+						var coordinates = new google.maps.LatLng( results[i].latitude,  results[i].longitude);						
+						if (results[i].code != ipCode){
+							setMarker($scope.mapUpd, coordinates, "red", false);
+						} 	
+					}					
+					$http({			 
+						method : "GET",
+						url : "/getInfopoint/"+ipCode		
+						}).then(function mySucces(response) {
+							results  = response.data;
+							var coordinates = new google.maps.LatLng( results[0].latitude,  results[0].longitude);	
+							$scope.latitude = results[0].latitude;
+					    	$scope.longitude = results[0].longitude;    
+					    	$scope.description = results[0].description;
+					    	views = results[0].views;
+					    	
+							if(newMarker){		
+							    setMarker($scope.mapUpd, coordinates, "green", true);	
+								newMarker = false;   		
+							}
+						}, function myError(response) {
+							results  = response.statusText;
+					});				
+				}, function myError(response) {
+					results  = response.statusText;
+			});	
+
+	    	//Aggiunge un marker alla mappa
+		    function setMarker(map, coordinates, icon, draggable) {
+		    	marker = new google.maps.Marker({
+		        	position: coordinates,
+		        	map: map,
+		        	draggable: draggable,
+		        	icon: 'https://maps.google.com/mapfiles/ms/icons/'+icon+'-dot.png',
+				});
+		    	if (draggable){
+		    		google.maps.event.addListener(marker, 'dragend', function () {
+						$scope.latitude = marker.position.lat().toPrecision(8);
+			        	$scope.longitude = marker.position.lng().toPrecision(8);
+			        	$scope.$apply();
+		    		});
+		    	}
+		    }  	
+
+	    });
+
+		$scope.executeUpdIP = function(description){	
+			$http({
+				method: 'GET',	
+				url: 	'/updInfopoint/'+description+'/..%2F..%2Fimages%2Fgame4%2Finfopoints%2F'+chCode+'%2Fnoimage.png/'+$scope.latitude+'/'+$scope.longitude+'/'+views+'/'+chCode+'/'+ipCode
+			}).then(function successCallback(response) {	
+				newMarker = true;
+				window.open("Game4_Infopoints.html", "_self");   
+			}, function errorCallback(response) {
+				// called asynchronously if an error occurs
+				// or server returns response with an error status.
+			});
+		}		
+		
+		$scope.cancel = function() {
+			newMarker = false;
+			$modalInstance.dismiss('cancel');
+		};
+	});
+</script>

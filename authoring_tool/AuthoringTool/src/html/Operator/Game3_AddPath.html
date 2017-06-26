@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+<body ng-app="GoPoleis" >
+
+	<div class="col-sm-9" ng-controller="addPathController">
+				        
+		<h1 style="margin:20px;"><u>Create a Path</u>:</h1><br><br>  
+		<p id="chCode" ng-show="false" ng-module="chCode"></p> 
+		
+		<form name="form" role="form">     
+       
+       		<div class="form-group" ng-class="{ 'has-error': form.title.$dirty && form.title.$error.required }" >
+		     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
+			     	<label for="title" style="display: inline-block; vertical-align: bottom;">
+			     		Title: 
+					</label>
+					<input type="text" class="form-control" ng-model="addPath.title" style="width:850px; display: inline-block;" required>
+				</fieldset>
+			</div>	
+				
+	     	<div class="form-group" ng-class="{ 'has-error': form.finalquestion.$dirty && form.finalquestion.$error.required }" >
+		     	<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="finalquestion" style="display: inline-block; vertical-align: top;">
+			     		Final question:  
+					</label>
+					<textarea class="form-control" ng-model="addPath.finalquestion" style="resize:none; display:inline-block; width:850px;" required></textarea>
+				</fieldset>
+			</div>
+			
+			<div class="form-group" ng-class="{ 'has-error': form.hintonsite.$dirty && form.hintonsite.$error.required }" >
+		     	<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="hintonsite" style="display: inline-block; vertical-align: bottom;">
+			     		Hint on site: 
+					</label>
+					<input type="text" class="form-control" ng-model="addPath.hintonsite" style="width:850px; display: inline-block;" required>
+				</fieldset>
+			</div>	
+			
+			<div class="form-group" ng-class="{ 'has-error': form.hintbypaying.$dirty && form.hintbypaying.$error.required }" >
+		     	<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="hintbypaying" style="display: inline-block; vertical-align: bottom;">
+			     		Hint by paying: 
+					</label>
+					<input type="text" class="form-control" ng-model="addPath.hintbypaying" style="width:850px; display: inline-block;" required>
+				</fieldset>
+			</div>	
+			
+			<div class="form-group" ng-class="{ 'has-error': form.answer.$dirty && form.answer.$error.required }" >
+		     	<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="answer" style="display: inline-block; vertical-align: bottom;">
+			     		Correct answer: 
+					</label>
+					<input type="text" class="form-control" ng-model="addPath.answer" style="width:850px; display: inline-block;" required>
+				</fieldset>
+			</div>	
+
+			<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+	            <button type="submit" name="btnAddPath" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddPath()">Create</button>
+	            <img ng-if="vm.dataLoading"/>
+	            <a href="Game3_Paths.html" target="_self">Cancel</a>
+	        </div>		
+ 
+	    </form>
+
+	</div>
+	
+</body>
+</html>
+<script>
+	var app = angular.module("GoPoleis", []);
+	app.controller('addPathController', function($scope, $http, $window, $timeout) {
+
+		$scope.addPath={};
+		$scope.chCode = parent.window.getCode();
+		
+		$scope.executeAddPath = function(){	
+			
+			//Query: INSERT Question on DB
+			$http({
+				method: 'GET',
+				url: '/addQuestion/0/'+$scope.addPath.finalquestion+'/'+$scope.addPath.hintonsite+'/'+$scope.addPath.hintbypaying+'/'+$scope.addPath.answer		
+			}).then(function successCallback(response) {	
+				
+				var questionCodeDB = response.data.insertId;
+				
+				//Query: INSERT Path on DB
+				$http({
+					method: 'GET',
+					url: '/addPath/0/'+$scope.addPath.title+'/'+questionCodeDB+'/false/'+$scope.chCode		
+				}).then(function successCallback(response) {	
+					window.open("Game3_Paths.html", "_self");   
+				}, function errorCallback(response) {
+					alert("Error on the query: Path INSERT");
+				});
+ 
+			}, function errorCallback(response) {
+				alert("Error on the query: Question INSERT");
+			});
+			
+			
+			
+		}
+	});
+	
+</script>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+<body ng-app="GoPoleis" >
+
+	<div class="col-sm-9" ng-controller="addCardController">
+				        
+		<h1 style="margin:20px;"><u>Create a Card</u>:</h1><br><br>   
+		
+		<form name="form" role="form" id="uploadCardForm" enctype="multipart/form-data" action="/upload" method="post">     
+       
+       		<div class="form-group" ng-class="{ 'has-error': form.name.$dirty && form.name.$error.required }" >
+		     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
+			     	<label for="name" style="display: inline-block; vertical-align: bottom;">
+			     		Name: 
+					</label>
+					<input type="text" class="form-control" ng-model="addCard.name" style="width:850px; display: inline-block;" required>
+				</fieldset>
+			</div>	
+				
+			<div class="form-group" ng-class="{ 'has-error': form.image.$dirty && form.image.$error.required }" >
+				<fieldset style="margin-top:30px; margin-left:20px;"> 	
+					<p id="imgCode" ng-show="false" ng-model="imgCode"></p> 
+			     	<label for="image" style="display:inline-block;">
+			     		Image:  
+					</label>
+					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
+							style="display:inline-block; margin-left:20px;" ngf-max-size="2MB" required/>
+					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
+				</fieldset>
+			</div>	
+				
+	     	<div class="form-group" ng-class="{ 'has-error': form.description.$dirty && form.description.$error.required }" >
+		     	<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="description" style="display: inline-block; vertical-align: top;">
+			     		Short description:  
+					</label>
+					<textarea class="form-control" ng-model="addCard.description" style="resize:none; display:inline-block; width:850px;" required></textarea>
+				</fieldset>
+			</div>
+		
+			<div class="form-group" ng-class="{ 'has-error': form.cardValue.$dirty && form.cardValue.$error.required }" >
+				<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="cardValue" style="display: inline-block; vertical-align: bottom;">
+			     		Card's value in coins: 
+					</label>
+					<input type="number" min="1"class="form-control" ng-model="addCard.cardValue" style="width:100px; display: inline-block;" required>
+				</fieldset>
+			</div>
+		
+			<div class="form-group" ng-class="{ 'has-error': form.destructionValue.$dirty && form.destructionValue.$error.required }" >
+				<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="destructionValue" style="display: inline-block; vertical-align: bottom;">
+			     		Coins obtained in case of destruction of a dual card: 
+					</label>
+					<input type="number" min="1"class="form-control" ng-model="addCard.destructionValue" style="width:100px; display: inline-block;" required>
+				</fieldset>
+			</div>	
+		
+			<div class="form-group" ng-class="{ 'has-error': form.cost.$dirty && form.cost.$error.required }" >
+				<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="cost" style="display: inline-block; vertical-align: bottom;">
+			     		Card's cost in coins: 
+					</label>
+					<input type="number" min="1"class="form-control" ng-model="addCard.cost" style="width:100px; display: inline-block;" required>
+				</fieldset>
+			</div>		
+				
+			<div class="form-group" ng-class="{ 'has-error': form.rarity.$dirty && form.rarity.$error.required }" >
+				<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="rarity" style="display: inline-block;">
+			     		Rarity:  
+					</label>
+					<select class="form-control" ng-model="addCard.rarity" name="rarity" ng-options="option as option.name for option in rarity" style="width:300px; display: inline-block;" required></select>	
+				</fieldset>
+			</div>	
+
+			<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+	            <button type="submit" name="btnAddCard" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddCard()">Create</button>
+	            <img ng-if="vm.dataLoading"/>
+	            <a href="Cards_Template.html" target="_self">Cancel</a>
+	        </div>		
+ 
+	    </form>
+
+	</div>
+	
+</body>
+</html>
+<script>
+	var app = angular.module("GoPoleis", []);
+	app.controller('addCardController', function($scope, $http, $window, $timeout) {
+
+		var type;
+		
+		$http({
+			method: 'GET',
+			url: '/getAllRarities/'
+		}).then(function successCallback(response) {	
+			$scope.rarity = response.data;			
+		}, function errorCallback(response) {
+			alert("Error on the query: Rarity SELECT *");
+		});
+
+		$scope.addCard={};
+		
+		$scope.thumbnail = { dataUrl: '../../images/noimage.png' };
+	    $scope.fileReaderSupported = window.FileReader != null;
+	    $scope.imgChanged = function(files){
+	        if (files != null) {
+	            var file = files[0];
+		        if ($scope.fileReaderSupported && file.type.indexOf('image') > -1) {
+		            $timeout(function() {
+		                var fileReader = new FileReader();
+		                fileReader.readAsDataURL(file);
+		                fileReader.onload = function(e) {
+		                    $timeout(function(){
+		 							$scope.thumbnail.dataUrl = e.target.result;
+		                    });
+		                }
+		            });
+		        }	        
+	    	}
+	        type = file.name.split('.')[file.name.split('.').length -1];
+	    };
+		
+		$scope.executeAddCard = function(){	
+			
+			$scope.imgCode="cards-" + Date.now();
+
+			//Upload image on server
+			$http({
+				method: 'POST',
+				url: '/upload'
+			}).then(function successCallback(response) {	
+			}, function errorCallback(response) {  //return an error because the upload is performed by the server
+				
+				//Query: INSERT Image on DB
+				$http({
+					method: 'GET',
+					url: '/addImage/0/..%2F..%2Fimages%2Fcards%2F/' + $scope.imgCode + '.' + type 
+				}).then(function successCallback(response) {	
+					
+					var imgCodeDB = response.data.insertId;
+					
+					//Query: INSERT Card on DB
+					$http({
+						method: 'GET',
+						url: '/addCard/0/'+$scope.addCard.name+'/'+imgCodeDB+'/'+$scope.addCard.description+'/'+$scope.addCard.cardValue+'/'+$scope.addCard.destructionValue+'/'+$scope.addCard.cost+'/'+$scope.addCard.rarity.code
+					}).then(function successCallback(response) {	
+						window.open("Cards_Template.html", "_self");   
+					}, function errorCallback(response) {
+						alert("Error on the query: Card INSERT");
+					});
+					
+				}, function errorCallback(response) {			
+					alert("Error on the query: Image INSERT");
+				});
+			
+			});			
+		}
+	
+	});
+	
+</script>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+
+<body ng-app="GoPoleis" >
+
+	<div class="col-sm-9" ng-controller="getMedalsController">
+		<div ng-show="getMedalsPage">
+			<h1 style="margin:20px;"><u>Medals</u></h1>
+			<fieldset style="margin-top:50px; margin-left:20px;"> 	
+	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
+		        	<span class="glyphicon glyphicon-search"></span>
+		        	Search: 
+		        </label>
+	      		<input type="text" ng-model="searchBoxMedals.name" class="form-control" style="width:250px; display: inline-block; vertical-align: bottom;"/>
+	        </fieldset>
+	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
+	       		<li ng-repeat="medal in results | filter:searchBoxMedals" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+	       			ng-model="getAllMedals.selection" ng-value="medal.name" id="{{medal.name}}" ng-click="updMedal(medal.code)">	        	
+	        		<h4 medal.name="selection">
+	        			<img ng-src="{{medal.path}}{{medal.filename}}" style="height: 80px; width: 80px;"/>
+	        			{{ medal.name }}
+	        		</h4>	
+	       		</li>
+	        </ul>
+        </div>
+        
+        
+        <div ng-show="updMedalPage">
+
+			<h1 style="margin:20px;"><u>Update Medal</u>: [{{updMedal.name}}]</h1><br><br>        
+	        
+	        <form name="form" role="form" id="uploadMedalForm" enctype="multipart/form-data" action="/upload" method="post">
+
+				<div class="form-group" ng-class="{ 'has-error': form.name.$dirty && form.name.$error.required }" >
+			     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
+				     	<label for="name" style="display: inline-block; vertical-align: bottom;">
+				     		Name: 
+						</label>
+						<input type="text" class="form-control" ng-model="updMedal.name" style="width:850px; display: inline-block;" required>
+					</fieldset>
+				</div>
+				
+				<div class="form-group" ng-class="{ 'has-error': form.image.$dirty && form.image.$error.required }" >
+					<fieldset style="margin-top:30px; margin-left:20px;"> 	
+						<p id="imgCode" ng-show="false" ng-model="imgCode"></p> 
+				     	<label for="image" style="display:inline-block;">
+				     		Image:  
+						</label>
+						<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
+						<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
+								style="display:inline-block; margin-left:20px;" ngf-max-size="2MB" />
+					</fieldset>
+				</div>
+				
+				<div class="form-group" ng-class="{ 'has-error': form.category.$dirty && form.category.$error.required }" >
+					<fieldset style="margin-top:30px; margin-left:20px;"> 	
+				     	<label for="category" style="display: inline-block;">
+				     		Category:  
+						</label>
+ 						<select ng-model="updMedal.category" class="form-control" style="width:250px; display: inline-block;">
+							<option ng-repeat="x in category">{{x.name}}</option>
+						</select>
+					</fieldset>
+				</div>
+
+				<div class="form-group" ng-class="{ 'has-error': form.numOfPlaces.$dirty && form.numOfPlaces.$error.required }" >
+					<fieldset style="margin-top:30px; margin-left:20px;"> 	
+				     	<label for="numOfPlaces" style="display: inline-block; vertical-align: bottom;">
+				     		Number of places to visit to obtain this medal: 
+						</label>
+						<input type="number" min="1"class="form-control" ng-model="updMedal.numOfPlaces" style="width:200px; display: inline-block;" required>
+					</fieldset>
+				</div>
+		
+				<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+		            <button type="submit" name="btnUpdMedal" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeUpdMedal()">Update</button>
+		            <img ng-if="vm.dataLoading"/>
+		            <a href="Medals_Template.html" target="_self">Cancel</a>
+		        </div>
+	
+			</form>
+	        
+		</div>
+        
+	</div>
+
+</body>
+</html>
+<script>
+	var app = angular.module("GoPoleis", []);
+	app.controller('getMedalsController', function($scope, $http, $window, $timeout) {
+		$scope.getMedalsPage=true;
+		$scope.updMedalPage=false;
+	
+		$http({
+			method : "GET",
+			url : "/getAllMedals"
+		}).then(function mySucces(response) {
+			$scope.results  = response.data;
+		}, function myError(response) {
+			$scope.results  = response.statusText;
+		});		
+		
+		$scope.updMedal = function(medalCode){ 	
+
+			$scope.getMedalsPage=false;
+			$scope.updMedalPage=true;
+			$scope.updMedal={};
+			
+			var newImg = false;
+			var oldImgCode;
+			
+			$http({
+				method: 'GET',
+				url: '/getAllCategories/'
+			}).then(function successCallback(response) {	
+				$scope.category = response.data;		
+			}, function errorCallback(response) {
+				alert("Error on the query: Category SELECT *");
+			});
+			
+			$http({
+				method : "GET",
+				url : "/getMedal/"+medalCode
+			}).then(function mySucces(response) {
+				results  = response.data;	
+				if (results.length > 0){
+					$scope.updMedal.name=results[0].name;
+					oldImgCode=results[0].image;
+					$scope.thumbnail = { dataUrl: results[0].path+results[0].filename };
+					$scope.updMedal.category = results[0].cName;	
+					$scope.updMedal.numOfPlaces = results[0].num;				
+				}
+			}, function myError(response) {
+				$scope.results  = response.statusText;
+			});					
+			
+		    $scope.fileReaderSupported = window.FileReader != null;
+		    $scope.imgChanged = function(files){
+		        if (files != null) {
+		            var file = files[0];
+			        if ($scope.fileReaderSupported && file.type.indexOf('image') > -1) {
+			            $timeout(function() {
+			                var fileReader = new FileReader();
+			                fileReader.readAsDataURL(file);
+			                fileReader.onload = function(e) {
+			                    $timeout(function(){
+			 							$scope.thumbnail.dataUrl = e.target.result;
+			                    });
+			                }
+			            });
+			        }	        
+		    	}
+		        type = file.name.split('.')[file.name.split('.').length -1];
+		        newImg=true;
+		    };
+			
+		    $scope.executeUpdMedal = function(){	
+		    	
+		    	
+		    	$scope.imgCode="medals-" + Date.now();
+
+		    	if(newImg==true){
+			    	//Upload image on server
+					$http({
+						method: 'POST',
+						url: '/upload'
+					}).then(function successCallback(response) {	
+					}, function errorCallback(response) {  //return an error because the upload is performed by the server
+						
+						//Query: UPDATE Image on DB
+						$http({
+							method: 'GET',
+							url: '/updImage/..%2F..%2Fimages%2Fmedals%2F/' + $scope.imgCode + '.' + type +'/'+ oldImgCode
+						}).then(function successCallback(response) {							
+							updateMedal();
+						}, function errorCallback(response) {			
+							alert("Error on the query: Image UPDATE");
+						});
+								
+					});
+			    	
+		    	}
+		    	else{
+		    		//Fake POST
+		    		$http({
+						method: 'POST',
+						url: '/'
+					}).then(function successCallback(response) {	
+					}, function errorCallback(response) {  //return an error because the upload is performed by the server						
+						updateMedal();	
+					});
+
+		    	}
+			}
+		    
+		    function updateMedal() {
+				//Query: UPDATE Medal on DB
+				$http({
+					method: 'GET',
+					url: '/updMedal/'+$scope.updMedal.name+'/'+getCategoryCode()+'/'+$scope.updMedal.numOfPlaces+'/'+oldImgCode+'/'+medalCode			
+				}).then(function successCallback(response) {	
+					window.open("Medals_Template.html", "_self");   
+				}, function errorCallback(response) {
+					alert("Error on the query: Medal UPDATE");
+				});
+			}
+		    
+			getCategoryCode = function(){
+				var catCode;
+				for (var i=0; i<$scope.category.length; i++) {
+					if($scope.category[i].name == $scope.updMedal.category){
+						catCode = $scope.category[i].code;
+					}
+				}
+				return catCode;
+			}
+		}
+			
+	});
+</script>

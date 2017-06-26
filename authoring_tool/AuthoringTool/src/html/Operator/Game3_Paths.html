@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCrHxpT62yPIguYjilGuX_pGkOqQYvS-NQ&sensor=false"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js" type="text/javascript"></script>
+	
+	<link data-require="bootstrap-css@3.1.1" data-semver="3.1.1" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <script>document.write('<base href="' + document.location + '" />');</script>
+    <script data-require="jquery@*" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script data-require="angular.js@1.2.x" src="https://code.angularjs.org/1.2.22/angular.js" data-semver="1.2.22"></script>
+    <script data-require="angular-route@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-route.js"></script>
+    <script data-require="angular-resource@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-resource.js"></script>
+    <script data-require="angular-bootstrap@0.11.0" data-semver="0.11.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
+    <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	   
+    <script src="https://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.debug.js"></script>
+    <script type="text/javascript" src="ng-map/ng-map.min.js"></script> 
+     
+</head>
+
+<body ng-app="GoPoleis" >
+
+	 <div class="col-sm-9" ng-controller="PathsController">
+		<div>
+			<p id="chCode" ng-show="false" ng-module="chCode"></p>
+			<p id="chName" ng-show="false" ng-module="chName"></p>
+			<h1 style="margin:20px;"><u>Paths for</u>: [ {{chName}} ]</h1>
+
+ 		    <div>
+	        	<iframe id="mapFrame"  src="Game3_PathsMap.html" style="height:360px; width: 1500px; border: none;"></iframe>
+	        </div>
+      
+ 			<fieldset style="margin-top:10px; margin-left:20px;"> 	 	
+				<label for="search" style="display: inline-block; vertical-align: bottom;" >
+		        	<span class="glyphicon glyphicon-search"></span>
+		        	Search: 
+		        </label>
+	      		<input type="text" ng-model="searchPaths.info" class="form-control" style="width:250px; display: inline-block; vertical-align: bottom;"/>
+	      		<label for="string1" style="display: inline-block; vertical-align: bottom; margin-left:20px;">
+		     		Right-click on the map to add a new path: 
+				</label>
+			</fieldset>
+
+			<fieldset style="margin-top:30px; margin-left:20px;""> 	
+				<ul style="list-item-style:circle; margin-left:20px; padding-left:0px;">
+		       		<li ng-repeat="path in results | filter:searchPaths" ng-model="getCHPaths.selection" ng-value="path.title" id="{{path.title}}">	        	
+		        		<h4 path.name="selection">     			
+		        			<span class="glyphicon glyphicon-map-marker" ng-click="localizePath(path.code)"></span> 
+		        			<span class="glyphicon glyphicon-pencil" ng-click="updPath(path.code)"></span> 
+		        			<span class="glyphicon glyphicon-trash" ng-click="delPath(path.code)"></span> 
+		        			{{ path.title }}
+		        		</h4>	
+		       		</li>
+		        </ul>
+			</fieldset>
+
+			<fieldset style="margin-top:20px; margin-left:20px; margin-bottom:20px;"> 			
+				<a href="Game3_Template.html" ng-click="cancel()">Cancel</a>
+			</fieldset> 
+
+        </div>
+        
+	</div> 
+
+</body>
+</html>
+<script>
+	var pCode;
+
+	var app = angular.module('GoPoleis', ['ui.bootstrap','ngMap']);
+	app.controller('PathsController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
+	
+		var results;
+		$scope.chCode = parent.window.getCode();
+			
+		$http({
+			method : "GET",
+			url : "/getCHPaths/"+$scope.chCode
+		}).then(function mySucces(response) {
+			results  = response.data;				
+		    $scope.results = [];
+			if (results.length > 0){
+				$scope.chName = results[0].heritage;
+				$timeout(function() {
+					$scope.results  = results;	
+			    }, 10);
+			}
+			else{
+				$http({
+					method : "GET",
+					url : "/getCH/"+$scope.chCode
+				}).then(function mySucces(response) {
+					results  = response.data;	
+					$scope.chName = results[0].name;	
+				}, function myError(response) {
+					alert("Error on the query: getCH SELECT");
+				});	
+			}
+		}, function myError(response) {
+			alert("Error on the query: getCHPaths SELECT");
+		});
+		
+		$window.getCode = function (){
+			return $scope.chCode;
+		};
+		
+		
+		$window.addPath = function() {   			
+			window.open("Game3_AddPath.html", "_self"); 
+	   	};
+
+	   	$window.getPathCode = function (){
+			return pCode;
+		};
+	   	
+	   	$scope.localizePath = function (pathCode) {	
+			pCode = pathCode;
+			document.getElementById('mapFrame').src = "Game3_PathsMap.html";
+		};
+	   	
+	   	$scope.updPath = function(pathCode) { 
+	   		parent.window.setPathCode(pathCode);
+			window.open("Game3_UpdPath.html", "_self"); 
+	   	};
+
+		$scope.delPath = function (pathCode) {
+        	if ($window.confirm("Are you sure you want to delete this Path?")) {
+ 				$http({
+ 					method : "GET",
+ 					url : "/delPath/"+pathCode
+				}).then(function mySucces(response) {
+ 					results  = response.data;	 
+ 					alert("Successful delete");
+ 					window.open("Game3_Paths.html", "_self"); 
+ 				}, function myError(response) {
+ 					alert("Error on the query: Path DELETE");
+ 				});
+			} 
+		};	
+
+		$scope.cancel = function(){ 
+			parent.window.enableGame3SubButtons(false, null);
+		};
+			
+	});
+</script>

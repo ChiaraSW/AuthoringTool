@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+
+<body ng-app="GoPoleis" >
+
+	<div class="col-sm-9" ng-controller="addMedalController">
+		
+		<h1 style="margin:20px;"><u>Create a Medal</u>:</h1><br><br>
+		
+		<form name="form" role="form" id="uploadMedalForm" enctype="multipart/form-data" action="/upload" method="post">
+    	
+    	
+    		<div class="form-group" ng-class="{ 'has-error': form.name.$dirty && form.name.$error.required }" >
+		     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
+			     	<label for="name" style="display: inline-block; vertical-align: bottom;">
+			     		Name: 
+					</label>
+					<input type="text" class="form-control" ng-model="addMedal.name" style="width:850px; display: inline-block;" required>
+				</fieldset>
+			</div>
+		
+			<div class="form-group" ng-class="{ 'has-error': form.image.$dirty && form.image.$error.required }" >
+				<fieldset style="margin-top:30px; margin-left:20px;"> 	
+					<p id="imgCode" ng-show="false" ng-model="imgCode"></p> 
+			     	<label for="image" style="display:inline-block;">
+			     		Image:  
+					</label>
+					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
+							style="display:inline-block; margin-left:20px;" ngf-max-size="2MB" required/>
+					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
+				</fieldset>
+			</div>
+			
+			<div class="form-group" ng-class="{ 'has-error': form.category.$dirty && form.category.$error.required }" >
+				<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="category" style="display: inline-block;">
+			     		Category:  
+					</label>
+					<select class="form-control" ng-model="addMedal.category" name="category" ng-options="option as option.name for option in category" style="width:300px; display: inline-block;" required></select>	
+				</fieldset>
+			</div>
+			
+			<div class="form-group" ng-class="{ 'has-error': form.numOfPlaces.$dirty && form.numOfPlaces.$error.required }" >
+				<fieldset style="margin-top:30px; margin-left:20px;"> 	
+			     	<label for="numOfPlaces" style="display: inline-block; vertical-align: bottom;">
+			     		Number of places to visit to obtain this medal: 
+					</label>
+					<input type="number" min="1" class="form-control" ng-model="addMedal.numOfPlaces" style="width:200px; display: inline-block;" required>
+				</fieldset> 
+			</div>
+
+			<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+	            <button type="submit" name="btnAddMedal" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddMedal()">Create</button>
+	            <img ng-if="vm.dataLoading"/>
+	            <a href="Medals_Template.html" target="_self">Cancel</a>
+	        </div>
+	        
+	    </form>
+
+	</div>
+
+</body> 
+</html>
+<script>
+
+	var app = angular.module("GoPoleis", []);
+	app.controller('addMedalController', function($scope, $http, $window, $timeout) {
+		
+		var type;
+		
+		$http({
+			method: 'GET',
+			url: '/getAllCategories/'
+		}).then(function successCallback(response) {	
+			$scope.category = response.data;			
+		}, function errorCallback(response) {
+			alert("Error on the query: Category SELECT *");
+		});
+		
+		$scope.addMedal={};
+		
+		$scope.thumbnail = { dataUrl: '../../images/noimage.png' };
+	    $scope.fileReaderSupported = window.FileReader != null;
+	    $scope.imgChanged = function(files){
+	        if (files != null) {
+	            var file = files[0];
+		        if ($scope.fileReaderSupported && file.type.indexOf('image') > -1) {
+		            $timeout(function() {
+		                var fileReader = new FileReader();
+		                fileReader.readAsDataURL(file);
+		                fileReader.onload = function(e) {
+		                    $timeout(function(){
+		 							$scope.thumbnail.dataUrl = e.target.result;
+		                    });
+		                }
+		            });
+		        }	        
+	    	}
+	        type = file.name.split('.')[file.name.split('.').length -1];
+	    };
+
+
+		$scope.executeAddMedal = function(){
+			
+			$scope.imgCode="medals-" + Date.now();
+
+			//Upload image on server
+			$http({
+				method: 'POST',
+				url: '/upload'
+			}).then(function successCallback(response) {	
+			}, function errorCallback(response) {  //return an error because the upload is performed by the server
+				
+				//Query: INSERT Image on DB
+				$http({
+					method: 'GET',
+					url: '/addImage/0/..%2F..%2Fimages%2Fmedals%2F/' + $scope.imgCode + '.' + type 
+				}).then(function successCallback(response) {	
+					
+					var imgCodeDB = response.data.insertId;
+					//Query: INSERT Medal on DB
+					$http({
+						method: 'GET',
+						url: '/addMedal/0/'+$scope.addMedal.name+'/'+$scope.addMedal.category.code+'/'+$scope.addMedal.numOfPlaces+'/'+ imgCodeDB
+					}).then(function successCallback(response) {	
+						window.open("Medals_Template.html", "_self");   
+					}, function errorCallback(response) {
+						alert("Error on the query: Medal INSERT");
+					});	
+					
+				}, function errorCallback(response) {			
+					alert("Error on the query: Image INSERT");
+				});
+			
+			});
+
+		}
+	});
+
+
+</script>

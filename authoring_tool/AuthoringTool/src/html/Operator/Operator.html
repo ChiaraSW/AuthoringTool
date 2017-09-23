@@ -11,49 +11,49 @@
 		    		<div class="col-sm-3">
 
 
-				    	<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="CulturalHeritages" 
-				    		ng-click="CulturalHeritages_subButtons=true; Game1_subButtons=false; Game2_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getCulturalHeritages();">
+				    	<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.CulturalHeritages" 
+				    		ng-click="vm.CulturalHeritages_subButtons=true; vm.Game1_subButtons=false; vm.Game2_subButtons=false; vm.Game3_subButtons=false; vm.Game4_subButtons=false; vm.getCulturalHeritages();">
 							Cultural Heritages'<br>Template
 						</button>	
-						<div class='sub_container' align="center" ng-show="CulturalHeritages_subButtons">
-							<button id="addCH" type="button" class="btn sub-btn btn-success" ng-click="addCulturalHeritage();">Add a Cultural Heritage</button>
-							<button id="delCH" type="button" class="btn sub-btn btn-danger" ng-click="delCulturalHeritage();">Delete a Cultural Heritage</button>
+						<div class='sub_container' align="center" ng-show="vm.CulturalHeritages_subButtons">
+							<button id="addCH" type="button" class="btn sub-btn btn-success" ng-click="vm.addCulturalHeritage();">Add a Cultural Heritage</button>
+							<button id="delCH" type="button" class="btn sub-btn btn-danger" ng-click="vm.delCulturalHeritage();">Delete a Cultural Heritage</button>
 						</div>
 						
- 						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Game1"
-							ng-click="CulturalHeritages_subButtons=false; Game1_subButtons=false; Game2_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getGame1();">
+  						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Game1"
+							ng-click="vm.CulturalHeritages_subButtons=false; vm.Game1_subButtons=false; vm.Game2_subButtons=false; vm.Game3_subButtons=false; vm.Game4_subButtons=false; vm.getGame1();">
 							Game 1<br>- Treasures' portal -<br>Template
 						</button>
-						<div class='sub_container' align="center" ng-show="Game1_subButtons">
- 							<button id="siteInfo" type="button" class="btn sub-btn btn-info" ng-click="siteInfo();">Site information</button>
-							<button id="chests" type="button" class="btn sub-btn btn-info" ng-click="chests();">Chests' Template</button>
+						<div class='sub_container' align="center" ng-show="vm.Game1_subButtons">
+ 							<button id="siteInfo" type="button" class="btn sub-btn btn-info" ng-click="vm.siteInfo();">Site information</button>
+							<button id="chests" type="button" class="btn sub-btn btn-info" ng-click="vm.chests();">Chests' Template</button>
 						</div>
 
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Game2"
-							ng-click="CulturalHeritages_subButtons=false; Game1_subButtons=false; Game2_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getGame2();">
+						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Game2"
+							ng-click="vm.CulturalHeritages_subButtons=false; vm.Game1_subButtons=false; vm.Game2_subButtons=false; vm.Game3_subButtons=false; vm.Game4_subButtons=false; vm.getGame2();">
 							Game 2<br>- Travels' portal -<br>Template
 						</button>
-						<div class='sub_container' align="center" ng-show="Game2_subButtons">
- 							<button id="area" type="button" class="btn sub-btn btn-info" ng-click="drawPolygon();">Draw validity area </button>
+						<div class='sub_container' align="center" ng-show="vm.Game2_subButtons">
+ 							<button id="area" type="button" class="btn sub-btn btn-info" ng-click="vm.drawPolygon();">Draw validity area </button>
 						</div>
 
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Game3"
-							ng-click="CulturalHeritages_subButtons=false; Game1_subButtons=false; Game2_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getGame3();">
+						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Game3"
+							ng-click="vm.CulturalHeritages_subButtons=false; vm.Game1_subButtons=false; vm.Game2_subButtons=false; vm.Game3_subButtons=false; vm.Game4_subButtons=false; vm.getGame3();">
 							Game 3<br>- Puzzles' portal -<br>Template
 						</button>
-						<div class='sub_container' align="center" ng-show="Game3_subButtons">
- 							<button id="paths" type="button" class="btn sub-btn btn-info" ng-click="paths();">Paths' template</button>
+						<div class='sub_container' align="center" ng-show="vm.Game3_subButtons">
+ 							<button id="paths" type="button" class="btn sub-btn btn-info" ng-click="vm.paths();">Paths' template</button>
 						</div>
 						
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Game4"
-							ng-click="CulturalHeritages_subButtons=false; Game1_subButtons=false; Game2_subButtons=false; Game3_subButtons=false; Game4_subButtons=false; getGame4();">
+						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Game4"
+							ng-click="vm.CulturalHeritages_subButtons=false; vm.Game1_subButtons=false; vm.Game2_subButtons=false; vm.Game3_subButtons=false; vm.Game4_subButtons=false; vm.getGame4();">
 							Game 4<br>- Knowledge's portal -<br>Template
 						</button>
-						<div class='sub_container' align="center" ng-show="Game4_subButtons">
- 							<button id="reviewsList" type="button" class="btn sub-btn btn-info" ng-click="reviewsList();">Reviews' list</button>
-							<button id="infopoints" type="button" class="btn sub-btn btn-info" ng-click="infopoints();">Infopoints' Template</button>
-							<button id="enciclopedicPage" type="button" class="btn sub-btn btn-info" ng-click="enciclopedicPage();">Enciclopedic page Template</button>
-						</div>			
+						<div class='sub_container' align="center" ng-show="vm.Game4_subButtons">
+ 							<button id="reviewsList" type="button" class="btn sub-btn btn-info" ng-click="vm.reviewsList();">Reviews' list</button>
+							<button id="infopoints" type="button" class="btn sub-btn btn-info" ng-click="vm.infopoints();">Infopoints' Template</button>
+							<button id="enciclopedicPage" type="button" class="btn sub-btn btn-info" ng-click="vm.enciclopedicPage();">Enciclopedic page</button>
+						</div>
 						
 			        </div>
 			        <div class="col-sm-9">

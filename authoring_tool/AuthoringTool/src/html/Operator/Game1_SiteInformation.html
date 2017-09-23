@@ -114,7 +114,7 @@
 	    };
 
 
-		$scope.thumbnail = { dataUrl: '../../images/noimage.png' };
+		$scope.thumbnail = { dataUrl: '../../../../images/noimage.png' };
 	    $scope.fileReaderSupported = window.FileReader != null;
 	    $scope.imgChanged = function(files){
 	        if (files != null) {
@@ -150,7 +150,7 @@
 					//Query: INSERT Image on DB
 					$http({
 						method: 'GET',
-						url: '/addImage/0/..%2F..%2Fimages%2FsiteInformations%2F/' + $scope.imgCode + '.' + type 
+						url: '/addImage/0/..%2F..%2F..%2F..%2Fimages%2FsiteInformations%2F/' + $scope.imgCode + '.' + type 
 					}).then(function successCallback(response) {	
 						
 						imgCode = response.data.insertId;
@@ -190,7 +190,7 @@
 					//Query: UPDATE Image on DB
 					$http({
 						method: 'GET',
-						url: '/updImage/..%2F..%2Fimages%2FsiteInformations%2F/' + $scope.imgCode + '.' + type +'/'+imgCode
+						url: '/updImage/..%2F..%2F..%2F..%2Fimages%2FsiteInformations%2F/' + $scope.imgCode + '.' + type +'/'+imgCode
 					}).then(function successCallback(response) {	
 						updateSI();
 					}, function errorCallback(response) {			

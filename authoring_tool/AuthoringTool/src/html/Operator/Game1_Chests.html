@@ -107,14 +107,14 @@
 				</label>
 			</fieldset>
 
-			<fieldset style="margin-top:30px; margin-left:20px;""> 	
-				<ul style="list-item-style:circle; margin-left:20px; padding-left:0px;">
-		       		<li ng-repeat="chest in results | filter:searchChests" ng-model="getCHChests.selection" ng-value="chest.title" id="{{chest.title}}">	        	
-		        		<h4 chest.name="selection">     			
+			<fieldset style="margin-top:30px; margin-left:20px;"> 	
+				<ul style="list-item-style:circle; margin-left:20px;">
+		       		<li ng-repeat="chest in chests | filter:searchChests" ng-model="getCHChests.selection">	        	
+		        		<h4 chest.name="selection" style="display: inline-block;  margin-left: 10px;">     			
 		        			<span class="glyphicon glyphicon-map-marker" ng-click="localizeTC(chest.code)"></span> 
 		        			<span class="glyphicon glyphicon-pencil" ng-click="updTCModal(chest.code)"></span> 
 		        			<span class="glyphicon glyphicon-trash" ng-click="delTC(chest.code)"></span> 
-		        			{{ chest.title }}
+		        			<h4 style="display: inline-block;  margin-left: 30px; color:{{chest.color}}"><b> [# Openings: ...] {{ chest.title }}</b></h4>
 		        		</h4>	
 		       		</li>
 		        </ul>
@@ -144,11 +144,14 @@
 			url : "/getCHTreasureChests/"+$scope.chCode
 		}).then(function mySucces(response) {
 			results  = response.data;				
-		    $scope.results = [];
+		    $scope.chests = [];
 			if (results.length > 0){
 				$scope.chName = results[0].name;
 				$timeout(function() {
-					$scope.results  = results;	
+					$scope.chests  = results;	
+					for(var i=0; i < results.length; i++){
+						$scope.chests[i].color='black';
+					}
 			    }, 10);
 			}
 			else{
@@ -227,6 +230,14 @@
 
 		$scope.localizeTC = function (chestCode) {	
 			tcCode =chestCode;
+			for(var i=0; i < $scope.chests.length; i++){		   	
+	   			if($scope.chests[i].code == tcCode){
+	   				$scope.chests[i].color='#00cc00';
+	   			}
+	   			else{
+	   				$scope.chests[i].color='black';			//o red?
+	   			}
+			}			
 			document.getElementById('mapFrame').src = "Game1_ChestsMap.html";
 		};
 

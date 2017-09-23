@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	
+	<style>
+	table, th , td  {
+	  border: 3px solid #004d80;
+	  border-collapse: collapse;
+	  margin-left: 20px;
+	  padding: 10px;
+	  padding-left: 30px;
+	  padding-right: 30px;
+	}
+	table tr:nth-child(odd) {
+	  background-color: #b3e0ff;
+	}
+	table tr:nth-child(even) {
+	  background-color: #ffffff;
+	}
+	</style>
+
+</head>
+<body ng-app="GoPoleis" >
+
+	<div class="col-sm-11" ng-controller="leaderboardController" >
+				        
+		<h1 style="margin:20px;"><u>Leaderboard</u>:</h1><br><br>   
+		
+		<table>
+			<tr style="background-color: #007acc ; color: white;">
+		    	<th>Position</th>
+		    	<th>Coins</th>
+		    	<th>Player</th>
+		    	<th>Cultural Heritages visited</th>
+		    	<th>Cards' Packets opened</th>
+		    	<th>Paths completed</th>
+		    	<th>Reviews written</th>
+		    	<th>Medal won</th>
+		    	<th>Missions completed</th>
+			</tr>
+			<tr ng-repeat="player in players|limitTo:10">
+		    	<td>{{ $index + 1 }}</td>
+		    	<td>{{ player.coins }}</td>
+		    	<td>{{ player.email }}</td>
+		    	<td>{{ player.chs }}</td>
+		    	<td>{{ player.packets }}</td>
+		    	<td>{{ player.paths }}</td>
+		    	<td>{{ player.reviews }}</td>
+		    	<td>{{ player.medals }}</td>
+		    	<td>{{ player.missions }}</td>
+			</tr>
+		</table>
+
+
+
+		<br><br><br><br><br><br><h4 style="margin:20px; color: red;"><u>NB: Manca il collegamento tra i player e le missioni!! Appena viene fatto ricordati di modificare la query e riempire l'ultima colonna della tabella!!</u></h4> 
+
+
+	</div>
+</body>
+</html>
+<script>
+
+var app = angular.module('GoPoleis', []);
+app.controller('leaderboardController', function($scope, $http) {	
+	$http({
+		method : "GET",
+		url : "/getTop10"
+	}).then(function mySucces(response) {
+		$scope.players  = response.data;
+	}, function myError(response) {
+		alert("Error on the query: getTop10 SELECT");
+	});
+});
+
+</script>

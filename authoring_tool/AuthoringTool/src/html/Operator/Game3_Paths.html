@@ -23,6 +23,36 @@
 
 <body ng-app="GoPoleis" >
 
+			<script type="text/ng-template" id="addPath.html">
+        		<div class="modal-content" style="margin-left: -300px; height: 300px; width: 1200px;">		
+					<div class="modal-body">
+						
+
+						<h1 style="margin:20px;"><u>Create a Path</u>:</h1><br><br>  
+						<p id="chCode" ng-show="false" ng-module="chCode"></p> 
+		
+						<form name="form" role="form">     
+       
+       						<div class="form-group" ng-class="{ 'has-error': form.title.$dirty && form.title.$error.required }" >
+		     					<fieldset style="margin-left:20px; margin-right:20px;"> 	
+			     					<label for="title" style="display: inline-block; vertical-align: bottom;">
+			     						Title: 
+									</label>
+									<input type="text" class="form-control" ng-model="title" style="width:1080px; display: inline-block;" required>
+								</fieldset>
+							</div>
+
+							<div class="form-actions" style="margin-top:50px; margin-right:20px;">
+								<button class="btn btn-secondary pull-right" ng-click="cancel()" style="width:100px; margin-left:10px;">Cancel</button>
+								<button type="submit" class="btn btn-primary pull-right" ng-disabled="form.$invalid" ng-click="executeAddPath(title)" style="width:100px;">Create</button>
+							</div>		
+
+					 	</form>
+
+					</div>
+				</div> 
+			</script>
+
 	 <div class="col-sm-9" ng-controller="PathsController">
 		<div>
 			<p id="chCode" ng-show="false" ng-module="chCode"></p>
@@ -44,14 +74,16 @@
 				</label>
 			</fieldset>
 
-			<fieldset style="margin-top:30px; margin-left:20px;""> 	
+			<fieldset style="margin-top:30px; margin-left:20px;"> 	
 				<ul style="list-item-style:circle; margin-left:20px; padding-left:0px;">
-		       		<li ng-repeat="path in results | filter:searchPaths" ng-model="getCHPaths.selection" ng-value="path.title" id="{{path.title}}">	        	
-		        		<h4 path.name="selection">     			
+		       		<li ng-repeat="path in paths | filter:searchPaths" ng-model="getCHPaths.selection">	        	
+		        		<h4 path.title="selection" style="display: inline-block;  margin-left: 10px;">     	
+		        			<span class="glyphicon glyphicon-off" style="color:#00cc00;" ng-show={{path.enabled}} ng-click="disablePath(path.code)"></span>	
+		        			<span class="glyphicon glyphicon-off" style="color:#ff0000;" ng-hide={{path.enabled}} ng-click="enablePath(path.code)"></span>		
 		        			<span class="glyphicon glyphicon-map-marker" ng-click="localizePath(path.code)"></span> 
 		        			<span class="glyphicon glyphicon-pencil" ng-click="updPath(path.code)"></span> 
-		        			<span class="glyphicon glyphicon-trash" ng-click="delPath(path.code)"></span> 
-		        			{{ path.title }}
+		        			<span class="glyphicon glyphicon-trash" ng-click="delPath(path.code)"></span>  
+		        			<h4 style="display: inline-block;  margin-left: 30px; color:{{path.color}}"><b> [#Completions ...] {{ path.title }}</b></h4>
 		        		</h4>	
 		       		</li>
 		        </ul>
@@ -68,82 +100,151 @@
 </body>
 </html>
 <script>
-	var pCode;
+var pCode;
 
-	var app = angular.module('GoPoleis', ['ui.bootstrap','ngMap']);
-	app.controller('PathsController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
+var app = angular.module('GoPoleis', ['ui.bootstrap','ngMap']);
+app.controller('PathsController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
+
 	
-		var results;
-		$scope.chCode = parent.window.getCode();
-			
-		$http({
-			method : "GET",
-			url : "/getCHPaths/"+$scope.chCode
-		}).then(function mySucces(response) {
-			results  = response.data;				
-		    $scope.results = [];
-			if (results.length > 0){
-				$scope.chName = results[0].heritage;
-				$timeout(function() {
-					$scope.results  = results;	
-			    }, 10);
-			}
-			else{
-				$http({
-					method : "GET",
-					url : "/getCH/"+$scope.chCode
-				}).then(function mySucces(response) {
-					results  = response.data;	
-					$scope.chName = results[0].name;	
-				}, function myError(response) {
-					alert("Error on the query: getCH SELECT");
-				});	
-			}
-		}, function myError(response) {
-			alert("Error on the query: getCHPaths SELECT");
-		});
+	var colors=['red','#2eb82e','#e6e600','#0099ff','#ff9900','#000000','#aa80ff','#808080','#d9d9d9'];	
+	
+	var results;
+	$scope.chCode = parent.window.getCode();
 		
-		$window.getCode = function (){
-			return $scope.chCode;
-		};
-		
-		
-		$window.addPath = function() {   			
-			window.open("Game3_AddPath.html", "_self"); 
-	   	};
-
-	   	$window.getPathCode = function (){
-			return pCode;
-		};
-	   	
-	   	$scope.localizePath = function (pathCode) {	
-			pCode = pathCode;
-			document.getElementById('mapFrame').src = "Game3_PathsMap.html";
-		};
-	   	
-	   	$scope.updPath = function(pathCode) { 
-	   		parent.window.setPathCode(pathCode);
-			window.open("Game3_UpdPath.html", "_self"); 
-	   	};
-
-		$scope.delPath = function (pathCode) {
-        	if ($window.confirm("Are you sure you want to delete this Path?")) {
- 				$http({
- 					method : "GET",
- 					url : "/delPath/"+pathCode
-				}).then(function mySucces(response) {
- 					results  = response.data;	 
- 					alert("Successful delete");
- 					window.open("Game3_Paths.html", "_self"); 
- 				}, function myError(response) {
- 					alert("Error on the query: Path DELETE");
- 				});
-			} 
-		};	
-
-		$scope.cancel = function(){ 
-			parent.window.enableGame3SubButtons(false, null);
-		};
-			
+	$http({
+		method : "GET",
+		url : "/getCHPaths/"+$scope.chCode
+	}).then(function mySucces(response) {
+		var paths  = response.data;				
+	    $scope.paths = [];
+		if (paths.length > 0){
+			$scope.chName = paths[0].heritage;
+			$timeout(function() {
+				$scope.paths  = paths;	
+				for(var i=0; i < paths.length; i++){
+					$scope.paths[i].color=colors[i%colors.length];
+				}
+		    }, 10);
+		}
+		else{
+			$http({
+				method : "GET",
+				url : "/getCH/"+$scope.chCode
+			}).then(function mySucces(response) {
+				results  = response.data;	
+				$scope.chName = results[0].name;	
+			}, function myError(response) {
+				alert("Error on the query: getCH SELECT");
+			});	
+		}
+	}, function myError(response) {
+		alert("Error on the query: getCHPaths SELECT");
 	});
+	
+	$window.getCode = function (){
+		return $scope.chCode;
+	};
+	
+	$window.addPath = function() {   			
+		$scope.addPathModal();
+   	};	   	
+
+   	$scope.addPathModal = function () {
+   		var modalInstance = $modal.open({
+    		templateUrl : 'addPath.html',
+    		controller : 'addPathCtrl'
+    	});
+    	modalInstance.result.then(function() {
+    	}, function() {
+    	});
+	};
+
+   	$window.getPathCode = function (){
+		return pCode;
+	};
+   	
+   	$scope.localizePath = function (pathCode) {	
+   		pCode = pathCode;
+   		
+   		for(var i=0; i < $scope.paths.length; i++){		   	
+   			if($scope.paths[i].code == pCode){
+   				$scope.paths[i].color='#00cc00';
+   			}
+   			else{
+   				$scope.paths[i].color='black';			//o red?
+   			}
+		}
+		
+		document.getElementById('mapFrame').src = "Game3_PathsMap.html";
+	};
+   	
+	$scope.updPath = function(pathCode) { 
+   		parent.window.setPathCode(pathCode);
+		window.open("Game3_UpdPath.html", "_self"); 
+   	};
+   	
+   	$scope.disablePath = function(pathCode) { 
+   		$http({
+			method : "GET",
+			url : "/enablePath/false/"+pathCode
+		}).then(function mySucces(response) {
+			window.open("Game3_Paths.html", "_self"); 
+		}, function myError(response) {
+			alert("Error on the query: enablePath UPDATE");
+		});		
+   	}
+   	$scope.enablePath = function(pathCode) { 
+   		$http({
+			method : "GET",
+			url : "/enablePath/true/"+pathCode
+		}).then(function mySucces(response) {
+			window.open("Game3_Paths.html", "_self"); 
+		}, function myError(response) {
+			alert("Error on the query: enablePath UPDATE");
+		});	
+   	}
+
+	$scope.delPath = function (pathCode) {
+       	if ($window.confirm("Are you sure you want to delete this Path?")) {
+			$http({
+				method : "GET",
+				url : "/delPath/"+pathCode
+			}).then(function mySucces(response) {
+				results  = response.data;	 
+				alert("Successful delete");
+				window.open("Game3_Paths.html", "_self"); 
+			}, function myError(response) {
+				alert("Error on the query: Path DELETE");
+			});
+		} 
+	};	
+
+	$scope.cancel = function(){ 
+		parent.window.enableGame3SubButtons(false, null);
+	};
+		
+});
+	
+//Pop-up per l'inserimento di un nuovo Treasure Chest	
+app.controller("addPathCtrl", function($scope, $log, $modalInstance, $rootScope, $http) {
+	$scope.executeAddPath = function(title){	
+		var chCode=parent.window.getCode();
+			
+		//Query: INSERT Path on DB
+		$http({
+			method: 'GET',
+			url: '/addPath/0/'+title+'/false/'+chCode		
+		}).then(function successCallback(response) {	
+			window.open("Game3_Paths.html", "_self");   
+		}, function errorCallback(response) {
+			alert("Error on the query: Path INSERT");
+		});
+
+	};
+	
+	$scope.cancel = function() { 
+		$modalInstance.dismiss('cancel');
+	};
+});
+	
 </script>

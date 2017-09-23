@@ -15,6 +15,7 @@
     <script data-require="angular-resource@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-resource.js"></script>
     <script data-require="angular-bootstrap@0.11.0" data-semver="0.11.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
     <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
 	   
     <script src="https://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.debug.js"></script>
     <script type="text/javascript" src="ng-map/ng-map.min.js"></script> 
@@ -35,12 +36,15 @@
 	      		<input type="text" ng-model="searchBoxCHs.name" class="form-control" style="width:250px; display: inline-block; vertical-align: bottom;"/>
 	        </fieldset>
 	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
-	       		<li ng-repeat="ch in results | filter:searchBoxCHs" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
-	       			ng-model="getOperatorCHs.selection" ng-value="ch.name" id="{{ch.name}}" ng-click="updCH(ch.code)">	        	
-	        		<h4 ch.name="selection">
-	        			<img ng-src="{{ch.path}}{{ch.filename}}" style="height: 80px; width: 80px;"/>
-	        			{{ ch.name }}
-	        		</h4>	
+	        
+	        
+	       		<li ng-repeat="ch in results | filter:searchBoxCHs" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; height:180px; text-align:left;" 
+	       			ng-model="getOperatorCHs.selection" ng-value="ch.name" id="{{ch.name}}" ng-click="updCH(ch.code)">	 
+	       			   
+	       			<img ng-src="{{ch.path}}{{ch.filename}}" style="height: 80px; width: 80px; display: inline-block;"/>
+	       			<h5 style="display: inline-block; margin-left:30px;"><b> # Visits: {{ch.views}}	</b></h5>
+	        		<h4 ch.name="selection" style="margin-top:20px;"> {{ ch.name }} </h4>	
+	        		
 	       		</li>
 	        </ul>
 		</div>
@@ -117,15 +121,22 @@
 						<label for="historicalPeriod" style="display: inline-block;">
 				     		Historical period:  
 						</label>
-						<select ng-model="updCH.historicalPeriod" class="form-control" style="width:250px; display: inline-block;">
+<!-- 						<select ng-model="updCH.historicalPeriod" class="form-control" style="width:250px; display: inline-block;">
 							<option ng-repeat="x in historicalPeriods">{{x.name}}</option>
-						</select>	
+						</select>	 -->
+						<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="updCH.historicalPeriod" style="width:300px; display: inline-block;"
+								typeahead="option as option.name for option in historicalPeriods | filter:$viewValue | limitTo:8" class="form-control" required>
+								
+								
 						<label for="typeOfStructure" style="display: inline-block; margin-left:20px;">
 				     		Type of structure: 
 						</label>
-						<select ng-model="updCH.typeOfStructure" class="form-control" style="width:250px; display: inline-block;">
+<!-- 						<select ng-model="updCH.typeOfStructure" class="form-control" style="width:250px; display: inline-block;">
 							<option ng-repeat="y in typeOfStructures">{{y.name}}</option>
-						</select>
+						</select> -->
+						<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="updCH.typeOfStructure" style="width:300px; display: inline-block;"
+								typeahead="option as option.name for option in typeOfStructures | filter:$viewValue | limitTo:8" class="form-control" required>
+								
 					</fieldset>
 				</div>
 				
@@ -178,12 +189,11 @@
 			method : "GET",
 			url : "/getOperatorCHs/user3"				//MODIFICARE --> devi fare la get dello user loggato e metterla al posto di user3!!!
 		}).then(function mySucces(response) {
-			$scope.results  = response.data;
+			$scope.results=response.data;
 		}, function myError(response) {
 			$scope.results  = response.statusText;
 		});
 
-		
 		$scope.updCH = function(chCode){ 
 			$scope.getCHsPage=false;
 			$scope.updCHPage=true;
@@ -203,6 +213,8 @@
 			var oldLat=null;
 			var oldLong=null;
 			
+			$scope.updCH.historicalPeriod = undefined;
+			$scope.updCH.typeOfStructure = undefined;
 			
 			$http({
 				method : "GET",
@@ -334,7 +346,7 @@
 						//Query: UPDATE Image on DB
 						$http({
 							method: 'GET',
-							url: '/updImage/..%2F..%2Fimages%2Fheritages%2F/' + $scope.imgCode + '.' + type +'/'+imgCode
+							url: '/updImage/..%2F..%2F..%2F..%2Fimages%2Fheritages%2F/' + $scope.imgCode + '.' + type +'/'+imgCode
 						}).then(function successCallback(response) {	
 							updateCooAndCH();
 						}, function errorCallback(response) {			
@@ -358,40 +370,84 @@
 		   			$http({
 						method: 'GET',
 						url:	'/updCoordinates/'+$scope.updCH.latitude+'/'+$scope.updCH.longitude+'/'+cooCode			
-					}).then(function successCallback(response) {	
-						
-						//Query: UPDATE CH on DB
-						$http({
-							method: 'GET',
-							url:	'/updCH/'+$scope.updCH.name+'/'+$scope.updCH.description+'/'+imgCode+'/'+$scope.g1+'/'+$scope.g2+'/'+$scope.g3+'/'+$scope.g4+'/'+cooCode+'/'+provinceCode+'/'
-									+getHistoricalPeriodCode()+'/'+getTypeOfStructureCode()+'/1/'+chCode 							//PRENDI LO USERNAME E METTILO AL POSTO DELL'ULTIMO 1	
-						}).then(function successCallback(response) {	
-							window.open("CulturalHeritages_Template.html", "_self");   
-						}, function errorCallback(response) {
-							alert("Error on the query: CH UPDATE");
-						});
-					
+					}).then(function successCallback(response) {						
+						if(getHistoricalPeriodCode() == undefined || getTypeOfStructureCode() == undefined){							
+							if(getHistoricalPeriodCode() == undefined){
+								addHistoricalPeriod(imgCode, cooCode, $scope.updCH.historicalPeriod, $scope.updCH.typeOfStructure);
+							}
+							else{
+								addTypeOfStructure(imgCode, cooCode, getHistoricalPeriodCode(), $scope.updCH.typeOfStructure);
+							}
+						}	
+						else{
+							updCH(imgCode, cooCode, getHistoricalPeriodCode(), getTypeOfStructureCode());
+						}
 					}, function errorCallback(response) {
 						alert("Error on the query: Coordinates UPDATE");
 					});
 				}
 		   
 		   	}
-		
-		    getHistoricalPeriodCode = function(){
+		    
+		    function addHistoricalPeriod(imgCodeDB, cooCodeDB, historicalPeriod, typeOfStructure){
+				//Query: INSERT HistoricalPeriod on DB
+				$http({
+					method: 'GET',
+					url:	'/addHistoricalPeriod/0/'+historicalPeriod
+				}).then(function successCallback(response) {	
+					var hpCodeDB = response.data.insertId;		
+					
+					if(getTypeOfStructureCode() == undefined){
+						addTypeOfStructure(imgCodeDB, cooCodeDB, hpCodeDB, typeOfStructure);
+					}
+					else{
+						updCH(imgCodeDB, cooCodeDB, hpCodeDB, getTypeOfStructureCode());
+					}
+				}, function errorCallback(response) {
+					alert("Error on the query: addHistoricalPeriod INSERT");
+				});
+			}
+		    
+			function addTypeOfStructure(imgCodeDB, cooCodeDB, historicalPeriod,  typeOfStructure){
+				//Query: INSERT StructureType on DB
+				$http({
+					method: 'GET',
+					url:	'/addStructureType/0/'+typeOfStructure
+				}).then(function successCallback(response) {	
+					var tosCodeDB = response.data.insertId;		
+					updCH(imgCodeDB, cooCodeDB, historicalPeriod, tosCodeDB);
+				}, function errorCallback(response) {
+					alert("Error on the query: addStructureType INSERT");
+				});
+			}
+		    
+		    function updCH(imgCodeDB, cooCodeDB, hpCodeDB, tosCodeDB){
+		    	//Query: UPDATE CH on DB
+				$http({
+					method: 'GET',
+					url:	'/updCH/'+$scope.updCH.name+'/'+$scope.updCH.description+'/'+imgCode+'/'+$scope.g1+'/'+$scope.g2+'/'+$scope.g3+'/'+$scope.g4+'/'+cooCode+'/'+provinceCode+'/'
+							+hpCodeDB+'/'+tosCodeDB+'/1/'+chCode 							//PRENDI LO USERNAME E METTILO AL POSTO DELL'ULTIMO 1	
+				}).then(function successCallback(response) {	
+					window.open("CulturalHeritages_Template.html", "_self");   
+				}, function errorCallback(response) {
+					alert("Error on the query: CH UPDATE");
+				});
+			}
+			
+		    function getHistoricalPeriodCode(){
 				var hpCode;
 				for (var i=0; i<$scope.historicalPeriods.length; i++) {
-					if($scope.historicalPeriods[i].name == $scope.updCH.historicalPeriod){
+					if($scope.historicalPeriods[i].name == $scope.updCH.historicalPeriod || $scope.historicalPeriods[i].name == $scope.updCH.historicalPeriod.name){
 						hpCode = $scope.historicalPeriods[i].code;
 					}
 				}
 				return hpCode;
 			}
 		    
-		    getTypeOfStructureCode = function(){
+			function getTypeOfStructureCode(){
 				var tosCode;
 				for (var i=0; i<$scope.typeOfStructures.length; i++) {
-					if($scope.typeOfStructures[i].name == $scope.updCH.typeOfStructure){
+					if($scope.typeOfStructures[i].name == $scope.updCH.typeOfStructure || $scope.typeOfStructures[i].name == $scope.updCH.typeOfStructure.name){
 						tosCode = $scope.typeOfStructures[i].code;
 					}
 				}

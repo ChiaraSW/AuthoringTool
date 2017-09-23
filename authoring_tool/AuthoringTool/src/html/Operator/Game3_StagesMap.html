@@ -23,13 +23,7 @@
 <body ng-app="GoPoleis">
 
 	<div class="col-sm-9" ng-controller="StagesMapController">
-	
-<!-- 		<map zoom-to-include-markers="auto" center="[{{ center.lat }}, {{ center.lng }}]"  style="height:400px; width:1450px;" on-rightclick="addNewTC(center.lat)">     
-	    	<marker ng-repeat="result in results track by $index" position="[{{ result.latitude }}, {{ result.longitude }}]"></marker>
-	    </map> -->
-	    
 	    <div id="map" style="width: 1450px; height: 350px"></div> 
-
 	</div>
     
 </body>
@@ -43,6 +37,8 @@ app.controller('StagesMapController', function($scope, $http, $window, $timeout,
 	var chCode = parent.window.getCode();	
 	var pathCode = parent.window.getPathCode();	
 	var stageCode = parent.window.getStageLocation();
+	
+	var path=[];
 	
 	$http({	
 		method : "GET",
@@ -82,24 +78,34 @@ app.controller('StagesMapController', function($scope, $http, $window, $timeout,
 		for (var i = 0; i < markers.length; i++) {
 			var stage = markers[i];
 		    var stagePosition = new google.maps.LatLng(stage.latitude, stage.longitude);
+		    path.push(stagePosition);
 		    var marker;
 		   	if(stage.code == stageCode){
 		    	marker = new google.maps.Marker({
 			    	position: stagePosition,
 			    	map: map,
-					icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+					icon: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_green'+(i+1)+'.png'
 			    });
 		    }
 		    else{
 		    	 marker = new google.maps.Marker({
 			    	position: stagePosition,
 			    	map: map,
-					icon: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+					icon: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_red'+(i+1)+'.png'
 			    }); 
 		    }
 		    bounds.extend(stagePosition);
 		}
-		map.fitBounds(bounds);	    
+		map.fitBounds(bounds);	  
+
+		var chPath = new google.maps.Polyline({
+			path: path,
+			geodesic: true,
+			strokeColor: '#FF0000',
+			strokeOpacity: 1.0,
+			strokeWeight: 3
+		});
+		chPath.setMap(map);
 	}
 
 	map.addListener('rightclick', function(event) {    //quendo si preme il tasto destro richiama la funzione addStage dalla finestra genitore [rigthclick, dblclick, click]     	

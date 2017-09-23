@@ -7,20 +7,37 @@
 </head>
 
 <body ng-app="GoPoleis" >
-
 	<div class="col-sm-9" ng-controller="getCardsController">
-	
 		<div ng-show="getCardsPage">
+		
 			<h1 style="margin:20px;"><u>Cards</u></h1>
 			<fieldset style="margin-top:50px; margin-left:20px;"> 	
 	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
 		        	<span class="glyphicon glyphicon-search"></span>
 		        	Search: 
 		        </label>
-	      		<input type="text" ng-model="searchBoxCards.name" class="form-control" style="width:250px; display: inline-block; vertical-align: bottom;"/>
+	      		<input type="text" ng-model="searchBoxCards.name" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
+	      				
+	      		<label style="display: inline-block; margin-left: 120px;">
+		     		Filter by card's rarity:  
+				</label>
+				
+				<h5 style="display: inline-block;">	
+					<span class="glyphicon glyphicon-check" ng-click="commonCard()" style="margin-left: 20px;" ng-show="commonFilter" value='common'></span>
+	     			<span class="glyphicon glyphicon-unchecked" ng-click="commonCard()" style="margin-left: 20px;" ng-hide="commonFilter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Common</h5>
+		     		   		
+		     		<span class="glyphicon glyphicon-check" ng-click="uncommonCard()" style="margin-left: 50px;" ng-show="uncommonFilter" value='uncommon'></span>
+	     			<span class="glyphicon glyphicon-unchecked" ng-click="uncommonCard()" style="margin-left: 50px;" ng-hide="uncommonFilter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Uncommon</h5>
+		     		
+		     		<span class="glyphicon glyphicon-check" ng-click="epicCard()" style="margin-left: 50px;" ng-show="epicFilter" value='epic'></span>
+	     			<span class="glyphicon glyphicon-unchecked" ng-click="epicCard()" style="margin-left: 50px;" ng-hide="epicFilter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Epic</h5>
+				</h5>	
 	        </fieldset>
 	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
-	       		<li ng-repeat="card in results | filter:searchBoxCards" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+	       		<li data-ng-repeat="card in cards | filter:searchBoxCards | rarity:filterRarity" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
 	       			ng-model="getAllCards.selection" ng-value="card.name" id="{{card.name}}" ng-click="updCard(card.code)">	        	
 	        		<h4 medal.name="selection">
 	        			<img ng-src="{{card.path}}{{card.filename}}" style="height: 80px; width: 80px;"/>
@@ -123,16 +140,73 @@
 	app.controller('getCardsController', function($scope, $http, $window, $timeout) {
 		$scope.getCardsPage=true;
 		$scope.updCardPage=false;			
-			
+
+		$scope.commonFilter=false;
+		$scope.uncommonFilter=false;
+		$scope.epicFilter=false;
+		
+		$scope.filterRarity=[{rarity:'1'}, {rarity:'2'}, {rarity:'3'}];
+		
 		$http({
 			method : "GET",
 			url : "/getAllCards"
 		}).then(function mySucces(response) {
-			$scope.results  = response.data;
+			$scope.cards  = response.data;
 		}, function myError(response) {
-			$scope.results  = response.statusText;
+			alert("Error on the query: getAllCards SELECT");
 		});
 		
+		$scope.commonCard = function(){
+	    	if($scope.commonFilter){
+	    		$scope.commonFilter=false;
+	    	}
+	    	else{
+	    		$scope.commonFilter=true;	    		
+	    	}
+	    	checkFilters();
+	    }
+	    
+	    $scope.uncommonCard = function(){
+	    	if($scope.uncommonFilter){
+	    		$scope.uncommonFilter=false;
+	    	}
+	    	else{
+	    		$scope.uncommonFilter=true;
+	    	}
+    		checkFilters();
+	    }
+	    
+	    $scope.epicCard = function(){
+	    	if($scope.epicFilter){
+	    		$scope.epicFilter=false;
+	    	}
+	    	else{
+	    		$scope.epicFilter=true;
+	    	}
+    		checkFilters();
+	    }
+	    
+	    function checkFilters(){
+			if($scope.commonFilter==false && $scope.uncommonFilter==false && $scope.epicFilter==false){
+				$scope.filterRarity=[{rarity:'1'}, {rarity:'2'}, {rarity:'3'}];
+			}	
+			else{
+				$scope.filterRarity=[];
+				if($scope.commonFilter){
+					var rarity1= {rarity:'1'};
+		    		$scope.filterRarity.push(rarity1);
+				}
+				if($scope.uncommonFilter){
+					var rarity2= {rarity:'2'};
+		    		$scope.filterRarity.push(rarity2);
+				}
+				if($scope.epicFilter){
+					var rarity3= {rarity:'3'};
+		    		$scope.filterRarity.push(rarity3);
+				}
+			}
+		}   
+
 		$scope.updCard = function(cardCode){ 
 			$scope.getCardsPage=false;
 			$scope.updCardPage=true;
@@ -192,8 +266,7 @@
 			
 			
 			$scope.executeUpdCard = function(){	
-				
-				
+			
 		    	$scope.imgCode="cards-" + Date.now();
 		    	
 		    	if(newImg==true){
@@ -207,7 +280,7 @@
 						//Query: UPDATE Image on DB
 						$http({
 							method: 'GET',
-							url: '/updImage/..%2F..%2Fimages%2Fcards%2F/' + $scope.imgCode + '.' + type +'/'+ oldImgCode
+							url: '/updImage/..%2F..%2F..%2F..%2Fimages%2Fcards%2F/' + $scope.imgCode + '.' + type +'/'+ oldImgCode
 						}).then(function successCallback(response) {								
 							updateCard();							
 						}, function errorCallback(response) {			
@@ -241,7 +314,7 @@
 				});
 			}
 		
-			getRarityCode = function(){
+			function getRarityCode(){
 				var rarityCode;
 				for (var i=0; i<$scope.rarity.length; i++) {
 					if($scope.rarity[i].name == $scope.updCard.rarity){
@@ -252,6 +325,26 @@
 			}
 			
 		}
-	
+		
 	});
+	
+	app.filter('rarity', function(){		 
+		return function(cards, rarity){
+			if(!rarity){
+				return cards;
+			}
+			var arr = [];
+			angular.forEach(cards, function(card){
+				
+				for(var i=0; i<rarity.length; i++){
+					if(card.rCode == rarity[i].rarity){
+						arr.push(card);
+					}
+				}
+			})
+
+			return arr;
+		}
+	})
+
 </script>

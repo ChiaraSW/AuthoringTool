@@ -43,36 +43,28 @@
 				</fieldset>
 			</div>
 		
-			<div class="form-group" ng-class="{ 'has-error': form.cardValue.$dirty && form.cardValue.$error.required }" >
+			<div class="form-group" ng-class="{ 'has-error': form.cardValue.$dirty && form.cardValue.$error.required && form.destructionValue.$dirty && form.destructionValue.$error.required}" >
 				<fieldset style="margin-top:30px; margin-left:20px;"> 	
 			     	<label for="cardValue" style="display: inline-block; vertical-align: bottom;">
 			     		Card's value in coins: 
 					</label>
 					<input type="number" min="1"class="form-control" ng-model="addCard.cardValue" style="width:100px; display: inline-block;" required>
-				</fieldset>
-			</div>
-		
-			<div class="form-group" ng-class="{ 'has-error': form.destructionValue.$dirty && form.destructionValue.$error.required }" >
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-			     	<label for="destructionValue" style="display: inline-block; vertical-align: bottom;">
+	
+			     	<label for="destructionValue" style="display: inline-block; vertical-align: bottom; margin-left:100px;">
 			     		Coins obtained in case of destruction of a dual card: 
 					</label>
 					<input type="number" min="1"class="form-control" ng-model="addCard.destructionValue" style="width:100px; display: inline-block;" required>
 				</fieldset>
 			</div>	
 		
-			<div class="form-group" ng-class="{ 'has-error': form.cost.$dirty && form.cost.$error.required }" >
+			<div class="form-group" ng-class="{ 'has-error': form.cost.$dirty && form.cost.$error.required && form.rarity.$dirty && form.rarity.$error.required}" >
 				<fieldset style="margin-top:30px; margin-left:20px;"> 	
 			     	<label for="cost" style="display: inline-block; vertical-align: bottom;">
 			     		Card's cost in coins: 
 					</label>
 					<input type="number" min="1"class="form-control" ng-model="addCard.cost" style="width:100px; display: inline-block;" required>
-				</fieldset>
-			</div>		
-				
-			<div class="form-group" ng-class="{ 'has-error': form.rarity.$dirty && form.rarity.$error.required }" >
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-			     	<label for="rarity" style="display: inline-block;">
+
+			     	<label for="rarity" style="display: inline-block; margin-left:110px;">
 			     		Rarity:  
 					</label>
 					<select class="form-control" ng-model="addCard.rarity" name="rarity" ng-options="option as option.name for option in rarity" style="width:300px; display: inline-block;" required></select>	
@@ -108,7 +100,7 @@
 
 		$scope.addCard={};
 		
-		$scope.thumbnail = { dataUrl: '../../images/noimage.png' };
+		$scope.thumbnail = { dataUrl: '../../../../images/noimage.png' };
 	    $scope.fileReaderSupported = window.FileReader != null;
 	    $scope.imgChanged = function(files){
 	        if (files != null) {
@@ -142,7 +134,7 @@
 				//Query: INSERT Image on DB
 				$http({
 					method: 'GET',
-					url: '/addImage/0/..%2F..%2Fimages%2Fcards%2F/' + $scope.imgCode + '.' + type 
+					url: '/addImage/0/..%2F..%2F..%2F..%2Fimages%2Fcards%2F/' + $scope.imgCode + '.' + type 
 				}).then(function successCallback(response) {	
 					
 					var imgCodeDB = response.data.insertId;

@@ -11,75 +11,53 @@
 		    		<div class="col-sm-3">
 
 
-				    	<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Medals" 
-				    		ng-click="Medals_subButtons=true; Cards_subButtons=false; Titles_subButtons=false; Missions_subButtons=false; Achievement_subButtons=false; getMedals();">
+				    	<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Medals" 
+				    		ng-click="vm.Medals_subButtons=true; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getMedals();">
 							Medals' Template
 						</button>	
-						<div class='sub_container' align="center" ng-show="Medals_subButtons">
-							<button id="addMedal" type="button" class="btn sub-btn btn-success" ng-click="addMedal();">Add a Medal</button>
-							<button id="delMedal" type="button" class="btn sub-btn btn-danger" ng-click="delMedal();">Delete a Medal</button>
+						<div class='sub_container' align="center" ng-show="vm.Medals_subButtons">
+							<button id="addMedal" type="button" class="btn sub-btn btn-success" ng-click="vm.addMedal();">Add a Medal</button>
+							<button id="delMedal" type="button" class="btn sub-btn btn-danger" ng-click="vm.delMedal();">Delete a Medal</button>
 						</div>
 						
 						
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Cards"
-							ng-click="Medals_subButtons=false; Cards_subButtons=true; Titles_subButtons=false; Missions_subButtons=false; Achievement_subButtons=false; getCards();">
+						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Cards"
+							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=true; vm.Missions_subButtons=false; vm.getCards();">
 							Cards' Template
 						</button>
-						<div class='sub_container' align="center" ng-show="Cards_subButtons">
-							<button id="addCard" type="button" class="btn sub-btn btn-success" ng-click="addCard();">Add a Card</button>
-							<button id="delCard" type="button" class="btn sub-btn btn-danger" ng-click="delCard();">Delete a Card</button>
+						<div class='sub_container' align="center" ng-show="vm.Cards_subButtons">
+							<button id="addCard" type="button" class="btn sub-btn btn-success" ng-click="vm.addCard();">Add a Card</button>
+							<button id="delCard" type="button" class="btn sub-btn btn-danger" ng-click="vm.delCard();">Delete a Card</button>
 						</div>
 						
 						
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Titles"
-							ng-click="Medals_subButtons=false; Cards_subButtons=false; Titles_subButtons=true; Missions_subButtons=false; Achievement_subButtons=false; getTitles();">
-							Titles' Template
-						</button>
-						<div class='sub_container' align="center" ng-show="Titles_subButtons">
-							<button id="addTitle" type="button" class="btn sub-btn btn-success">Add a Title</button>
-							<button id="delTitle" type="button" class="btn sub-btn btn-danger">Delete a Title</button>
-							<button id="levelsManagement" type="button" class="btn sub-btn btn-info">Levels' Management</button>
-						</div>
-						
-						
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Missions"
-							ng-click="Medals_subButtons=false; Cards_subButtons=false; Titles_subButtons=false; Missions_subButtons=true; Achievement_subButtons=false; getMissions();">
+						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Missions"
+							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=true; vm.getMissions();">
 							Missions' Template
 						</button>
-						<div class='sub_container' align="center" ng-show="Missions_subButtons">
-							<button id="addMission" type="button" class="btn sub-btn btn-success">Add a Mission</button>
-							<button id="delMission" type="button" class="btn sub-btn btn-danger">Delete a Mission</button>
+						<div class='sub_container' align="center" ng-show="vm.Missions_subButtons">
+							<button id="addMission" type="button" class="btn sub-btn btn-success" ng-click="vm.addMission();">Add a Mission</button>
 						</div>
-						
-						
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Achievements"
-							ng-click="Medals_subButtons=false; Cards_subButtons=false; Titles_subButtons=false; Missions_subButtons=false; Achievement_subButtons=true; getAchievements();">
-							Achievements' Template
-						</button>
-						<div class='sub_container' align="center" ng-show="Achievement_subButtons">
-							<button id="addAchievement" type="button" class="btn sub-btn btn-success">Add an Achievement</button>
-							<button id="delAchievement" type="button" class="btn sub-btn btn-danger">Delete an Achievement</button>
-						</div>
-						
-						
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="Rankings"
-							ng-click="Medals_subButtons=false; Cards_subButtons=false; Titles_subButtons=false; Missions_subButtons=false; Achievement_subButtons=false; getRankings();">
-							Rankings' Template
+
+
+						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Leaderboard"
+							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getLeaderboard();">
+							Leaderboard
 						</button>
 						
 						
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="GamesStatistics"
-							ng-click="Medals_subButtons=false; Cards_subButtons=false; Titles_subButtons=false; Missions_subButtons=false; Achievement_subButtons=false; getGamesStatistics();">
+						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.GamesStatistics"
+							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getGamesStatistics();">
 							View Games' Statistics
 						</button>
 						
 						
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="UsersStatistics"
-							ng-click="Medals_subButtons=false; Cards_subButtons=false; Titles_subButtons=false; Missions_subButtons=false; Achievement_subButtons=false; getUsersStatistics();">
+						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.UsersStatistics"
+							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getUsersStatistics();">
 							View Users' Statistics
-						</button>			
+						</button>	
 						
-			        </div>
+			        </div>  
 			        <div class="col-sm-9">
 			        
 				        <iframe id="mainFrame"  src="src/html/Admin/WhitePage.html" style="height: 876px; width: 1584px; border: none;">
@@ -95,4 +73,4 @@
 	    
     </div>
     
-</div>
+</div> 

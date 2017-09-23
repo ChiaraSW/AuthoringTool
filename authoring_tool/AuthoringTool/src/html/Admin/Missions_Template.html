@@ -8,8 +8,97 @@
 
 <body ng-app="GoPoleis" >
 
-	<div class="col-sm-9" ng-controller="getMissionsController">
-		
+	<div class="col-sm-11" ng-controller="getMissionsController">
+		<div ng-show="getMissionPage">
+			
+			<h1 style="margin:20px;"><u>Missions</u></h1>
+			<fieldset style="margin-top:50px; margin-left:20px;"> 	
+	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
+		        	<span class="glyphicon glyphicon-search"></span>
+		        	Search: 
+		        </label>
+	      		<input type="text" ng-model="searchBoxMissions.title" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
+			</fieldset>	
+						
+			<fieldset style="margin-top:30px; margin-left:20px;"> 						
+				<label style="display: inline-block;">
+		     		Filter by mission type:  
+				</label>
+
+				<h5 style="display: inline-block; ">				
+					<span class="glyphicon glyphicon-check" ng-click="mt1()" style="margin-left: 50px;" ng-show="mt1Filter" value='mt1'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="mt1()" style="margin-left: 50px;" ng-hide="mt1Filter"></span>	    
+	     			<h5 style="display: inline-block;  margin-left: 5px;">Open Treasure Chest</h5>
+	     		
+   					<span class="glyphicon glyphicon-check" ng-click="mt2()" style="margin-left: 50px;" ng-show="mt2Filter" value='mt2'></span>
+    				<span class="glyphicon glyphicon-unchecked" ng-click="mt2()" style="margin-left: 50px;" ng-hide="mt2Filter"></span>   	
+    				<h5 style="display: inline-block;  margin-left: 5px;">Collect Card</h5>
+    					
+					<span class="glyphicon glyphicon-check" ng-click="mt3()" style="margin-left: 50px;" ng-show="mt3Filter" value='mt3'></span>
+	     			<span class="glyphicon glyphicon-unchecked" ng-click="mt3()" style="margin-left: 50px;" ng-hide="mt3Filter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Visit Cultural Heritage</h5>
+    				
+    				<span class="glyphicon glyphicon-check" ng-click="mt4()" style="margin-left: 50px;" ng-show="mt4Filter" value='mt4'></span>
+	     			<span class="glyphicon glyphicon-unchecked" ng-click="mt4()" style="margin-left: 50px;" ng-hide="mt4Filter"></span>
+	     			<h5 style="display: inline-block;  margin-left: 5px;">Collect Medal</h5>
+	     			
+	     			<span class="glyphicon glyphicon-check" ng-click="mt5()" style="margin-left: 50px;" ng-show="mt5Filter" value='mt5'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="mt5()" style="margin-left: 50px;" ng-hide="mt5Filter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Complete Path</h5>
+
+		     		<span class="glyphicon glyphicon-check" ng-click="mt6()" style="margin-left: 50px;" ng-show="mt6Filter" value='mt6'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="mt6()" style="margin-left: 50px;" ng-hide="mt6Filter"></span>
+	     			<h5 style="display: inline-block;  margin-left: 5px;">Write Review</h5>
+        		</h5>	
+			</fieldset>
+			
+			<fieldset style="margin-top:10px; margin-left:20px;"> 		
+				<label style="display: inline-block;">
+		     		Filter by granularity level:  
+				</label>
+			
+				<h5 style="display: inline-block;">	
+					<span class="glyphicon glyphicon-check" ng-click="gl1()" style="margin-left: 20px;" ng-show="gl1Filter" value='gl1'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl1()" style="margin-left: 20px;" ng-hide="gl1Filter"></span>	  
+		     		<h5 style="display: inline-block;  margin-left: 5px;">National/Whole collection</h5>
+		     		   		
+		     		<span class="glyphicon glyphicon-check" ng-click="gl2()" style="margin-left: 50px;" ng-show="gl2Filter" value='gl2'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl2()" style="margin-left: 50px;" ng-hide="gl2Filter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Regional</h5>
+		     		
+		     		<span class="glyphicon glyphicon-check" ng-click="gl3()" style="margin-left: 50px;" ng-show="gl3Filter" value='gl3'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl3()" style="margin-left: 50px;" ng-hide="gl3Filter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Provincial</h5>
+		     		
+		     		<span class="glyphicon glyphicon-check" ng-click="gl4()" style="margin-left: 50px;" ng-show="gl4Filter" value='gl4'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl4()" style="margin-left: 50px;" ng-hide="gl4Filter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Cultural Heritage</h5>
+		     		
+		     		<span class="glyphicon glyphicon-check" ng-click="gl5()" style="margin-left: 50px;" ng-show="gl5Filter" value='gl5'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl5()" style="margin-left: 50px;" ng-hide="gl5Filter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Specific Rarity</h5>
+		     		
+		     		<span class="glyphicon glyphicon-check" ng-click="gl6()" style="margin-left: 50px;" ng-show="gl6Filter" value='gl6'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl6()" style="margin-left: 50px;" ng-hide="gl6Filter"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Specific Category</h5>
+		     		
+		     		<span class="glyphicon glyphicon-check" ng-click="gl7()" style="margin-left: 50px;" ng-show="gl7Filter" value='gl7'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl7()" style="margin-left: 50px;" ng-hide="gl7Filter"></span>
+					<h5 style="display: inline-block;  margin-left: 5px;">Specific Medal</h5>
+				</h5>
+			</fieldset>
+			
+			<ul style="list-item-style:circle; margin-top:30px; margin-left:40px; padding-left:0px;">
+	       		<li data-ng-repeat="mission in missions | filter:searchBoxMissions | missiontype:filterMT | granularitylevel:filterGL" ng-model="getAllMissions.selection">	        	
+	        		<h4 mission.name="selection" style="display: inline-block;  margin-left: 10px;">
+	        			<span class="glyphicon glyphicon-pencil" ng-click="updMission(mission.code)"></span> 
+	        			<span class="glyphicon glyphicon-trash" ng-click="delMission(mission.code)"></span>  
+	        			<h4 style="display: inline-block;  margin-left: 30px;"><b> [#Completions: ... ] {{ mission.title }}</b></h4>
+	        		</h4>	
+	       		</li>
+	        </ul>
+	        
+        </div>
 	</div>
 
 </body>
@@ -18,5 +107,258 @@
 	var app = angular.module("GoPoleis", []);
 	app.controller('getMissionsController', function($scope, $http, $window) {
 		
+		$scope.getMissionPage=true;
+		
+		$scope.mt1Filter=false;
+		$scope.mt2Filter=false;
+		$scope.mt3Filter=false;
+		$scope.mt4Filter=false;
+		$scope.mt5Filter=false;
+		$scope.mt6Filter=false;	
+		$scope.filterMT=[{missiontype:'1'}, {missiontype:'2'}, {missiontype:'3'}, {missiontype:'4'}, {missiontype:'5'}, {missiontype:'6'}];
+		
+		$scope.gl1Filter=false;
+		$scope.gl2Filter=false;
+		$scope.gl3Filter=false;
+		$scope.gl4Filter=false;
+		$scope.gl5Filter=false;
+		$scope.gl6Filter=false;
+		$scope.gl7Filter=false;
+		$scope.filterGL=[	{granularitylevel:'1'}, {granularitylevel:'2'}, {granularitylevel:'3'}, {granularitylevel:'4'}, {granularitylevel:'5'}, {granularitylevel:'6'}, {granularitylevel:'7'}, 
+							{granularitylevel:'8'}, {granularitylevel:'9'}];
+		
+		$http({
+			method : "GET",
+			url : "/getAllMissions"
+		}).then(function mySucces(response) {
+			$scope.missions  = response.data;
+		}, function myError(response) {
+			alert("Error on the query: getAllMissions SELECT");
+		});	
+		
+		$scope.updMission = function(missionCode) { 	
+			parent.window.setMissionCode(missionCode);
+			window.open("Mission_Upd.html", "_self"); 
+	   	};
+		
+		$scope.delMission = function (missionCode) {
+	       	if ($window.confirm("Are you sure you want to delete this Mission?")) {
+				$http({
+					method : "GET",
+					url : "/delMission/"+missionCode
+				}).then(function mySucces(response) {
+					alert("Successful delete");
+					window.open("Missions_Template.html", "_self"); 
+				}, function myError(response) {
+					alert("Error on the query: delMission DELETE");
+				});
+			} 
+		};
+
+		$scope.mt1 = function(){
+	    	if($scope.mt1Filter)	$scope.mt1Filter=false;
+	    	else	$scope.mt1Filter=true;	    		
+	    	checkMTFilters();
+	    }	    
+		$scope.mt2 = function(){
+	    	if($scope.mt2Filter)	$scope.mt2Filter=false;
+	    	else	$scope.mt2Filter=true;	    		
+	    	checkMTFilters();
+	    }
+		$scope.mt3 = function(){
+	    	if($scope.mt3Filter)	$scope.mt3Filter=false;
+	    	else	$scope.mt3Filter=true;	    		
+	    	checkMTFilters();
+	    }		
+		$scope.mt4 = function(){
+	    	if($scope.mt4Filter)	$scope.mt4Filter=false;
+	    	else	$scope.mt4Filter=true;	    		
+	    	checkMTFilters();
+	    }
+		$scope.mt5 = function(){
+	    	if($scope.mt5Filter)	$scope.mt5Filter=false;
+	    	else	$scope.mt5Filter=true;	    		
+	    	checkMTFilters();
+	    }
+		$scope.mt6 = function(){
+	    	if($scope.mt6Filter)	$scope.mt6Filter=false;
+	    	else	$scope.mt6Filter=true;	    		
+	    	checkMTFilters();
+	    }	
+		$scope.gl1 = function(){
+	    	if($scope.gl1Filter)	$scope.gl1Filter=false;
+	    	else	$scope.gl1Filter=true;	
+	    	checkGLFilters();
+	    }	
+		$scope.gl2 = function(){
+	    	if($scope.gl2Filter)	$scope.gl2Filter=false;
+	    	else	$scope.gl2Filter=true;	
+	    	checkGLFilters();
+	    }	 
+		$scope.gl3 = function(){
+	    	if($scope.gl3Filter)	$scope.gl3Filter=false;
+	    	else	$scope.gl3Filter=true;	
+	    	checkGLFilters();
+	    }	 
+		$scope.gl4 = function(){
+	    	if($scope.gl4Filter)	$scope.gl4Filter=false;
+	    	else	$scope.gl4Filter=true;	
+	    	checkGLFilters();
+	    }	 
+		$scope.gl5 = function(){
+	    	if($scope.gl5Filter)	$scope.gl5Filter=false;
+	    	else	$scope.gl5Filter=true;	
+	    	checkGLFilters();
+	    }	 
+		$scope.gl6 = function(){
+	    	if($scope.gl6Filter)	$scope.gl6Filter=false;
+	    	else	$scope.gl6Filter=true;	
+	    	checkGLFilters();
+	    }	 
+		$scope.gl7 = function(){
+	    	if($scope.gl7Filter)	$scope.gl7Filter=false;
+	    	else	$scope.gl7Filter=true;	
+	    	checkGLFilters();
+	    }	 
+
+		function checkMTFilters(){
+	    	if(	$scope.mt1Filter==false && $scope.mt2Filter==false && $scope.mt3Filter==false && $scope.mt4Filter==false && $scope.mt5Filter==false && $scope.mt6Filter==false){
+	    		$scope.g1Filter=false;
+	    		$scope.g2Filter=false;
+	    		$scope.g3Filter=false;
+	    		$scope.g4Filter=false;
+	    		$scope.filterMT=[{missiontype:'1'}, {missiontype:'2'}, {missiontype:'3'}, {missiontype:'4'}, {missiontype:'5'}, {missiontype:'6'}];
+			}	
+	    	else{
+	    		$scope.filterMT=[];
+
+	    		if($scope.mt1Filter && $scope.mt2Filter){
+	    			$scope.g1Filter=true;    			
+	    		}
+	    		else{
+	    			$scope.g1Filter=false;  
+	    		}		
+				if($scope.mt1Filter){
+					var mt1= {missiontype:'1'};
+		    		$scope.filterMT.push(mt1);
+				}
+				if($scope.mt2Filter){
+					var mt2= {missiontype:'2'};
+		    		$scope.filterMT.push(mt2);
+				}
+				if($scope.mt3Filter && $scope.mt4Filter){
+	    			$scope.g2Filter=true;    			
+	    		}
+	    		else{
+	    			$scope.g2Filter=false;  
+	    		}	
+				if($scope.mt3Filter){
+					var mt3= {missiontype:'3'};
+		    		$scope.filterMT.push(mt3);
+				}
+				if($scope.mt4Filter){
+					var mt4= {missiontype:'4'};
+		    		$scope.filterMT.push(mt4);
+				}
+				if($scope.mt5Filter){
+	    			$scope.g3Filter=true;    			
+	    		}
+	    		else{
+	    			$scope.g3Filter=false;  
+	    		}	
+				if($scope.mt5Filter){
+					var mt5= {missiontype:'5'};
+		    		$scope.filterMT.push(mt5);
+				}
+				if($scope.mt6Filter){
+	    			$scope.g4Filter=true;    			
+	    		}
+	    		else{
+	    			$scope.g4Filter=false;  
+	    		}	
+				if($scope.mt6Filter){
+					var mt6= {missiontype:'6'};
+		    		$scope.filterMT.push(mt6);
+				}
+			}
+		}  
+		
+		function checkGLFilters(){
+			if(	$scope.gl1Filter==false && $scope.gl2Filter==false && $scope.gl3Filter==false && $scope.gl4Filter==false && $scope.gl5Filter==false && $scope.gl6Filter==false && $scope.gl7Filter==false){
+				$scope.filterGL=[	{granularitylevel:'1'}, {granularitylevel:'2'}, {granularitylevel:'3'}, {granularitylevel:'4'}, {granularitylevel:'5'}, {granularitylevel:'6'}, {granularitylevel:'7'}, 
+									{granularitylevel:'8'}, {granularitylevel:'9'}];
+			}
+			else{
+				$scope.filterGL=[];	
+				if($scope.gl1Filter){
+					var gl1= {granularitylevel:'1'};
+		    		$scope.filterGL.push(gl1);
+				}
+				if($scope.gl2Filter){
+					var gl2= {granularitylevel:'2'};
+		    		$scope.filterGL.push(gl2);
+				}
+				if($scope.gl3Filter){
+					var gl3= {granularitylevel:'3'};
+		    		$scope.filterGL.push(gl3);
+				}
+				if($scope.gl4Filter){
+					var gl4= {granularitylevel:'4'};
+		    		$scope.filterGL.push(gl4);
+				}
+				if($scope.gl5Filter){
+					var gl5= {granularitylevel:'5'};
+		    		$scope.filterGL.push(gl5);
+				}
+				if($scope.gl6Filter){
+					var gl6= {granularitylevel:'6'};
+		    		$scope.filterGL.push(gl6);
+				}
+				if($scope.gl7Filter){
+					var gl7= {granularitylevel:'7'};
+		    		$scope.filterGL.push(gl7);
+		    		var gl8= {granularitylevel:'8'};
+		    		$scope.filterGL.push(gl8);
+		    		var gl9= {granularitylevel:'9'};
+		    		$scope.filterGL.push(gl9);
+				}
+			}
+		}
+			
 	});
+	
+	app.filter('missiontype', function(){		 
+		return function(missions, missiontype){
+			if(!missiontype){
+				return missions;
+			}
+			var arr = [];
+			angular.forEach(missions, function(mission){				
+				for(var i=0; i<missiontype.length; i++){
+					if(mission.mtCode == missiontype[i].missiontype){
+						arr.push(mission);
+					}
+				}
+			})
+			return arr;
+		}
+	})
+	
+	app.filter('granularitylevel', function(){		 
+		return function(missions, granularitylevel){
+			if(!granularitylevel){
+				return missions;
+			}
+			var arr = [];
+			angular.forEach(missions, function(mission){			
+				for(var i=0; i<granularitylevel.length; i++){
+					if(mission.glCode == granularitylevel[i].granularitylevel){
+						arr.push(mission);
+					}
+				}
+			})
+			return arr;
+		}
+	})
+
 </script>

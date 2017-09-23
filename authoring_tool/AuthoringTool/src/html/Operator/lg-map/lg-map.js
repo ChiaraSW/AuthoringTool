@@ -1,4 +1,4 @@
-var app = angular.module('GoPoleis', ['ui.bootstrap', 'ngMap']);
+var app = angular.module('GoPoleis', ["ui.bootstrap", 'ngMap']);
 app.controller('addCHController', function($scope, $http, $window, $modal, $timeout, $rootScope) {	
 	var clickedRegion;
 	var type;
@@ -14,6 +14,9 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 	$scope.addCH.longitude = null;
 	$scope.provinces = null;
 	$scope.isSelected = false;
+
+	$scope.addCH.historicalPeriod = undefined;
+	$scope.addCH.typeOfStructure = undefined;
 	
 	$http({
 		method : "GET",
@@ -43,7 +46,7 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 	});	
 	
 		
-	$scope.thumbnail = { dataUrl: '../../images/noimage.png' };
+	$scope.thumbnail = { dataUrl: '../../../../images/noimage.png' };
     $scope.fileReaderSupported = window.FileReader != null;
     $scope.imgChanged = function(files){
         if (files != null) {
@@ -79,7 +82,7 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 				//Query: INSERT Image on DB
 				$http({
 					method: 'GET',
-					url: '/addImage/0/..%2F..%2Fimages%2Fheritages%2F/' + $scope.imgCode + '.' + type 
+					url: '/addImage/0/..%2F..%2F..%2F..%2Fimages%2Fheritages%2F/' + $scope.imgCode + '.' + type 
 				}).then(function successCallback(response) {	
 					
 					var imgCodeDB = response.data.insertId;
@@ -91,17 +94,18 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 					}).then(function successCallback(response) {	
 
 						var cooCodeDB = response.data.insertId;
-
-						//Query: INSERT CH on DB
-						$http({
-							method: 'GET',
-							url:	'/addCH/0/'+$scope.addCH.name+'/'+$scope.addCH.description+'/'+imgCodeDB+'/'+$scope.g1+'/'+$scope.g2+'/'+$scope.g3+'/'+$scope.g4+'/'+cooCodeDB+'/'
-									+$scope.addCH.province.code+'/'+$scope.addCH.historicalPeriod.code+'/'+$scope.addCH.typeOfStructure.code+'/1' 							//PRENDI LO USERNAME E METTILO AL POSTO DELL'ULTIMO 1
-						}).then(function successCallback(response) {	
-							window.open("CulturalHeritages_Template.html", "_self");   
-						}, function errorCallback(response) {
-							alert("Error on the query: Heritage INSERT");
-						});
+						if($scope.addCH.historicalPeriod.code == undefined || $scope.addCH.typeOfStructure.code == undefined){
+							
+							if($scope.addCH.historicalPeriod.code == undefined){
+								addHistoricalPeriod(imgCodeDB, cooCodeDB, $scope.addCH.historicalPeriod, $scope.addCH.typeOfStructure);
+							}
+							else{
+								addTypeOfStructure(imgCodeDB, cooCodeDB, $scope.addCH.historicalPeriod.code, $scope.addCH.typeOfStructure);
+							}
+						}	
+						else{
+							addCH(imgCodeDB, cooCodeDB, $scope.addCH.historicalPeriod.code, $scope.addCH.typeOfStructure.code);
+						}
 
 					}, function errorCallback(response) {
 						alert("Error on the query: Coordinates INSERT");
@@ -110,14 +114,57 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 				}, function errorCallback(response) {			
 					alert("Error on the query: Image INSERT");
 				});
-			});	
-
+			});
 		}
 		else{
 			alert("You should select an image.");
 		}
 	}
-
+	
+	function addHistoricalPeriod(imgCodeDB, cooCodeDB, historicalPeriod, typeOfStructure){
+		//Query: INSERT HistoricalPeriod on DB
+		$http({
+			method: 'GET',
+			url:	'/addHistoricalPeriod/0/'+historicalPeriod
+		}).then(function successCallback(response) {	
+			var hpCodeDB = response.data.insertId;
+			if($scope.addCH.typeOfStructure.code == undefined){
+				addTypeOfStructure(imgCodeDB, cooCodeDB, hpCodeDB, typeOfStructure)
+			}
+			else{
+				addCH(imgCodeDB, cooCodeDB, hpCodeDB, typeOfStructure.code);
+			}
+		}, function errorCallback(response) {
+			alert("Error on the query: addHistoricalPeriod INSERT");
+		});
+	}
+	
+	function addTypeOfStructure(imgCodeDB, cooCodeDB, historicalPeriod,  typeOfStructure){
+		//Query: INSERT StructureType on DB
+		$http({
+			method: 'GET',
+			url:	'/addStructureType/0/'+typeOfStructure
+		}).then(function successCallback(response) {	
+			var tosCodeDB = response.data.insertId;		
+			addCH(imgCodeDB, cooCodeDB, historicalPeriod, tosCodeDB);
+		}, function errorCallback(response) {
+			alert("Error on the query: addStructureType INSERT");
+		});
+	}
+	
+	function addCH(imgCodeDB, cooCodeDB, hpCodeDB, tosCodeDB){
+		//Query: INSERT CH on DB
+		$http({
+			method: 'GET',
+			url:	'/addCH/0/'+$scope.addCH.name+'/'+$scope.addCH.description+'/'+imgCodeDB+'/'+$scope.g1+'/'+$scope.g2+'/'+$scope.g3+'/'+$scope.g4+'/'+cooCodeDB+'/'+$scope.addCH.province.code
+					+'/'+hpCodeDB+'/'+tosCodeDB+'/1' 																									//PRENDI LO USERNAME E METTILO AL POSTO DELL'ULTIMO 1
+		}).then(function successCallback(response) {
+			window.open("CulturalHeritages_Template.html", "_self");   
+		}, function errorCallback(response) {
+			alert("Error on the query: Heritage INSERT");
+		});
+	}
+	
 	$rootScope.$on('mapsInitialized', function(evt, maps){		
     	$scope.map = maps[0];
     });

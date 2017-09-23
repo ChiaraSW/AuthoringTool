@@ -27,29 +27,24 @@
 <body  ng-app="GoPoleis">
 
 	<div class="col-sm-11" ng-controller="DrawPolygonController"> 
-
 		
 		<label for="title1" style="margin-top:30px; margin-left:20px;"> Click on the map to draw a validity area. You can select the most appropriate shape in the top-right menu on the map. </label>
 
-	
 	    <div id="panel" style="width: 200px; float: right; margin-top: 45px;">
-<!--  	    	<div>
-				<button id="add-button" type="submit" name="addShape" class="btn btn-success" style="width:220px;" ng-click="addShape()">Add a new shape</button>
-	     	</div> -->
 	    	<div>
 				<button id="delBtn" type="submit" name="delShape" class="btn btn-danger" style="width:220px; margin-top: 10px;">Delete selected area</button>
 	     	</div>
 	        <div>
-	        	<button id="getCoordinatesBtn" type="submit" name="getCoordinates" class="btn btn-info" style="width:220px; margin-top: 10px;">Get selected area's coodinates</button>
+ 	            <textarea id="coordinatesList" class="form-control" ng-model="coordinatesList" style="resize:none; margin-top: 20px; width: 220px; height: 670px;" disabled></textarea>
+	        </div> 
+	        <div>
+	        	<button id="confirmBtn" type="submit" name="confirmArea" class="btn btn-primary" style="width:220px; margin-top: 20px;" ng-click="executeInsertVA()" ng-show="insert">Insert validity area</button>
 	        </div>
 	        <div>
-	            <textarea id="coordinatesList" class="form-control" ng-model="coordinatesList" style="resize:none; margin-top: 20px; width: 220px; height: 500px;" ng-change="updateArea()"></textarea>
+	        	<button id="updateBtn" type="submit" name="updateArea" class="btn btn-primary" style="width:220px; margin-top: 20px;" ng-click="executeUpdateVA()" ng-show="update">Update validity area</button>
 	        </div>
-	        <div>
-	        	<button id="updateVerticesBtn" type="submit" name="updateVertices" class="btn btn-info" style="width:220px; margin-top: 10px;" ng-show="cooChanged" ng-click="updateVertices()">Update area</button>
-	        </div>
-	        <div>
-	        	<button id="confirmBtn" type="submit" name="confirmArea" class="btn btn-primary" style="width:220px; margin-top: 20px;">Confirm validity area</button>
+	        <div style="margin-top: 10px; width:220px; text-align:center;">
+	        	<a href="Game2_Template.html" ng-click="cancel()">Cancel</a>
 	        </div>
 	    </div>    
 	    
@@ -64,71 +59,98 @@
 var app = angular.module('GoPoleis', ['ui.bootstrap','ngMap']);
 app.controller('DrawPolygonController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
 	
+	var chCode = parent.window.getCode();	
+	var latCenter;
+	var lngCenter;
+	var map;
 	var drawingManager;
+	var id=-1;
 	var selectedShape;
 	var polygons = [];
-	var polygon ={};
-	var id=-1;
-	$scope.cooChanged=false;
+	var numVertices;
+	var numCircles;
+	var cooChanged=false;
+	var deletedCircle=0;
+	var deletedVertices=0;
 
-	function clearSelection() {
+	$http({
+		method : "GET",
+		url : "/getCH/"+chCode
+	}).then(function mySucces(response) {
+		var ch  = response.data;	
+		latCenter=ch[0].latitude;
+		lngCenter=ch[0].longitude;
 		
+		initialize();
+		
+		$http({
+    		method: 'GET',
+    		url:	'/getCHValidityAreas/'+chCode
+    	}).then(function successCallback(response) {	
+			if(response.data.length>0){
+				$scope.insert=false;
+				$scope.update=true;				
+				forEachExistingVAs(response);
+			}
+			else{
+				$scope.insert=true;
+				$scope.update=false;
+			}
+    	}, function errorCallback(response) {
+    		alert("Error on the query: getCHValidityAreas SELECT");
+    	});
+		
+	}, function myError(response) {
+		alert("Error on the query: getCH SELECT");
+	});	
+	
+	
+
+		
+	//------------------------------------Inizio funzioni comuni---------------------------------
+	function clearSelection() {
 		if (selectedShape) {
 			selectedShape.setEditable(false);
-			
-			//selectedShape.setMap(null);
+			selectedShape.setDraggable(false);
+			document.getElementById('coordinatesList').innerHTML = "";
+			selectedShape = null;
 		}
 	}
-
-    function setSelection(shape) {
-    	
-    	/*if(shape.type == "circle"){   		
+	
+	function setSelection(shape) {
+		
+    	if(shape.type == "circle"){   		
     		google.maps.event.addListener(shape, "center_changed", getCoordinates); //o dragend
     		google.maps.event.addListener(shape, "radius_changed", getCoordinates);
 		}
-    	if(selectedShape.type == "polygon"){
+    	if(shape.type == "polygon"){
     		google.maps.event.addListener(shape.getPath(), "insert_at", getCoordinates);
+    		google.maps.event.addListener(shape.getPath(), "remove_at", getCoordinates);
     		google.maps.event.addListener(shape.getPath(), "set_at", getCoordinates);
-    	}*/
-		
-		
-        clearSelection();
-        selectedShape = shape;
-        shape.setEditable(true);
-        
-        
-        
-        
-        
-        
-        coo = "";
-        for (var i = 0; i < shape.getPath().getLength(); i++) {
-	        coo += shape.getPath().getAt(i).toUrlValue(5) + "\n";
-	    }
-        polygon = {id:id, coordinates: coo};
-        polygons.push(polygon);
-        //alert(shape.type);
-        
-        
-        
-        
-        
-        selectColor(shape.get('fillColor') || shape.get('strokeColor'));      
-    }    
+    	}
+    	
+		clearSelection();
+		selectedShape = shape;
+		shape.setEditable(true);
+		shape.setDraggable(true);
+    	
+        getCoordinates();
 
-    function deleteSelectedShape() {
-        if (selectedShape) {
-        	alert("delete shape"+selectedShape.id);
-            selectedShape.setMap(null);
-            document.getElementById('coordinatesList').innerHTML = "";
+        //Inserisce il poligono nell'array di poligoni se non già presente
+		var found=false;
+		for(var i=0; i<polygons.length; i++){
+			if(polygons[i].id == selectedShape.id){
+				found=true;
+			}
         }
-        else{
-        	alert("You should select an Area.");
-        }
-        selectedShape=null;
-    }
+       	if(!found){
+       		polygons.push(shape);
+       	}
+		selectColor(shape.get('fillColor') || shape.get('strokeColor'));      
+	}   
     
-    function getCoordinates() {   
+    function getCoordinates() { 
+		
 		if (selectedShape) {
 			if(selectedShape.type == "circle"){
 				var coordinates = "Center: "+selectedShape.getCenter().toUrlValue(5)+"\nRadius: "+selectedShape.getRadius().toPrecision(8);
@@ -144,18 +166,629 @@ app.controller('DrawPolygonController', function($scope, $http, $window, $timeou
 		}
 		else{
 			alert("You should select an Area.");
-		}		
+		}	
     }  
+    
+    function checkPolygonValidity(string) {   	//controlla se il testo contiene un path di vertici
+    	var re = new RegExp("^((\\-?\\d+\\.\\d+),\\s*(\\-?\\d+\\.\\d+)\\s*)*$");  
+		return re.test(string);
+    }
+    
+    function checkCircleValidity(string) {   	//controlla se il testo contiene centro e raggio validi
+    	var re = new RegExp("^(Center: ((\\-?\\d+\\.\\d+),\\s*(\\-?\\d+\\.\\d+))\\s+Radius: (\\d+\\.\\d+))$");  
+		return re.test(string);
+    }
+    
+    function deleteSelectedShape() {
+    	var index;
+        if (selectedShape) {     	
+            selectedShape.setMap(null);
+            document.getElementById('coordinatesList').innerHTML = "";
+                 
+            //Rimuove il poligono dall'array di poligoni
+			for(var i=0; i<polygons.length; i++){
+				if(polygons[i].id==selectedShape.id){
+					index=i;
+					if(selectedShape.type=='circle' && selectedShape.vaCode!=0){
+						deletedCircle++;
+					}
+					if(selectedShape.type=='polygon' && selectedShape.vaCode!=0){
+						
+						for(var j=0; j<chPolygons.length; j++){
+							if(chPolygons[j].vaCode == selectedShape.vaCode){
+								deletedVertices = deletedVertices + chPolygons[j].vertexCodePath.length;
+							}
+						}
+					}
+				}
+			}
+			polygons.splice(index,1);
+        }
+        else{
+        	alert("You should select an Area.");
+        }
+        selectedShape=null;
+    }
+	
+    $scope.cancel = function(){ 
+		parent.window.enableGame2SubButtons(false, null);
+	};
+	
+	function canReload(){
+		if(numVertices==0 && numCircles==0 && deletedVertices==0 && deletedCircle==0){
+   			parent.window.enableGame2SubButtons(false, null);
+   			window.open("Game2_Template.html", "_self"); 
+   		}
+	}
+	
+	//------------------------------------Fine funzioni comuni------------------------------
+    
+	//----------------------------------Inizio INSERT---------------------------------------
+    $scope.executeInsertVA = function(){	
+    	
+    	numVertices=0;
+    	numCircles=0;
+    	for(var i=0; i<polygons.length; i++){
+    		if(polygons[i].type=="polygon"){
+    			numVertices = numVertices+polygons[i].getPath().length; 
+    		}
+    		if(polygons[i].type=="circle"){
+    			numCircles++;
+    		}
+    	}
 
-    function initialize() {
-  	
-        var map = new google.maps.Map(document.getElementById('map'), {
+    	var shapes; 	
+    	if(polygons.length>0){
+    		$http({
+    			method : "GET",
+    			url : "/getAllShapes"
+    		}).then(function mySucces(response) {
+    			shapes  = response.data;	
+    			for (var i=0; i<polygons.length; i++){
+    				singlePolygon(i, shapes);
+    			}
+    		}, function myError(response) {
+    			alert("Error on the query: getAllShapes SELECT");
+    		});
+	    }
+		else{
+			alert("You should draw at least a Validity Area.");
+		}
+    }
+    
+    function singlePolygon(i, shapes) {
+    	var shapeCode=0;   	
+		for(var j=0; j<shapes.length;j++){
+			if(shapes[j].type == polygons[i].type){
+				shapeCode=shapes[j].code;
+				addValidityArea(i, shapeCode);
+			}
+		}
+    } 
+    
+    function addValidityArea(i, shapeCode) {
+    	$http({
+			method : "GET",
+			url : "/addValidityArea/0/"+chCode+"/"+	shapeCode
+		}).then(function mySucces(response) {
+			var vaCode = response.data.insertId;
+			if(polygons[i].type == 'circle'){
+   				var centerLat = polygons[i].getCenter().lat().toPrecision(10);
+   				var centerLng = polygons[i].getCenter().lng().toPrecision(10);
+   				var centerRadius = polygons[i].getRadius().toPrecision(10);
+   				addCircleCoo(centerLat, centerLng, centerRadius, vaCode);
+   			}
+   			if(polygons[i].type == 'polygon'){
+   				addPolygon(vaCode, i);
+   			}
+		}, function myError(response) {
+			alert("Error on the query: addValidityArea INSERT");
+		});		
+    }
+    
+    function addCircleCoo(centerLat, centerLng, centerRadius, vaCode) {	
+    	$http({
+			method: 'GET',
+			url:	'/addCoordinates/0/'+centerLat+'/'+centerLng
+		}).then(function successCallback(response) {	
+			var centerCooCode = response.data.insertId;			
+			$http({
+   				method : "GET",
+   				url : '/addCircle/0/'+vaCode+'/'+centerCooCode+'/'+centerRadius
+   			}).then(function mySucces(response) {
+   				numCircles--;
+   	    		canReload();
+   			}, function myError(response) {
+   				alert("Error on the query: addCircle INSERT");
+   			});				
+		}, function errorCallback(response) {
+			alert("Error on the query: Coordinates INSERT");
+		});	
+    }
+    
+    function addPolygon(vaCode, i){
+
+    	$http({
+    		method : "GET",
+    		url : "/addPolygon/0/"+vaCode
+    	}).then(function mySucces(response) {
+    		var polygonCode = response.data.insertId;
+    		forEackVertex(polygonCode, i);
+    	}, function myError(response) {
+    		alert("Error on the query: addPolygon INSERT");
+    	});			
+    }
+    
+    function forEackVertex(polygonCode, i){
+    	var polygonPath = polygons[i].getPath();
+    	for(var k=0; k < polygonPath.length;k++){
+    		var vertexLatLngCoo = polygonPath.getAt(k).toUrlValue(5).split(",");
+			var vertexLat = vertexLatLngCoo[0];
+			var vertexLng = vertexLatLngCoo[1];
+			var vertexNum = k+1;			
+	    	addCooVertex(polygonCode, vertexLat, vertexLng, vertexNum);
+    	}
+    }
+    
+    function addCooVertex(polygonCode, vertexLat, vertexLng, vertexNum){
+    	$http({
+    		method: 'GET',
+    		url:	'/addCoordinates/0/'+vertexLat+'/'+vertexLng
+    	}).then(function successCallback(response) {	
+    		var vertexCooCode = response.data.insertId;
+    		addVertex(polygonCode, vertexCooCode, vertexNum);	
+    	}, function errorCallback(response) {
+    		alert("Error on the query: Coordinates INSERT");
+    	});
+    }
+
+    function addVertex(polygonCode, vertexCooCode, vertexNum) {
+    	$http({
+    		method: 'GET',
+    		url:	'/addVertex/0/'+polygonCode+'/'+vertexCooCode+'/'+vertexNum		
+    	}).then(function successCallback(response) {
+    		numVertices--;
+    		canReload();
+    	}, function errorCallback(response) {
+    		alert("Error on the query: addVertex INSERT");
+    	});   	
+    }
+    //----------------------------------Fine INSERT---------------------------------------
+    
+    //----------------------------------Inizio MOSTRA VAs GIA' ASSOCIATE A QUEL CH-------------------------------------
+    
+    var chCircles=[];
+    var dbCircle={};
+    var chPolygons=[];
+    var dbPolygon={};
+    
+    function forEachExistingVAs(response){
+    	drawingManager.setDrawingMode(null);	  	
+    	for(var i=0; i<response.data.length; i++){  
+    		if(response.data[i].shape=="polygon"){
+    			getExistingPolygon(response.data[i].code);
+    		}
+    		if(response.data[i].shape=="circle"){
+    			getExistingCircle(response.data[i].code);
+    		} 		
+    	}	
+    }	
+    	
+    function getExistingPolygon(vaCode){
+		$http({
+    		method: 'GET',
+    		url:	'/getPolygonVertices/'+vaCode		
+    	}).then(function successCallback(response) {
+    		
+    		var polygonCode = response.data[0].polygonCode;
+    		var path = [];
+    		var vertexCodePath = [];
+    		var cooCodePath = [];
+
+    		for(var i=0; i<response.data.length; i++){
+				var coordinates = new google.maps.LatLng(response.data[i].latitude, response.data[i].longitude); 
+				vertexCodePath.push(response.data[i].vertexCode);
+				cooCodePath.push(response.data[i].cooCode);
+				path.push(coordinates);
+			}
+    		addExistingPolygon(vaCode, polygonCode, path, vertexCodePath, cooCodePath);
+
+    	}, function errorCallback(response) {
+    		alert("Error on the query: getPolygonVertices SELECT");
+    	});   
+    }
+	
+	function addExistingPolygon(vaCode, polygonCode, path, vertexCodePath, cooCodePath){
+		id++;
+		var myPolygon = new google.maps.Polygon({
+			id: id,
+			vaCode: vaCode, 
+			type: 'polygon',
+			path: path,
+			draggable:true,
+			editable: true, 	    
+			strokeColor: "#009933",
+			strokeOpacity: 0.8,
+			strokeWeight: 2,
+			fillColor: "#009933",
+			fillOpacity: 0.35,
+			map:map
+		});
+	
+		dbPolygon.vaCode = vaCode;
+		dbPolygon.polygonCode = polygonCode;
+		dbPolygon.vertexCodePath = vertexCodePath;
+		dbPolygon.cooCodePath = cooCodePath;
+		chPolygons.push(dbPolygon);
+		dbPolygon={};
+		
+		google.maps.event.addListener(myPolygon, 'click', function () {
+			setSelection(myPolygon);
+  		});
+  		setSelection(myPolygon);
+	}
+    	
+	function getExistingCircle(vaCode){
+		$http({
+    		method: 'GET',
+    		url:	'/getCircle/'+vaCode		
+    	}).then(function successCallback(response) {
+    		var circleCode = response.data[0].circleCode;		
+			var centerCode = response.data[0].centerCode;
+    		var latitude = response.data[0].latitude;
+			var longitude = response.data[0].longitude;
+			var radius = response.data[0].radius;
+    		addCircle(circleCode, centerCode, latitude, longitude, radius, vaCode);   		
+    	}, function errorCallback(response) {
+    		alert("Error on the query: getCircle SELECT");
+    	});   
+	}
+    	
+	function addCircle(circleCode, centerCode, latitude, longitude, radius, vaCode){
+		id++;
+		
+		var myCircle = new google.maps.Circle({
+			id: id,
+			vaCode: vaCode, 
+			type: 'circle',
+			center: new google.maps.LatLng(latitude, longitude),
+            radius:radius,
+            draggable: true,
+			editable: true,
+            strokeColor: '#009933',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#009933',
+            fillOpacity: 0.35,
+            map: map
+		});
+		
+		dbCircle.circleCode = circleCode;
+		dbCircle.centerCode = centerCode;
+		dbCircle.vaCode = vaCode;
+		chCircles.push(dbCircle);
+		dbCircle={};
+	
+		google.maps.event.addListener(myCircle, 'click', function () {
+			setSelection(myCircle);
+  		});
+  		setSelection(myCircle);
+	}
+
+    //----------------------------------Fine MOSTRA VAs GIA' ASSOCIATE A QUEL CH---------------------------------------
+	//----------------------------------Inizio UPDATE VAs-------------------------------------
+	
+	$scope.executeUpdateVA = function(){	
+    	var oldVA=false;
+    	
+    	numVertices=0;
+    	numCircles=0;
+    	for(var i=0; i<polygons.length; i++){
+    		if(polygons[i].type=="polygon"){
+    			numVertices = numVertices+polygons[i].getPath().length; 
+    		}
+    		if(polygons[i].type=="circle"){
+    			numCircles++;
+    		}
+    	}
+    
+		for(var i=0; i < polygons.length; i++){
+			if(polygons[i].type=="circle"){
+				if(polygons[i].vaCode == 0){
+					addNewCircle(i);
+				}
+				else{
+					for(var j=0; j < chCircles.length; j++){
+						if(polygons[i].vaCode == chCircles[j].vaCode){							
+							var circleCode = chCircles[j].circleCode;
+							var centerCode = chCircles[j].centerCode;
+							var vaCode = chCircles[j].vaCode;
+							chCircles.splice(j,1);
+							updateCircle(circleCode, centerCode, vaCode, i);
+						}
+					}
+				}
+			}
+			if(polygons[i].type=="polygon"){
+				if(polygons[i].vaCode == 0){
+					addNewPolygon(i);
+				}
+				else{
+					for(var j=0; j < chPolygons.length; j++){
+						if(polygons[i].vaCode == chPolygons[j].vaCode){	
+							
+							var polygonCode = chPolygons[j].polygonCode;
+							var vertexCodePath = chPolygons[j].vertexCodePath;
+							var cooCodePath = chPolygons[j].cooCodePath;
+							chPolygons.splice(j,1);
+							updatePolygon(i, polygonCode, vertexCodePath, cooCodePath);
+						}
+					}
+				}
+			}
+			
+		}
+		for(var k=0; k < chCircles.length; k++){
+			var vaCode = chCircles[k].vaCode;
+			var circleCode = chCircles[k].circleCode;
+			var centerCode = chCircles[k].centerCode;
+			
+			delCircle(circleCode, vaCode, centerCode);
+
+		}
+		for(var k=0; k < chPolygons.length; k++){
+			
+			for(var x=0; x < chPolygons[k].vertexCodePath.length; x++){			
+				var vertexCode = chPolygons[k].vertexCodePath[x];
+				var cooCodePath = chPolygons[k].cooCodePath[x];
+				var polygonCode = chPolygons[k].polygonCode;
+				var vaCode =  chPolygons[k].vaCode
+				delVertex(vertexCode, cooCodePath, polygonCode, vaCode);			
+			}
+		}
+    }
+    
+
+    
+	function addNewCircle(i){
+		$http({
+			method : "GET",
+			url : "/addValidityArea/0/"+chCode+"/1"
+		}).then(function mySucces(response) {
+			var vaCode = response.data.insertId;
+			
+			$http({
+				method: 'GET',
+				url:	'/addCoordinates/0/'+polygons[i].center.lat().toPrecision(8)+'/'+polygons[i].center.lng().toPrecision(8)
+			}).then(function successCallback(response) {	
+				var centerCooCode = response.data.insertId;		
+				
+				$http({
+	   				method : "GET",
+	   				url : '/addCircle/0/'+vaCode+'/'+centerCooCode+'/'+polygons[i].radius
+	   			}).then(function mySucces(response) {
+
+	   				numCircles--;
+	   	    		canReload();
+	   				
+	   			}, function myError(response) {
+	   				alert("Error on the query: addCircle INSERT");
+	   			});		
+				
+			}, function errorCallback(response) {
+				alert("Error on the query: addCoordinates INSERT");
+			});	
+					
+		}, function myError(response) {
+			alert("Error on the query: addValidityArea INSERT");
+		});	
+	}
+	
+	function updateCircle(circleCode, centerCode, vaCode, i){
+		$http({
+			method: 'GET',
+			url:	'/updCoordinates/'+polygons[i].center.lat().toPrecision(8)+'/'+polygons[i].center.lng().toPrecision(8)+'/'+centerCode
+		}).then(function successCallback(response) {	
+
+			$http({
+   				method : "GET",
+   				url : '/updCircle/'+vaCode+'/'+centerCode+'/'+polygons[i].radius+'/'+circleCode
+   			}).then(function mySucces(response) {
+   				
+   				numCircles--;
+   	    		canReload();	    		
+   	    		
+   	    	}, function myError(response) {
+   				alert("Error on the query: updCircle UPDATE");
+   			});	
+			
+		}, function errorCallback(response) {
+			alert("Error on the query: Coordinates UPDATE");
+		});	
+	}
+	
+	function addNewPolygon(i){
+		$http({
+			method : "GET",
+			url : "/addValidityArea/0/"+chCode+"/2"
+		}).then(function mySucces(response) {
+			var vaCode = response.data.insertId;
+			$http({
+	    		method : "GET",
+	    		url : "/addPolygon/0/"+vaCode
+	    	}).then(function mySucces(response) {
+	    		var polygonCode = response.data.insertId;
+	    		
+	    		for(var j=0; j < polygons[i].getPath().length; j++){
+	    			
+	    			var vertexLat = polygons[i].getPath().getAt(j).lat().toPrecision(8);
+	    			var vertexLng = polygons[i].getPath().getAt(j).lng().toPrecision(8);
+	    			var vertexNum = j+1;
+	    			addNewVertexPolygon(polygonCode, vertexLat, vertexLng, vertexNum);
+	    			
+	    		}
+	    		
+	    	}, function myError(response) {
+	    		alert("Error on the query: addPolygon INSERT");
+	    	});		
+		}, function myError(response) {
+			alert("Error on the query: addValidityArea INSERT");
+		});		
+	}
+	
+	function addNewVertexPolygon(polygonCode, vertexLat, vertexLng, vertexNum){
+		$http({
+    		method: 'GET',
+    		url:	'/addCoordinates/0/'+vertexLat+'/'+vertexLng
+    	}).then(function successCallback(response) {	
+    		var vertexCooCode = response.data.insertId;
+		
+    		$http({
+        		method: 'GET',
+        		url:	'/addVertex/0/'+polygonCode+'/'+vertexCooCode+'/'+vertexNum		
+        	}).then(function successCallback(response) {
+
+        		numVertices--;
+        		canReload();        		
+        		
+        	}, function errorCallback(response) {
+        		alert("Error on the query: addVertex INSERT");
+        	});   	
+
+    	}, function errorCallback(response) {
+    		alert("Error on the query: Coordinates INSERT");
+    	});
+	}
+	
+	function updatePolygon(i, polygonCode, vertexCodePath, cooCodePath){	
+		if(polygons[i].getPath().length == cooCodePath.length){							//NON SONO STATI AGGIUNTI VERTICI AL POLIGONO
+			for(var j=0; j < cooCodePath.length; j++){
+				var codeCooVertex = cooCodePath[j];
+				var lat = polygons[i].getPath().getAt(j).lat().toPrecision(8);
+				var lng = polygons[i].getPath().getAt(j).lng().toPrecision(8);		
+				updatePolygonCoordinates(polygonCode, vertexCodePath, codeCooVertex, lat, lng, j+1);
+			}
+		}		
+		if(polygons[i].getPath().length > cooCodePath.length){							//SONO STATI AGGIUNTI DEI VERTICI AL POLIGONO
+			for(var j=0; j < cooCodePath.length; j++){ //aggiorno le coordinate già inserite
+				var codeCooVertex = cooCodePath[j];
+				var lat = polygons[i].getPath().getAt(j).lat().toPrecision(8);
+				var lng = polygons[i].getPath().getAt(j).lng().toPrecision(8);		
+				updatePolygonCoordinates(polygonCode, vertexCodePath, codeCooVertex, lat, lng, j+1);
+			}
+			for(var k=cooCodePath.length; k < polygons[i].getPath().length; k++){ //inserisco le coordinte mancanti
+				var lat = polygons[i].getPath().getAt(j).lat().toPrecision(8);
+				var lng = polygons[i].getPath().getAt(j).lng().toPrecision(8);				
+				addNewVertexPolygon(polygonCode, lat, lng, k+1);
+			}
+		}
+	}
+	
+	function updatePolygonCoordinates(polygonCode, vertexCodePath, codeCooVertex, lat, lng, vertexIndex){
+		$http({
+			method : "GET",
+			url : '/updCoordinates/'+lat+'/'+lng+'/'+codeCooVertex
+		}).then(function mySucces(response) {	
+			$http({
+				method : "GET",
+				url : '/updVertex/'+polygonCode+'/'+codeCooVertex+'/'+vertexIndex+'/'+vertexCodePath[vertexIndex-1]
+			}).then(function mySucces(response) {
+				
+				numVertices--;
+	    		canReload();
+				
+			}, function myError(response) {
+				alert("Error on the query: updVertex UPDATE");
+			});
+		}, function myError(response) {
+			alert("Error on the query: updCoordinates UPDATE");
+		});		
+	}
+	
+
+	function delCircle(circleCode, vaCode, centerCode){
+		$http({
+  			method : "GET",
+  			url : '/delCircle/'+circleCode
+  		}).then(function mySucces(response) {				
+  			$http({
+   				method : "GET",
+   				url : '/delValidityArea/'+vaCode
+   			}).then(function mySucces(response) {
+   				$http({
+  	   				method : "GET",
+  	   				url : '/delCoordinates/'+centerCode
+  	   			}).then(function mySucces(response) {
+
+	  	   			deletedCircle--;
+	   	    		canReload();
+
+  	   			}, function myError(response) {
+  	   				alert("Error on the query: delCoordinates DELETE");
+  	   			});  	    		    		
+   			}, function myError(response) {
+   				alert("Error on the query: delValidityArea DELETE");
+   			});	  			
+  	  	}, function myError(response) {
+			alert("Error on the query: delCircle DELETE");
+		});
+    }
+	
+	function delVertex(vertexCode, cooCodePath, polygonCode, vaCode){
+		$http({
+			method : "GET",
+			url : '/delVertex/'+vertexCode
+		}).then(function mySucces(response) {
+
+			$http({
+				method : "GET",
+				url : '/delCoordinates/'+cooCodePath
+			}).then(function mySucces(response) {
+
+				$http({
+					method : "GET",
+					url : '/delPolygon/'+polygonCode
+				}).then(function mySucces(response) {
+
+					$http({
+						method : "GET",
+						url : '/delValidityArea/'+vaCode
+					}).then(function mySucces(response) {
+
+						deletedVertices--;
+		   	    		canReload();
+
+					}, function myError(response) {
+						alert("Error on the query: delValidityArea DELETE");
+					});  
+
+				}, function myError(response) {
+					alert("Error on the query: delPolygon DELETE");
+				});  	  
+
+			}, function myError(response) {
+				alert("Error on the query: delCoordinates DELETE");
+			});  	  
+
+		}, function myError(response) {
+			alert("Error on the query: delVertex DELETE");
+		});  	    		    		
+		
+	}
+	
+	//----------------------------------Fine UPDATE VAs-------------------------------------
+    
+	
+	function initialize() {
+
+		map = new google.maps.Map(document.getElementById('map'), {
             zoom: 17,
-            center: new google.maps.LatLng(41.890995, 12.503659),
+            center: new google.maps.LatLng(parseFloat(latCenter), parseFloat(lngCenter)),
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             zoomControl: true
         });
 
+		
 		var circleOptions = {
 			strokeColor: '#009933',
 			strokeOpacity: 0.8,
@@ -175,7 +808,7 @@ app.controller('DrawPolygonController', function($scope, $http, $window, $timeou
 			draggable: true,
 			editable: true
 		};
-        
+		
 		// Creates a drawing manager attached to the map that allows the user to draw markers, lines, and shapes.
 		drawingManager = new google.maps.drawing.DrawingManager({
 			drawingMode: google.maps.drawing.OverlayType.POLYGON,
@@ -183,7 +816,6 @@ app.controller('DrawPolygonController', function($scope, $http, $window, $timeou
 				position: google.maps.ControlPosition.TOP_RIGHT,
 				drawingModes: [		
 					google.maps.drawing.OverlayType.CIRCLE,
-					//google.maps.drawing.OverlayType.RECTANGLE,
 					google.maps.drawing.OverlayType.POLYGON
 				]
 			},
@@ -197,90 +829,38 @@ app.controller('DrawPolygonController', function($scope, $http, $window, $timeou
 			polygonOptions: polyOptions,
 			map: map
 		});
-		
+		  
+
 		google.maps.event.addListener(drawingManager, 'overlaycomplete', function (e) {    
 			drawingManager.setDrawingMode(null);	
 			
 			// Add an event listener that selects the newly-drawn shape when the user mouses down on it.
 			if (e.type != google.maps.drawing.OverlayType.MARKER) {
 				// Switch back to non-drawing mode after drawing a shape.
-				var newShape = e.overlay;			
-				newShape.type = e.type;
 				id++;
+				var newShape = e.overlay;			
+				newShape.type = e.type;				
 				newShape.id=id;
-				newShape.vertices=e.overlay.getPath().getArray();
+				newShape.vaCode=0;	//new Validity area
+
 				google.maps.event.addListener(newShape, 'click', function () {
 			        setSelection(newShape);
 				});
 				setSelection(newShape);			
 			}
 		});
-        
-		
-		
-        // Clear the current selection when the drawing mode is changed, or when the map is clicked.
-        google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);       
-        //google.maps.event.addListener(map, 'click', clearSelection);
-		google.maps.event.addListener(map, 'click', getCoordinates);
-        
-        
-        
-        
-        google.maps.event.addDomListener(document.getElementById('delBtn'), 'click', deleteSelectedShape);
-        google.maps.event.addDomListener(document.getElementById('getCoordinatesBtn'), 'click', getCoordinates);
-        
-        
-        
-        var bermudaTriangle;
-        var squareCoords; 
-        var triangleCoords;
-        
-        /*google.maps.event.addDomListener(document.getElementById('confirmBtn'), 'click', inserisciPolygon);
-        function inserisciPolygon() {   		
-        	triangleCoords = [
-                new google.maps.LatLng(41.891326, 12.503450),
-                new google.maps.LatLng(41.890735, 12.502790),
-                new google.maps.LatLng(41.890567, 12.503970)
-            ];
-        	
-        	squareCoords = [
-                new google.maps.LatLng(41.891326, 12.503450),
-                new google.maps.LatLng(41.890735, 12.502790),
-                new google.maps.LatLng(41.890567, 12.503970),
-                new google.maps.LatLng(41.890432, 12.503432)
-            ];
-        	
-            bermudaTriangle = new google.maps.Polygon({
-                paths: triangleCoords,
-                draggable: true,
-                editable: true,
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                fillColor: '#FF0000',
-                fillOpacity: 0.35
-            });
-            bermudaTriangle.setMap(map);
-    	}
-        
-		$scope.updateArea = function(){
-        	$scope.cooChanged=true;
-		}	
-		
-		$scope.updateVertices = function(){
-        	var newVertices = $scope.coordinatesList.split("\n");
-        	var newShape = [];
-        	for(var i = 0; i < newVertices.length; i++){
-        		var latlong = newVertices[i].split(",");
-        		var position = new google.maps.LatLng(latlong[0],latlong[1]);
-        		newShape.push(position);
-        	}
-        	bermudaTriangle.setPath(newShape);
-		}	*/
-        
-      
-    }
-    google.maps.event.addDomListener(window, 'load', initialize);
+			
+			
+		// Clear the current selection when the drawing mode is changed, or when the map is clicked.
+		google.maps.event.addListener(drawingManager, 'drawingmode_changed', clearSelection);
+        google.maps.event.addListener(map, 'click', clearSelection);
 
+		google.maps.event.addDomListener(document.getElementById('delBtn'), 'click', deleteSelectedShape);
+		
+	}
+	//google.maps.event.addDomListener(window, 'load', initialize);
+	
+
+	
 });  	
 </script>

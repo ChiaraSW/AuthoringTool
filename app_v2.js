@@ -1,5 +1,10 @@
 var express = require ('express');
 var bodyparser = require ('body-parser');
+
+//var connection = require('/root/connection'); //NON CANCELLARE (server)
+//var routes = require ('/root/routes');		//NON CANCELLARE (server)
+
+
 //var connection = require('/root/connection'); //NON CANCELLARE (server)
 //var routes = require ('/root/routes');		//NON CANCELLARE (server)
 var connection = require('C:\\Users\\Chiara\\Documents\\WinSCP\\Server-AuthoringTool\\connection_v2');
@@ -18,7 +23,7 @@ var imageToSave;
 var storage = multer.diskStorage({
     destination: function (req, file, callback) {
     	var type = file.fieldname.split('-')[0];
-    	callback(null, './authoring_tool/AuthoringTool/src/images/'+type+'/');
+    	callback(null, './authoring_tool/images/'+type+'/');
     },
     filename: function (req, file, callback) {
         //imageToSave = file.fieldname + '-' + Date.now(); + '.' + file.originalname.split('.')[file.originalname.split('.').length -1];	

@@ -4,6 +4,8 @@
 	<meta charset="ISO-8859-1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
+	
 </head>
 
 <body ng-app="GoPoleis" >
@@ -36,12 +38,35 @@
 				</fieldset>
 			</div>
 			
-			<div class="form-group" ng-class="{ 'has-error': form.category.$dirty && form.category.$error.required }" >
+			<div class="form-group" ng-class="{ 'has-error': 	form.category.$dirty && form.category.$error.required && 
+																form.region.$dirty && form.region.$error.required && 
+																form.historicalPeriod.$dirty && form.historicalPeriod.$error.required && 
+																form.structureType.$dirty && form.structureType.$error.required}" >
+																
 				<fieldset style="margin-top:30px; margin-left:20px;"> 	
 			     	<label for="category" style="display: inline-block;">
 			     		Category:  
 					</label>
-					<select class="form-control" ng-model="addMedal.category" name="category" ng-options="option as option.name for option in category" style="width:300px; display: inline-block;" required></select>	
+					<select class="form-control" ng-model="addMedal.category" ng-change="showCategory()" name="category" ng-options="option as option.name for option in category" style="width:300px; display: inline-block;" required></select>	
+
+			     	<label for="region" style="display: inline-block; margin-left:30px;" ng-show="regionSelected">
+			     		Region:  
+					</label>
+					<select class="form-control" ng-model="addMedal.region" name="region" ng-options="option as option.name for option in regions" style="width:300px; display: inline-block;" ng-show="regionSelected" 
+							ng-required="regionSelected"></select>	
+					
+ 			     	<label for="historicalPeriod" style="display: inline-block; margin-left:30px;" ng-show="hpSelected">
+			     		Historical period:  
+					</label>
+					<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="addMedal.historicalPeriod" style="width:300px; display: inline-block;"
+								typeahead="option as option.name for option in historicalPeriods | filter:$viewValue | limitTo:8" class="form-control" ng-show="hpSelected" ng-required="hpSelected">	
+								
+											
+					<label for="structureType" style="display: inline-block; margin-left:30px;" ng-show="stSelected">
+			     		Type of structure:  
+					</label>
+					<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="addMedal.typeOfStructure" style="width:300px; display: inline-block;"
+								typeahead="option as option.name for option in typeOfStructures | filter:$viewValue | limitTo:8" class="form-control" ng-show="stSelected" ng-required="stSelected">	
 				</fieldset>
 			</div>
 			
@@ -68,10 +93,11 @@
 </html>
 <script>
 
-	var app = angular.module("GoPoleis", []);
+var app = angular.module("GoPoleis", ["ui.bootstrap"]);
 	app.controller('addMedalController', function($scope, $http, $window, $timeout) {
 		
 		var type;
+		var imageSelected=false;
 		
 		$http({
 			method: 'GET',
@@ -79,12 +105,14 @@
 		}).then(function successCallback(response) {	
 			$scope.category = response.data;			
 		}, function errorCallback(response) {
-			alert("Error on the query: Category SELECT *");
+			alert("Error on the query: getAllCategories SELECT");
 		});
 		
 		$scope.addMedal={};
+		$scope.addMedal.historicalPeriod = undefined;
+		$scope.addMedal.typeOfStructure = undefined;
 		
-		$scope.thumbnail = { dataUrl: '../../images/noimage.png' };
+		$scope.thumbnail = { dataUrl: '../../../../images/noimage.png' };
 	    $scope.fileReaderSupported = window.FileReader != null;
 	    $scope.imgChanged = function(files){
 	        if (files != null) {
@@ -96,6 +124,7 @@
 		                fileReader.onload = function(e) {
 		                    $timeout(function(){
 		 							$scope.thumbnail.dataUrl = e.target.result;
+		 							imageSelected=true;
 		                    });
 		                }
 		            });
@@ -103,44 +132,224 @@
 	    	}
 	        type = file.name.split('.')[file.name.split('.').length -1];
 	    };
-
+	    
+		$scope.showCategory = function(){
+	    	if($scope.addMedal.category.name == 'Region'){
+	    		$scope.regionSelected=true;
+	    		$scope.hpSelected=false;
+	    		$scope.stSelected=false;
+	    		
+	    		$http({
+					method: 'GET',
+					url: '/getAllRegions'
+				}).then(function successCallback(response) {	
+					$scope.regions = response.data;  
+				}, function errorCallback(response) {
+					alert("Error on the query: getAllRegions SELECT");
+				});	
+	    	}
+	    	
+	    	if($scope.addMedal.category.name == 'Historical Period'){
+	    		$scope.regionSelected=false;
+	    		$scope.hpSelected=true;
+	    		$scope.stSelected=false;
+	    		
+	    		$http({
+					method: 'GET',
+					url: '/getAllHistoricalPeriods'
+				}).then(function successCallback(response) {	
+					$scope.historicalPeriods = response.data;  
+				}, function errorCallback(response) {
+					alert("Error on the query: getAllHistoricalPeriods SELECT");
+				});	
+	    	}
+	    	
+	    	if($scope.addMedal.category.name == 'Type of Structure'){
+	    		$scope.regionSelected=false;
+	    		$scope.hpSelected=false;
+	    		$scope.stSelected=true;
+	    		
+	    		$http({
+					method: 'GET',
+					url: '/getAllStructureTypes'
+				}).then(function successCallback(response) {	
+					$scope.typeOfStructures = response.data;  
+				}, function errorCallback(response) {
+					alert("Error on the query: getAllStructureTypes SELECT");
+				});	
+	    	}
+	    	
+	    };
 
 		$scope.executeAddMedal = function(){
-			
-			$scope.imgCode="medals-" + Date.now();
 
-			//Upload image on server
-			$http({
-				method: 'POST',
-				url: '/upload'
-			}).then(function successCallback(response) {	
-			}, function errorCallback(response) {  //return an error because the upload is performed by the server
+			if(imageSelected){
+				$scope.imgCode="medals-" + Date.now();
+	
+				//Upload image on server
+				$http({
+					method: 'POST',
+					url: '/upload'
+				}).then(function successCallback(response) {	
+				}, function errorCallback(response) {  //return an error because the upload is performed by the server
 				
-				//Query: INSERT Image on DB
+					if($scope.addMedal.category.name == 'Region'){
+						$http({
+							method: 'GET',
+							url: '/getRegionMedalByRegionCode/'+$scope.addMedal.region.code
+						}).then(function successCallback(response) {	
+							if(response.data.length>0){
+								alert("There is already a medal associated with this region.");
+								window.open("Medal_Add.html", "_self");   
+							}
+							else{
+								insertMedal();
+							}
+						}, function errorCallback(response) {
+							alert("Error on the query: getRegionMedalByRegionCode SELECT");
+						});
+					}
+					
+					if($scope.addMedal.category.name == 'Historical Period'){
+						
+						$http({
+							method: 'GET',
+							url: '/getHPMedalByHPCode/'+$scope.addMedal.historicalPeriod.code
+						}).then(function successCallback(response) {	
+							if(response.data.length>0){
+								alert("There is already a medal associated with this historical period.");
+								window.open("Medal_Add.html", "_self");   
+							}
+							else{
+								insertMedal();
+							}
+						}, function errorCallback(response) {
+							alert("Error on the query: getHPMedalByHPCode SELECT");
+						});
+					}
+					
+					if($scope.addMedal.category.name == 'Type of Structure'){
+						
+						$http({
+							method: 'GET',
+							url: '/getToSMedalByToSCode/'+$scope.addMedal.typeOfStructure.code
+						}).then(function successCallback(response) {	
+							if(response.data.length>0){
+								alert("There is already a medal associated with this type of structure.");
+								window.open("Medal_Add.html", "_self");   
+							}
+							else{
+								insertMedal();
+							}
+						}, function errorCallback(response) {
+							alert("Error on the query: getToSMedalByToSCode SELECT");
+						});
+			    		
+			    	}
+				
+				});	
+			}
+			else{
+				alert("You should select an image.");
+			}
+		}
+		
+		function insertMedal(){
+
+			//Query: INSERT Image on DB
+			$http({
+				method: 'GET',
+				url: '/addImage/0/..%2F..%2F..%2F..%2Fimages%2Fmedals%2F/' + $scope.imgCode + '.' + type 
+			}).then(function successCallback(response) {	
+				
+				var imgCodeDB = response.data.insertId;
+				//Query: INSERT Medal on DB
 				$http({
 					method: 'GET',
-					url: '/addImage/0/..%2F..%2Fimages%2Fmedals%2F/' + $scope.imgCode + '.' + type 
+					url: '/addMedal/0/'+$scope.addMedal.name+'/'+$scope.addMedal.category.code+'/'+ $scope.addMedal.numOfPlaces +'/'+ imgCodeDB
 				}).then(function successCallback(response) {	
-					
-					var imgCodeDB = response.data.insertId;
-					//Query: INSERT Medal on DB
-					$http({
-						method: 'GET',
-						url: '/addMedal/0/'+$scope.addMedal.name+'/'+$scope.addMedal.category.code+'/'+$scope.addMedal.numOfPlaces+'/'+ imgCodeDB
-					}).then(function successCallback(response) {	
-						window.open("Medals_Template.html", "_self");   
-					}, function errorCallback(response) {
-						alert("Error on the query: Medal INSERT");
-					});	
-					
-				}, function errorCallback(response) {			
-					alert("Error on the query: Image INSERT");
-				});
-			
-			});
+					var medalCodeDB = response.data.insertId;
 
+					
+					if($scope.addMedal.category.name == 'Region'){		
+						//Query: INSERT RegionMedal on DB
+						$http({
+							method: 'GET',
+							url: '/addRegionMedal/'+medalCodeDB+'/'+$scope.addMedal.region.code
+						}).then(function successCallback(response) {	
+							window.open("Medals_Template.html", "_self");   
+						}, function errorCallback(response) {
+							alert("Error on the query: addRegionMedal INSERT");
+						});
+					}
+
+					if($scope.addMedal.category.name == 'Historical Period'){		
+						if($scope.addMedal.historicalPeriod.name == undefined){
+							$http({
+								method: 'GET',
+								url:	'/addHistoricalPeriod/0/'+$scope.addMedal.historicalPeriod
+							}).then(function successCallback(response) {	
+								var hpCodeDB = response.data.insertId;
+								addHPMedal(medalCodeDB, hpCodeDB);
+							}, function errorCallback(response) {
+								alert("Error on the query: addHistoricalPeriod INSERT");
+							});
+						}
+						else{
+							addHPMedal(medalCodeDB, $scope.addMedal.historicalPeriod.code);
+						}	
+			    	}
+
+					if($scope.addMedal.category.name == 'Type of Structure'){
+			    		if($scope.addMedal.typeOfStructure.name == undefined){
+							$http({
+								method: 'GET',
+								url:	'/addStructureType/0/'+$scope.addMedal.typeOfStructure
+							}).then(function successCallback(response) {	
+								var tosCodeDB = response.data.insertId;
+								addToSMedal(medalCodeDB, tosCodeDB);
+							}, function errorCallback(response) {
+								alert("Error on the query: addHistoricalPeriod INSERT");
+							});
+						}
+						else{
+							addToSMedal(medalCodeDB, $scope.addMedal.typeOfStructure.code);
+						}
+			    	}
+
+				}, function errorCallback(response) {
+					alert("Error on the query: addMedal INSERT");
+				});
+				
+			}, function errorCallback(response) {			
+				alert("Error on the query: Image INSERT");
+			});
+			
+		}
+		
+		function addHPMedal(medalCodeDB, hpCodeDB){			
+			//Query: INSERT HPMedal on DB
+			$http({
+				method: 'GET',
+				url: '/addHPMedal/'+medalCodeDB+'/'+hpCodeDB
+			}).then(function successCallback(response) {	
+				window.open("Medals_Template.html", "_self");   
+			}, function errorCallback(response) {
+				alert("Error on the query: addHPMedal INSERT");
+			});
+		}
+		
+		function addToSMedal(medalCodeDB, tosCodeDB){
+			//Query: INSERT ToSMedal on DB
+			$http({
+				method: 'GET',
+				url: '/addToSMedal/'+medalCodeDB+'/'+tosCodeDB
+			}).then(function successCallback(response) {	
+				window.open("Medals_Template.html", "_self");   
+			}, function errorCallback(response) {
+				alert("Error on the query: addToSMedal INSERT");
+			});	
 		}
 	});
-
 
 </script>

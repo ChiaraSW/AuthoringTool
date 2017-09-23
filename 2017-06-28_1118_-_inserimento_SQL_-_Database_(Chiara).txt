@@ -1,0 +1,1080 @@
+﻿drop database if exists gopoleis;
+
+create database gopoleis;
+
+use gopoleis;
+
+create table Image(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	path varchar (256) NOT NULL,
+	filename varchar (100) NOT NULL);
+
+create table Category(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (100) NOT NULL);
+
+create table Rarity(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (100) NOT NULL);
+
+create table Role(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (30) NOT NULL);
+
+create table Region(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (50) NOT NULL);
+
+create table Province(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (50) NOT NULL,
+	coordinates int NOT NULL,
+	zoom int not NULL,
+	region int NOT NULL);
+
+create table Medal(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (100) NOT NULL,
+	category int NOT NULL,
+	num INT NOT NULL,
+	image int NOT NULL);
+
+create table RegionMedal(
+	medal INT NOT NULL primary key,
+	region INT NOT NULL);
+
+create table HistoricalperiodMedal(
+	medal INT NOT NULL primary key,
+	historicalperiod INT NOT NULL);
+
+create table StructuretypeMedal(
+	medal INT NOT NULL primary key,
+	structuretype INT NOT NULL);
+
+create table Card(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (100) NOT NULL,
+	image int NOT NULL,
+	description varchar (999) NOT NULL,
+	cardvalue int NOT NULL,
+	destructionvalue int NOT NULL,
+	cost int NOT NULL,
+	rarity int NOT NULL);
+
+create table User(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	email varchar (100) NOT NULL,
+	password varchar (100) NOT NULL,
+	enabled ENUM('0', '1') DEFAULT null,
+	role int NOT NULL);
+		
+create table Admin(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	user int NOT NULL);
+	
+create table Organization(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	user int NOT NULL,
+	admin int DEFAULT null,
+	name varchar (100) NOT NULL);
+
+create table Operator(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	user int NOT NULL,
+	organization int NOT NULL);
+
+create table Coordinates(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	latitude varchar (12) NOT NULL,
+	longitude varchar (12) NOT NULL);
+
+create table Historicalperiod(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (60) NOT NULL);
+
+create table Structuretype(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (60) NOT NULL);
+
+
+create table Heritage(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (100) NOT NULL,
+	description varchar (999) NOT NULL,
+	image int NOT NULL,
+	g1 ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	g2 ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	g3 ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	g4 ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	coordinates int NOT NULL,
+	province int NOT NULL,
+	historicalperiod int NOT NULL,
+	structuretype int NOT NULL,
+	operator int NOT NULL);
+
+create table Siteinformation(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	title varchar (150) NOT NULL,
+	description varchar (999) NOT NULL,
+	image int NOT NULL,
+	heritage int NOT NULL);
+
+create table Treasure(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	title varchar (150) NOT NULL,
+	description varchar (999) NOT NULL,
+	coordinates int NOT NULL,
+	heritage int NOT NULL);
+
+create table Enciclopedicpage(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	title varchar (150) NOT NULL,
+	description varchar (999) NOT NULL,
+	curiosity varchar (999) NOT NULL,
+	image int NOT NULL,
+	heritage int NOT NULL);
+
+create table Question(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	question varchar (999) NOT NULL,
+	hintonsite varchar (200) NOT NULL,
+	hintbypaying varchar (200) NOT NULL,
+	answer varchar (100)NOT NULL);
+
+create table Path(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	title varchar (150) NOT NULL,
+	enabled ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	heritage int NOT NULL);
+
+create table Stage(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	title varchar (150) NOT NULL,
+	curiosity varchar (200) NOT NULL,
+	question int NOT NULL,
+	coordinates int NOT NULL,
+	path int NOT NULL,
+	isfinal ENUM('false', 'true') NOT NULL DEFAULT 'false');
+
+create table Review(
+	player varchar (100) NOT NULL,
+	heritage int NOT NULL,
+	likes int NOT NULL DEFAULT 0,
+	dislikes int NOT NULL DEFAULT 0,
+	review varchar (999),
+	primary key (player,heritage));
+
+create table Shape(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	type varchar (30) NOT NULL);
+
+create table Validityarea(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	heritage int NOT NULL,
+	shape int NOT NULL);
+
+create table Polygon(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	validityarea int NOT NULL);
+
+create table Vertex(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	polygon int NOT NULL,
+	coordinates int NOT NULL,
+	numvertex int NOT NULL);
+
+create table Circle(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	validityarea int NOT NULL,
+	center int NOT NULL,
+	radius double NOT NULL);
+
+create table Player(
+	email varchar (100) NOT NULL primary key,
+	title varchar (100),
+	coins int NOT NULL DEFAULT 0);
+
+create table PlayerEP(
+	id varchar (100) NOT NULL,
+	code int NOT NULL,
+	viewed ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	primary key (id, code));
+
+create table PlayerSI(
+	id varchar (100) NOT NULL,
+	code int NOT NULL,
+	viewed ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	primary key (id, code));
+
+create table PlayerPath(
+	player varchar (100) NOT NULL,
+	path int NOT NULL,
+	primary key (player, path));
+
+create table PlayerStage(
+	player varchar (100) NOT NULL,
+	stage int NOT NULL,
+	primary key (player, stage));
+
+create table PlayerCard(
+	player varchar (100) NOT NULL,
+	card int NOT NULL,
+	primary key (player, card));
+
+create table PlayerTreasure(
+	player varchar (100) NOT NULL,
+	treasure int NOT NULL,
+	primary key (player, treasure));
+
+create table PlayerHeritage(
+	player varchar (100) NOT NULL,
+	heritage int NOT NULL,
+	primary key (player, heritage));
+
+create table PlayerMedal(
+	player varchar (100) NOT NULL,
+	medal int NOT NULL,
+	primary key (player, medal));
+
+create table Mission(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	title varchar (100) NOT NULL,
+	num int NOT NULL,
+	missiontype int NOT NULL,
+	granularitylevel int NOT NULL);
+
+create table Missiontype(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (100) NOT NULL);
+	
+create table Granularitylevel(
+	code INT NOT NULL AUTO_INCREMENT primary key,
+	name varchar (20) NOT NULL);
+
+create table RegionalMission(
+	mission INT NOT NULL primary key,
+	region int NOT NULL);
+
+create table ProvincialMission(
+	mission INT NOT NULL primary key,
+	province int NOT NULL);
+
+create table HeritageMission(
+	mission INT NOT NULL primary key,
+	heritage int NOT NULL);
+
+create table RarityMission(
+	mission INT NOT NULL primary key,
+	rarity int NOT NULL);
+
+create table CategoryMission(
+	mission INT NOT NULL primary key,
+	category int NOT NULL);
+
+create table RegionMedalMission(
+	mission INT NOT NULL primary key,
+	regionmedal int NOT NULL);
+
+create table HPMedalMission(
+	mission INT NOT NULL primary key,
+	hpmedal int NOT NULL);
+
+create table ToSMedalMission(
+	mission INT NOT NULL primary key,
+	tosmedal int NOT NULL);
+
+create table HeritageMedal(
+	heritage INT NOT NULL,
+	medal INT NOT NULL,
+	primary key (heritage, medal));
+
+
+alter table Medal
+add constraint fk1 foreign key Medal (category) references Category (code) ON DELETE CASCADE,
+add constraint fk2 foreign key Medal (image) references Image (code) ON DELETE CASCADE;
+
+alter table Card
+add constraint fk3 foreign key Card (image) references Image (code) ON DELETE CASCADE,
+add constraint fk4 foreign key Card (rarity) references Rarity (code) ON DELETE CASCADE;
+
+alter table User
+add constraint fk5 foreign key User (role) references Role (code) ON DELETE CASCADE;
+
+alter table Admin
+add constraint fk6 foreign key Admin (user) references User (code) ON DELETE CASCADE;
+
+alter table Organization
+add constraint fk7 foreign key Organization (user) references User (code) ON DELETE CASCADE,
+add constraint fk8 foreign key Organization (admin) references Admin (code) ON DELETE CASCADE;
+
+alter table Operator
+add constraint fk9 foreign key Operator (user) references User (code) ON DELETE CASCADE,
+add constraint fk10 foreign key Operator (organization) references Organization (code) ON DELETE CASCADE;
+
+alter table Heritage
+add constraint fk11 foreign key Heritage (image) references Image (code) ON DELETE CASCADE,
+add constraint fk12 foreign key Heritage (coordinates) references Coordinates (code) ON DELETE CASCADE,
+add constraint fk13 foreign key Heritage (province) references Province (code) ON DELETE CASCADE,
+add constraint fk14 foreign key Heritage (historicalperiod) references Historicalperiod (code) ON DELETE CASCADE,
+add constraint fk15 foreign key Heritage (structuretype) references Structuretype (code) ON DELETE CASCADE,
+add constraint fk16 foreign key Heritage (operator) references Operator (code) ON DELETE CASCADE;
+
+alter table Province
+add constraint fk17 foreign key Province (region) references Region (code) ON DELETE CASCADE,
+add constraint fk18 foreign key Province (coordinates) references Coordinates (code) ON DELETE CASCADE;
+
+alter table Siteinformation
+add constraint fk19 foreign key Siteinformation (image) references Image (code) ON DELETE CASCADE,
+add constraint fk20 foreign key Siteinformation (heritage) references Heritage (code) ON DELETE CASCADE;
+
+alter table Treasure
+add constraint fk21 foreign key Treasure (coordinates) references Coordinates (code) ON DELETE CASCADE,
+add constraint fk22 foreign key Treasure (heritage) references Heritage (code) ON DELETE CASCADE;
+
+alter table Enciclopedicpage
+add constraint fk23 foreign key Enciclopedicpage (image) references Image (code) ON DELETE CASCADE,
+add constraint fk24 foreign key Enciclopedicpage (heritage) references Heritage (code) ON DELETE CASCADE;
+
+alter table Path
+add constraint fk26 foreign key Path (heritage) references Heritage (code) ON DELETE CASCADE;
+
+alter table Stage
+add constraint fk27 foreign key Stage (question) references Question (code) ON DELETE CASCADE,
+add constraint fk28 foreign key Stage (coordinates) references Coordinates (code) ON DELETE CASCADE,
+add constraint fk29 foreign key Stage (path) references Path (code) ON DELETE CASCADE;
+
+alter table Review
+add constraint fk30 foreign key Review (heritage) references Heritage (code) ON DELETE CASCADE,
+add constraint fk31 foreign key Review (player) references Player (email) ON DELETE CASCADE;
+
+alter table PlayerEP
+add constraint fk32 foreign key PlayerEP (id) references Player (email) ON DELETE CASCADE,
+add constraint fk33 foreign key PlayerEP (code) references Enciclopedicpage (code) ON DELETE CASCADE;
+
+alter table PlayerSI
+add constraint fk34 foreign key PlayerSI (id) references Player (email) ON DELETE CASCADE,
+add constraint fk35 foreign key PlayerSI (code) references Siteinformation (code) ON DELETE CASCADE;
+
+alter table PlayerPath
+add constraint fk36 foreign key PlayerPath (player) references Player (email) ON DELETE CASCADE,
+add constraint fk37 foreign key PlayerPath (path) references Path (code) ON DELETE CASCADE;
+
+alter table PlayerStage
+add constraint fk38 foreign key PlayerStage (player) references Player (email) ON DELETE CASCADE,
+add constraint fk39 foreign key PlayerStage (stage) references Stage (code) ON DELETE CASCADE;
+
+alter table PlayerCard
+add constraint fk40 foreign key PlayerCard (player) references Player (email) ON DELETE CASCADE,
+add constraint fk41 foreign key PlayerCard (card) references Card (code) ON DELETE CASCADE;
+
+alter table PlayerTreasure
+add constraint fk42 foreign key PlayerTreasure (player) references Player (email) ON DELETE CASCADE,
+add constraint fk43 foreign key PlayerTreasure (treasure) references Treasure (code) ON DELETE CASCADE;
+
+alter table Validityarea
+add constraint fk44 foreign key Validityarea (heritage) references Heritage (code) ON DELETE CASCADE,
+add constraint fk45 foreign key Validityarea (shape) references Shape (code) ON DELETE CASCADE;
+
+alter table Polygon
+add constraint fk46 foreign key Polygon (validityarea) references Validityarea (code) ON DELETE CASCADE;
+
+alter table Vertex
+add constraint fk47 foreign key Vertex (polygon) references Polygon (code) ON DELETE CASCADE,
+add constraint fk48 foreign key Vertex (coordinates) references Coordinates (code) ON DELETE CASCADE;
+
+alter table Circle
+add constraint fk49 foreign key Circle (validityarea) references Validityarea (code) ON DELETE CASCADE,
+add constraint fk50 foreign key Circle (center) references Coordinates (code) ON DELETE CASCADE;
+
+alter table PlayerHeritage
+add constraint fk51 foreign key PlayerHeritage (player) references Player (email) ON DELETE CASCADE,
+add constraint fk52 foreign key PlayerHeritage (heritage) references Heritage (code) ON DELETE CASCADE;
+
+alter table PlayerMedal
+add constraint fk53 foreign key PlayerMedal (player) references Player (email) ON DELETE CASCADE,
+add constraint fk54 foreign key PlayerMedal (medal) references Medal (code) ON DELETE CASCADE;
+
+alter table RegionMedal
+add constraint fk55 foreign key RegionMedal (medal) references Medal (code) ON DELETE CASCADE,
+add constraint fk56 foreign key RegionMedal (region) references Region (code) ON DELETE CASCADE;
+
+alter table HistoricalperiodMedal
+add constraint fk57 foreign key HistoricalperiodMedal (medal) references Medal (code) ON DELETE CASCADE,
+add constraint fk58 foreign key HistoricalperiodMedal (historicalperiod) references Historicalperiod (code) ON DELETE CASCADE;
+
+alter table StructuretypeMedal
+add constraint fk59 foreign key StructuretypeMedal (medal) references Medal (code) ON DELETE CASCADE,
+add constraint fk60 foreign key StructuretypeMedal (structuretype) references Structuretype (code) ON DELETE CASCADE;
+
+alter table Mission
+add constraint fk61 foreign key Mission (missiontype) references Missiontype (code) ON DELETE CASCADE,
+add constraint fk62 foreign key Mission (granularitylevel) references Granularitylevel (code) ON DELETE CASCADE;
+
+alter table RegionalMission
+add constraint fk63 foreign key RegionalMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk64 foreign key RegionalMission (region) references Region (code) ON DELETE CASCADE;
+
+alter table ProvincialMission
+add constraint fk65 foreign key ProvincialMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk66 foreign key ProvincialMission (province) references Province (code) ON DELETE CASCADE;
+
+alter table HeritageMission
+add constraint fk67 foreign key HeritageMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk68 foreign key HeritageMission (heritage) references Heritage (code) ON DELETE CASCADE;
+
+alter table RarityMission
+add constraint fk69 foreign key RarityMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk70 foreign key RarityMission (rarity) references Rarity (code) ON DELETE CASCADE;
+
+alter table CategoryMission
+add constraint fk71 foreign key CategoryMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk72 foreign key CategoryMission (category) references Category (code) ON DELETE CASCADE;
+
+alter table RegionMedalMission
+add constraint fk73 foreign key RegionMedalMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk74 foreign key RegionMedalMission (regionmedal) references RegionMedal (medal) ON DELETE CASCADE;
+
+alter table HPMedalMission
+add constraint fk75 foreign key HPMedalMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk76 foreign key HPMedalMission (hpmedal) references HistoricalperiodMedal (medal) ON DELETE CASCADE;
+
+alter table ToSMedalMission
+add constraint fk77 foreign key ToSMedalMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk78 foreign key ToSMedalMission (tosmedal) references StructuretypeMedal (medal) ON DELETE CASCADE;
+
+alter table HeritageMedal
+add constraint fk79 foreign key HeritageMedal (heritage) references Heritage (code) ON DELETE CASCADE,
+add constraint fk80 foreign key HeritageMedal (medal) references Medal (code) ON DELETE CASCADE;
+
+
+
+insert into Image values('0', '../../../../images/cards/', 'colosseo.jpg');
+insert into Image values('0', '../../../../images/cards/', 'faro_di_alessandria.jpg');
+insert into Image values('0', '../../../../images/cards/', 'machu_picchu.jpg');
+insert into Image values('0', '../../../../images/cards/', 'london_bridge.jpg');
+insert into Image values('0', '../../../../images/cards/', 'via_appia.jpg');
+insert into Image values('0', '../../../../images/cards/', 'isola_tiberina.jpg');
+insert into Image values('0', '../../../../images/cards/', 'partenone.jpg');
+insert into Image values('0', '../../../../images/cards/', 'stile_dorico.jpg');
+insert into Image values('0', '../../../../images/cards/', 'stile_ionico.jpg');
+insert into Image values('0', '../../../../images/cards/', 'stile_corinzio.jpg');
+insert into Image values('0', '../../../../images/cards/', 'arco_a_tutto_sesto.jpg');
+insert into Image values('0', '../../../../images/cards/', 'arco_a_sesto_acuto.jpg');
+insert into Image values('0', '../../../../images/cards/', 'stile_gotico.jpg');
+insert into Image values('0', '../../../../images/cards/', 'basilica_san_pietro.jpg');
+insert into Image values('0', '../../../../images/cards/', 'basilica_san_giovanni.jpg');
+insert into Image values('0', '../../../../images/cards/', 'piazza_del_popolo.jpg');
+insert into Image values('0', '../../../../images/cards/', 'altare_della_patria.jpg');
+insert into Image values('0', '../../../../images/cards/', 'balcone_piazza_venezia.jpg');
+insert into Image values('0', '../../../../images/cards/', 'museo_maxxi.jpg');
+insert into Image values('0', '../../../../images/cards/', 'stadio_olimpico.jpg');
+insert into Image values('0', '../../../../images/heritages/', 'colosseo.jpg');
+insert into Image values('0', '../../../../images/heritages/', 'altare.jpg');
+insert into Image values('0', '../../../../images/heritages/', 'ponte_milvio.jpg');
+insert into Image values('0', '../../../../images/heritages/', 'sanpietro.jpg');
+insert into Image values('0', '../../../../images/heritages/', 'arco_di_costantino.jpg');
+insert into Image values('0', '../../../../images/heritages/', 'nuvola.jpg');
+insert into Image values('0', '../../../../images/medals/', 'abruzzo.png');
+insert into Image values('0', '../../../../images/medals/', 'basilicata.gif');
+insert into Image values('0', '../../../../images/medals/', 'calabria.gif');
+insert into Image values('0', '../../../../images/medals/', 'campania.png');
+insert into Image values('0', '../../../../images/medals/', 'Emilia-Romagna.jpg');
+insert into Image values('0', '../../../../images/medals/', 'Friuli-Venezia_Giulia.jpg');
+insert into Image values('0', '../../../../images/medals/', 'lazio.gif');
+insert into Image values('0', '../../../../images/medals/', 'Liguria.jpg');
+insert into Image values('0', '../../../../images/medals/', 'Lombardia.jpg');
+insert into Image values('0', '../../../../images/medals/', 'Marche.gif');
+insert into Image values('0', '../../../../images/medals/', 'Molise.png');
+insert into Image values('0', '../../../../images/medals/', 'Piemonte.png');
+insert into Image values('0', '../../../../images/medals/', 'puglia.jpg');
+insert into Image values('0', '../../../../images/medals/', 'sardegna.gif');
+insert into Image values('0', '../../../../images/medals/', 'sicilia.png');
+insert into Image values('0', '../../../../images/medals/', 'Toscana.jpg');
+insert into Image values('0', '../../../../images/medals/', 'Trentino-Alto_Adige.png');
+insert into Image values('0', '../../../../images/medals/', 'Umbria.jpg');
+insert into Image values('0', '../../../../images/medals/', 'Valle-d_aosta.jpg');
+insert into Image values('0', '../../../../images/medals/', 'Veneto.png');
+insert into Image values('0', '../../../../images/medals/', 'museo.jpg');
+insert into Image values('0', '../../../../images/medals/', 'castello.jpg');
+insert into Image values('0', '../../../../images/medals/', 'chiesa.jpg');
+insert into Image values('0', '../../../../images/medals/', 'rinascimento.jpg');
+insert into Image values('0', '../../../../images/medals/', 'imperoromano.jpg');
+insert into Image values('0', '../../../../images/medals/', 'antica_roma.jpg');
+
+
+insert into Category values('0','Region');
+insert into Category values('0','Historical Period');
+insert into Category values('0','Type of Structure');
+
+insert into Rarity values('0','Common');
+insert into Rarity values('0','Uncommon');
+insert into Rarity values('0','Epic');
+
+
+insert into Role values('0','Admin');
+insert into Role values('0','Cultural Organization');
+insert into Role values('0','Cultural Operator');
+
+insert into Shape values('0','circle');
+insert into Shape values('0','polygon');
+
+
+insert into Region values('0','Abruzzo');
+insert into Region values('0','Basilicata');
+insert into Region values('0','Calabria');
+insert into Region values('0','Campania');
+insert into Region values('0','Emilia-Romagna');
+insert into Region values('0','Friuli-Venezia Giulia');
+insert into Region values('0','Lazio');
+insert into Region values('0','Liguria');
+insert into Region values('0','Lombardia');
+insert into Region values('0','Marche');
+insert into Region values('0','Molise');
+insert into Region values('0','Piemonte');
+insert into Region values('0','Puglia');
+insert into Region values('0','Sardegna');
+insert into Region values('0','Sicilia');
+insert into Region values('0','Toscana');
+insert into Region values('0','Trentino-Alto Adige');
+insert into Region values('0','Umbria');
+insert into Region values('0','Valle d\'Aosta');
+insert into Region values('0','Veneto');
+
+insert into Coordinates values('0', '42.347836','14.163939');
+insert into Coordinates values('0', '42.349747','13.399756');
+insert into Coordinates values('0', '42.461716','14.215972');
+insert into Coordinates values('0', '42.661040','13.698653');
+insert into Coordinates values('0', '40.666363','16.604420');
+insert into Coordinates values('0', '40.640380','15.805482');
+insert into Coordinates values('0', '38.910031','16.588031');
+insert into Coordinates values('0', '39.298290','16.253768');
+insert into Coordinates values('0', '39.080708','17.127074');
+insert into Coordinates values('0', '38.111380','15.647049');
+insert into Coordinates values('0', '38.675763','16.098365');
+insert into Coordinates values('0', '40.914381','14.790852');
+insert into Coordinates values('0', '41.129683','14.782388');
+insert into Coordinates values('0', '41.072239','14.331648');
+insert into Coordinates values('0', '40.851627','14.268573');
+insert into Coordinates values('0', '40.682289','14.768280');
+insert into Coordinates values('0', '44.494934','11.342327');
+insert into Coordinates values('0', '44.838060','11.619835');
+insert into Coordinates values('0', '44.180267','12.158574');
+insert into Coordinates values('0', '44.646997','10.925680');
+insert into Coordinates values('0', '44.801468','10.327685');
+insert into Coordinates values('0', '45.052574','9.692655');
+insert into Coordinates values('0', '44.418345','12.203427');
+insert into Coordinates values('0', '44.699062','10.630371');
+insert into Coordinates values('0', '44.067891','12.569880');
+insert into Coordinates values('0', '45.940213','13.620601');
+insert into Coordinates values('0', '45.962751','12.654886');
+insert into Coordinates values('0', '45.649435','13.776623');
+insert into Coordinates values('0', '46.071184','13.234721');
+insert into Coordinates values('0', '41.639551','13.342870');
+insert into Coordinates values('0', '41.467373','12.903704');
+insert into Coordinates values('0', '42.404395','12.856878');
+insert into Coordinates values('0', '41.902483','12.496165');
+insert into Coordinates values('0', '42.420729','12.107472');
+insert into Coordinates values('0', '44.405298','8.947135');
+insert into Coordinates values('0', '43.889611','8.039257');
+insert into Coordinates values('0', '44.102535','9.823964');
+insert into Coordinates values('0', '44.297268','8.464687');
+insert into Coordinates values('0', '45.698333','9.677045');
+insert into Coordinates values('0', '45.541438','10.211662');
+insert into Coordinates values('0', '45.807830','9.085084');
+insert into Coordinates values('0', '45.133203','10.022771');
+insert into Coordinates values('0', '45.856444','9.397978');
+insert into Coordinates values('0', '45.309674','9.503855');
+insert into Coordinates values('0', '45.156344','10.791532');
+insert into Coordinates values('0', '45.465361','9.184940');
+insert into Coordinates values('0', '45.584022','9.274905');
+insert into Coordinates values('0', '45.184678','9.158384');
+insert into Coordinates values('0', '46.169762','9.879028');
+insert into Coordinates values('0', '45.820838','8.825201');
+insert into Coordinates values('0', '43.615710','13.518842');
+insert into Coordinates values('0', '42.853637','13.574598');
+insert into Coordinates values('0', '43.158857','13.720062');
+insert into Coordinates values('0', '43.298452','13.453593');
+insert into Coordinates values('0', '43.813747','12.767284');
+insert into Coordinates values('0', '41.560125','14.663046');
+insert into Coordinates values('0', '41.596035','14.233015');
+insert into Coordinates values('0', '44.907068','8.612020');
+insert into Coordinates values('0', '44.900761','8.206792');
+insert into Coordinates values('0', '45.562738','8.058273');
+insert into Coordinates values('0', '44.384472','7.542627');
+insert into Coordinates values('0', '45.446959','8.622475');
+insert into Coordinates values('0', '45.069875','7.686910');
+insert into Coordinates values('0', '45.929359','8.464301');
+insert into Coordinates values('0', '45.320188','8.418575');
+insert into Coordinates values('0', '41.117233','16.8725256');
+insert into Coordinates values('0', '41.265916','16.343803');
+insert into Coordinates values('0', '40.632455','17.941962');
+insert into Coordinates values('0', '41.462104','15.544771');
+insert into Coordinates values('0', '40.351513','18.175153');
+insert into Coordinates values('0', '40.463949','17.246978');
+insert into Coordinates values('0', '39.223803','9.122026');
+insert into Coordinates values('0', '40.320164','9.326768');
+insert into Coordinates values('0', '39.906094','8.588279');
+insert into Coordinates values('0', '40.725871','8.556018');
+insert into Coordinates values('0', '39.158255','8.526302');
+insert into Coordinates values('0', '37.309335','13.585746');
+insert into Coordinates values('0', '37.489989','14.062942');
+insert into Coordinates values('0', '37.508123','15.083009');
+insert into Coordinates values('0', '37.565559','14.275131');
+insert into Coordinates values('0', '38.194162','15.553778');
+insert into Coordinates values('0', '38.115618','13.360720');
+insert into Coordinates values('0', '36.926916','14.725480');
+insert into Coordinates values('0', '37.075518','15.286257');
+insert into Coordinates values('0', '38.017590','12.537167');
+insert into Coordinates values('0', '43.463372','11.880236');
+insert into Coordinates values('0', '43.769293','11.254872');
+insert into Coordinates values('0', '42.763533','11.111864');
+insert into Coordinates values('0', '43.548255','10.310240');
+insert into Coordinates values('0', '43.837307','10.494997');
+insert into Coordinates values('0', '44.058150','10.124938');
+insert into Coordinates values('0', '43.722751','10.401558');
+insert into Coordinates values('0', '43.930429','10.907378');
+insert into Coordinates values('0', '43.877688','11.102243');
+insert into Coordinates values('0', '43.318626','11.330395');
+insert into Coordinates values('0', '46.498276','11.354711');
+insert into Coordinates values('0', '46.074740','11.122072');
+insert into Coordinates values('0', '43.110680','12.390967');
+insert into Coordinates values('0', '42.563798','12.643017');
+insert into Coordinates values('0', '45.734979','7.313017');
+insert into Coordinates values('0', '46.142033','12.216755');
+insert into Coordinates values('0', '45.406257','11.876825');
+insert into Coordinates values('0', '45.069667','11.790464');
+insert into Coordinates values('0', '45.666750','12.243149');
+insert into Coordinates values('0', '45.439795','12.316505');
+insert into Coordinates values('0', '45.438171','10.991844');
+insert into Coordinates values('0', '45.545528','11.535293');
+
+
+
+
+insert into Province values('0','Chieti','1','15','1');
+insert into Province values('0','L\'Aquila','2','15','1');
+insert into Province values('0','Pescara','3','14','1');
+insert into Province values('0','Teramo','4','15','1');
+insert into Province values('0','Matera','5','15','2');
+insert into Province values('0','Potenza','6','15','2');
+insert into Province values('0','Catanzaro','7','14','3');
+insert into Province values('0','Cosenza','8','14','3');
+insert into Province values('0','Crotone','9','15','3');
+insert into Province values('0','Reggio Calabria','10','14','3');
+insert into Province values('0','Vibo Valentia','11','15','3');
+insert into Province values('0','Avellino','12','14','4');
+insert into Province values('0','Benevento','13','15','4');
+insert into Province values('0','Caserta','14','14','4');
+insert into Province values('0','Napoli','15','14','4');
+insert into Province values('0','Salerno','16','14','4');
+insert into Province values('0','Bologna','17','14','5');
+insert into Province values('0','Ferrara','18','14','5');
+insert into Province values('0','Forlì-Cesena','19','12','5');
+insert into Province values('0','Modena','20','15','5');
+insert into Province values('0','Parma','21','15','5');
+insert into Province values('0','Piacenza','22','15','5');
+insert into Province values('0','Ravenna','23','14','5');
+insert into Province values('0','Reggio Emilia','24','15','5');
+insert into Province values('0','Rimini','25','14','5');
+insert into Province values('0','Gorizia','26','14','6');
+insert into Province values('0','Pordenone','27','14','6');
+insert into Province values('0','Trieste','28','14','6');
+insert into Province values('0','Udine','29','14','6');
+insert into Province values('0','Frosinone','30','15','7');
+insert into Province values('0','Latina','31','14','7');
+insert into Province values('0','Rieti','32','15','7');
+insert into Province values('0','Roma','33','11','7');
+insert into Province values('0','Viterbo','34','15','7');
+insert into Province values('0','Genova','35','14','8');
+insert into Province values('0','Imperia','36','15','8');
+insert into Province values('0','La Spezia','37','14','8');
+insert into Province values('0','Savona','38','14','8');
+insert into Province values('0','Bergamo','39','14','9');
+insert into Province values('0','Brescia','40','14','9');
+insert into Province values('0','Como','41','14','9');
+insert into Province values('0','Cremona','42','15','9');
+insert into Province values('0','Lecco','43','14','9');
+insert into Province values('0','Lodi','44','14','9');
+insert into Province values('0','Mantova','45','14','9');
+insert into Province values('0','Milano','46','13','9');
+insert into Province values('0','Monza e della Brianza','47','11','9');
+insert into Province values('0','Pavia','48','15','9');
+insert into Province values('0','Sondrio','49','15','9');
+insert into Province values('0','Varese','50','15','9');
+insert into Province values('0','Ancona','51','15','10');
+insert into Province values('0','Ascoli Piceno','52','15','10');
+insert into Province values('0','Fermo','53','15','10');
+insert into Province values('0','Macerata','54','15','10');
+insert into Province values('0','Pesaro e Urbino','55','11','10');
+insert into Province values('0','Campobasso','56','15','11');
+insert into Province values('0','Isernia','57','15','11');
+insert into Province values('0','Alessandria','58','14','12');
+insert into Province values('0','Asti','59','15','12');
+insert into Province values('0','Biella','60','14','12');
+insert into Province values('0','Cuneo','61','14','12');
+insert into Province values('0','Novara','62','15','12');
+insert into Province values('0','Torino','63','13','12');
+insert into Province values('0','Verbano-Cusio-Ossola','64','12','12');
+insert into Province values('0','Vercelli','65','14','12');
+insert into Province values('0','Bari','66','14','13');
+insert into Province values('0','Barletta-Andria-Trani','67','12','13');
+insert into Province values('0','Brindisi','68','14','13');
+insert into Province values('0','Foggia','69','15','13');
+insert into Province values('0','Lecce','70','14','13');
+insert into Province values('0','Taranto','71','14','13');
+insert into Province values('0','Cagliari','72','15','14');
+insert into Province values('0','Nuoro','73','15','14');
+insert into Province values('0','Oristano','74','15','14');
+insert into Province values('0','Sassari','75','15','14');
+insert into Province values('0','Sud Sardegna','76','12','14');
+insert into Province values('0','Agrigento','77','15','15');
+insert into Province values('0','Caltanissetta','78','15','15');
+insert into Province values('0','Catania','79','14','15');
+insert into Province values('0','Enna','80','15','15');
+insert into Province values('0','Messina','81','15','15');
+insert into Province values('0','Palermo','82','15','15');
+insert into Province values('0','Ragusa','83','15','15');
+insert into Province values('0','Siracusa','84','15','15');
+insert into Province values('0','Trapani','85','15','15');
+insert into Province values('0','Arezzo','86','15','16');
+insert into Province values('0','Firenze','87','15','16');
+insert into Province values('0','Grosseto','88','15','16');
+insert into Province values('0','Livorno','89','15','16');
+insert into Province values('0','Lucca','90','14','16');
+insert into Province values('0','Massa-Carrara','91','13','16');
+insert into Province values('0','Pisa','92','15','16');
+insert into Province values('0','Pistoia','93','15','16');
+insert into Province values('0','Prato','94','14','16');
+insert into Province values('0','Siena','95','15','16');
+insert into Province values('0','Bolzano','96','15','17');
+insert into Province values('0','Trento','97','15','17');
+insert into Province values('0','Perugia','98','15','18');
+insert into Province values('0','Terni','99','15','18');
+insert into Province values('0','Aosta','100','15','19');
+insert into Province values('0','Belluno','101','15','20');
+insert into Province values('0','Padova','102','15','20');
+insert into Province values('0','Rovigo','103','15','20');
+insert into Province values('0','Treviso','104','15','20');
+insert into Province values('0','Venezia','105','13','20');
+insert into Province values('0','Verona','106','15','20');
+insert into Province values('0','Vicenza','107','15','20');
+
+
+insert into Missiontype values('0','Open Treasure Chest');
+insert into Missiontype values('0','Collect Card');
+insert into Missiontype values('0','Visit Cultural Heritage');
+insert into Missiontype values('0','Collect Medal');
+insert into Missiontype values('0','Complete Path');
+insert into Missiontype values('0','Write Review');
+
+insert into Granularitylevel values('0','All');
+insert into Granularitylevel values('0','Regional');
+insert into Granularitylevel values('0','Provincial');
+insert into Granularitylevel values('0','Heritage');
+insert into Granularitylevel values('0','Rarity');
+insert into Granularitylevel values('0','Category');
+insert into Granularitylevel values('0','RegionalCategory');
+insert into Granularitylevel values('0','HPCategory');
+insert into Granularitylevel values('0','ToSCategory');
+
+
+insert into Medal values('0', 'Medaglia Abruzzo', '1', '100', '27');
+insert into Medal values('0', 'Medaglia Basilicata', '1', '100', '28');
+insert into Medal values('0', 'Medaglia Calabria', '1', '100', '29');
+insert into Medal values('0', 'Medaglia Campania', '1', '100', '30');
+insert into Medal values('0', 'Medaglia Emilia-Romagna', '1', '100', '31');
+insert into Medal values('0', 'Medaglia Friuli-Venezia Giulia', '1', '100', '32');
+insert into Medal values('0', 'Medaglia Lazio', '1', '3', '33');
+insert into Medal values('0', 'Medaglia Liguria', '1', '100', '34');
+insert into Medal values('0', 'Medaglia Lombardia', '1', '100', '35');
+insert into Medal values('0', 'Medaglia Marche', '1', '100', '36');
+insert into Medal values('0', 'Medaglia Molise', '1', '100', '37');
+insert into Medal values('0', 'Medaglia Piemonte', '1', '100', '38');
+insert into Medal values('0', 'Medaglia Puglia', '1', '100', '39');
+insert into Medal values('0', 'Medaglia Sardegna', '1', '100', '40');
+insert into Medal values('0', 'Medaglia Sicilia', '1', '100', '41');
+insert into Medal values('0', 'Medaglia Toscana', '1', '100', '42');
+insert into Medal values('0', 'Medaglia Trentino-Alto Adige', '1', '100', '43');
+insert into Medal values('0', 'Medaglia Umbria', '1', '100', '44');
+insert into Medal values('0', 'Medaglia Valle d\'Aosta', '1', '100', '45');
+insert into Medal values('0', 'Medaglia Veneto', '1', '100', '46');
+insert into Medal values('0', 'Medaglia Museo', '3', '100', '47');
+insert into Medal values('0', 'Medaglia Castello', '3', '100', '48');
+insert into Medal values('0', 'Medaglia Chiesa', '3', '100', '49');
+insert into Medal values('0', 'Medaglia Rinascimento', '2', '100', '50');
+insert into Medal values('0', 'Medaglia Impero Romano', '2', '100', '51');
+insert into Medal values('0', 'Medaglia Antica Roma', '2', '100', '52');
+
+insert into RegionMedal values('1', '1');
+insert into RegionMedal values('2', '2');
+insert into RegionMedal values('3', '3');
+insert into RegionMedal values('4', '4');
+insert into RegionMedal values('5', '5');
+insert into RegionMedal values('6', '6');
+insert into RegionMedal values('7', '7');
+insert into RegionMedal values('8', '8');
+insert into RegionMedal values('9', '9');
+insert into RegionMedal values('10', '10');
+insert into RegionMedal values('11', '11');
+insert into RegionMedal values('12', '12');
+insert into RegionMedal values('13', '13');
+insert into RegionMedal values('14', '14');
+insert into RegionMedal values('15', '15');
+insert into RegionMedal values('16', '16');
+insert into RegionMedal values('17', '17');
+insert into RegionMedal values('18', '18');
+insert into RegionMedal values('19', '19');
+insert into RegionMedal values('20', '20');
+
+
+
+
+
+insert into Card values('0','Il Colosseo','1','L \' edificio poggia su una piattaforma in travertino sopraelevata rispetto all \' area circostante. Le fondazioni sono costituite da una grande platea in tufo di circa 13 m di spessore, foderata all \' esterno da un muro in laterizio','50','5','300','3');
+insert into Card values('0','Il faro di Alessandria','2','Fu fatto costruire da Sostrato di Cnido,un mercante greco; il progetto fu iniziato da Tolomeo I Sotere, all\'inizio del proprio regno, e venne completato dal figlio Tolomeo II Filadelfo. Lo scopo dell\'imponente opera era aumentare la sicurezza del traffico marittimo in entrata e in uscita, reso pericoloso dai numerosi banchi di sabbia nel tratto di mare prospiciente il porto di Alessandria e dall\'assenza di rilievi orografici. Esso consentiva di segnalare la posizione del porto alle navi, di giorno mediante degli speciali specchi di bronzo lucidato che riflettevano la luce del sole fino al largo, mentre di notte venivano accesi dei fuochi','30','3','210','2');
+insert into Card values('0','Machu Picchu','3','L\'area edificata di Machu Picchu è di 530 metri di lunghezza per 200 di larghezza ed include almeno 172 livelli: Il complesso è chiaramente diviso in due grandi zone, la zona agricola, formata dall\'insieme delle terrazze per la coltivazione, ubicata a sud, e la zona urbana, che è quella dove vivevano gli occupanti e dove si svilupparono le principali attività civili e religiose. Entrambe le parti son separate da un muro, un fosso e una scalinata, elementi che corrono paralleli alla costa est della montagna','20','1','130','1');
+insert into Card values('0','Il London Bridge','4','London Bridge è un ponte sul Tamigi a Londra, che collega la City of London al borgo londinese di Southwark. Si trova tra il Cannon Street Railway Bridge e il Tower Bridge; forma anche il limite occidentale del Pool of London (bacino di Londra)','20','1','120','1');
+insert into Card values('0','La via Appia','5','La via Appia è una strada romana che collegava Roma a Brundisium (Brindisi), uno tra i più importanti porti dell\'Italia antica, da cui partivano le rotte commerciali per la Grecia e l\'Oriente. L\'Appia, considerata dai Romani la regina viarum (regina delle strade), è universalmente ritenuta una delle più grandi opere di ingegneria del mondo antico, sia in considerazione dell\'epoca precoce in cui fu realizzata (fine IV - III sec. a.C.), sia per l\'enorme impatto economico, militare e culturale che essa ha avuto sulla società romana','10','1','110','1');
+insert into Card values('0','Isola Tiberina','6','L\'Isola Tiberina (nota anche come Insula Tiberina, Insula Tiberis, Insula Aesculapi, Isola dei Due Ponti, Licaonia, Isola di San Bartolomeo, o semplicemente Insula), nata in modo alluvionale, è l\'unica isola urbana del Tevere, nel centro di Roma','15','2','100','1');
+insert into Card values('0','Il Partenone','7','Questo tempio è il più famoso reperto dell\'antica Grecia; è stato lodato come la migliore realizzazione dell\'architettura greca classica e le sue decorazioni sono considerate alcuni dei più grandi elementi dell\'arte greca. Il Partenone è un simbolo duraturo dell\'antica Grecia e della democrazia ateniese e rappresenta senz\'altro uno dei più grandi monumenti culturali del mondo','30','3','200','2');
+insert into Card values('0','Lo stile dorico','8','L\'ordine dorico è il primo e il più antico degli ordini architettonici greci. Il suo nome è dovuto all\'origine peloponnesiaca, anche se si diffuse a partire dal VI secolo a.C., al resto del territorio greco e alle colonie greche in Italia. In questo ordine sono costruiti tutti i templi superstiti della Magna Grecia e alcuni degli edifici più importanti della Grecia stessa, tra i quali il Partenone nell\'Acropoli di Atene e il Tempio di Zeus ad Olimpia','10','1','120','1');
+insert into Card values('0','Lo stile ionico','9','L\'ordine ionico è il secondo dei tre ordini architettonici classici. Esso assorbe e rielabora motivi orientali; la ricca decorazione orna la struttura architettonica senza appesantirla. Tradizionalmente è riferito al complesso delle tradizioni artistico-culturali riferibili al gruppo etnico degli Ioni, insediati sulle coste dell\'Asia Minore (Iònia), a stretto contatto con le culture dell\'Oriente','10','1','100','1');
+insert into Card values('0','Lo stile corinzio','10','L\'ordine corinzio è uno degli ordini architettonici dell\'architettura greca e in seguito romana, caratterizzato dagli stessi elementi dell\'ordine ionico, con un capitello decorato con foglie d\'acanto. Anche se di origine greca, l\'ordine corinzio non fu utilizzato spesso nell\'architettura greca, rispetto all\'ordine dorico ed a quello ionico','10','1','104','1');
+insert into Card values('0','Arco a tutto sesto','11','L\'arco a tutto sesto (sesto è l\'antico nome del compasso) o semicircolare è un tipo di arco contraddistinto da una volta a semicerchio. È detto anche arco a pieno centro. È la tipologia più semplice di arco e prevede che il centro verso il quale convergono i giunti si trovi sulla linea d\'imposta, cioè su quella linea che unisce i punti dove finiscono i sostegni e inizia l\'arco','10','1','102','1');
+insert into Card values('0','Arco a sesto acuto','12','L\'arco a sesto acuto, detto anche ogivale, è un arco bicentrico che contempla arcate appartenenti a circonferenze con raggio maggiore o uguale alla base dell\'arco stesso','10','1','120','1');
+insert into Card values('0','Lo stile gotico','13','La novità più originale dell\'architettura gotica è la scomparsa delle spesse masse murarie tipiche del romanico: il peso della struttura non veniva più assorbito dalle pareti, ma veniva distribuito su pilastri all\'interno e nel perimetro, coadiuvati da strutture secondarie come archi rampanti e contrafforti. Lo svuotamento della parete dai carichi permise la realizzazione di pareti di luce, coperte da magnifiche vetrate, alle quali corrispondeva fuori un complesso reticolo di elementi portanti','10','1','106','1');
+insert into Card values('0','Basilica di San Pietro','14','È la più grande delle quattro basiliche papali di Roma, spesso descritta come la più grande chiesa del mondo e centro del cattolicesimo. Non è tuttavia la chiesa cattedrale della diocesi romana poiché tale titolo spetta alla basilica di San Giovanni in Laterano, che è anche la prima per dignità essendo Madre e Capo di tutte le Chiese dell\'Urbe e del Mondo','40','4','220','2');
+insert into Card values('0','Basilica di San Giovanni','15','È la prima delle quattro basiliche papali maggiori e la più antica e importante basilica d\'Occidente. Sita sul colle del Celio, la basilica e il vasto complesso circostante (comprendente il Palazzo Pontificio del Laterano, il Palazzo dei Canonici, il Pontificio Seminario Romano Maggiore e la Pontificia Università Lateranense) godono dei privilegi di extraterritorialità riconosciuti dallo Stato italiano alla Santa Sede che pertanto ne ha la piena ed esclusiva giurisdizione','20','1','105','1');
+insert into Card values('0','Piazza del Popolo','16','L\'origine del nome della piazza è incerta: c\'è un\'etimologia che deriva "popolo" dal latino populus (pioppo), sulla base della tradizione che vuole ci fosse, nella zona, un boschetto di pioppi pertinente alla tomba di Nerone, che era lì presso. È notizia storica, comunque, che (Papa Pasquale II) fece costruire a ridosso delle mura una cappella, a spese del popolo romano (quella su cui poi sarebbe sorta la chiesa attuale di Santa Maria del Popolo): del popolo era la Madonna, del Popolo diventò la piazza','35','4','200','2');
+insert into Card values('0','Altare della patria','17','Il Monumento nazionale a Vittorio Emanuele II, meglio conosciuto con il nome di Vittoriano o Altare della Patria, è un monumento nazionale situato a Roma, sul Campidoglio, opera dell\'architetto Giuseppe Sacconi. È uno dei simboli patri italiani.Il nome Vittoriano deriva da Vittorio Emanuele II di Savoia, primo Re d\'Italia. Da quando, nel 1921, accolse le spoglie del Milite Ignoto, il monumento assunse una nuova valenza simbolica, e quello che era stato pensato inizialmente come monumento dinastico, divenne definitivamente una celebrazione dell\'Italia unita e della sua libertà','35','4','200','2');
+insert into Card values('0','Balcone di Piazza Venezia','18','Piazza Venezia è una celebre piazza di Roma. È situata ai piedi del Campidoglio, dove si incrociano cinque fra le più importanti strade della capitale: via dei Fori Imperiali, l\'asse via C. Battisti-via Nazionale, via del Corso, l\'asse via del Plebiscito-corso Vittorio e via del Teatro di Marcello','20','1','100','1');
+insert into Card values('0','Museo Maxxi','19','Il MAXXI - Museo nazionale delle arti del XXI secolo è un museo con sede a Roma. Progettato dall\'architetto Zaha Hadid e gestito dall\'omonima fondazione del Ministero per i Beni e le Attività Culturali, è diviso in due sezioni: MAXXI arte e MAXXI architettura','15','1','100','1');
+insert into Card values('0','Stadio Olimpico','20','Lo Stadio Olimpico è un impianto sportivo polifunzionale italiano di Roma. Sorge presso il Foro Italico, alle pendici di Monte Mario, nel settore nordoccidentale della Capitale','15','1','110','1');
+
+
+insert into User values('0', 'user1', 'user1', null, '1');
+insert into User values('0', 'user2', 'user2', null, '2');
+insert into User values('0', 'user3', 'user3', null, '3');
+insert into User values('0', 'user4', 'user4', null, '3');
+insert into User values('0', 'user5', 'user5', null, '2');
+insert into User values('0', 'user6', 'user6', null, '3');
+
+
+insert into Admin values('0', '1');
+
+
+insert into Organization values('0', '2', null, 'Ministero dei Beni Culturali');
+insert into Organization values('0', '5', null, 'Comune di Roma');
+
+
+insert into Operator values('0', '3', '1');
+insert into Operator values('0', '4', '1');
+insert into Operator values('0', '6', '2');
+
+
+insert into Coordinates values('0', '41.890155643','12.492445632');
+insert into Coordinates values('0', '41.894599667','12.483092456');
+insert into Coordinates values('0', '41.934662928','12.466831466');
+insert into Coordinates values('0', '41.902266584','12.455093636');
+insert into Coordinates values('0', '41.889722574','12.490833757');
+insert into Coordinates values('0', '41.834442826','12.469654586');
+
+insert into Historicalperiod values('0', 'Impero Romano');
+insert into Historicalperiod values('0', 'Rinascimento');
+insert into Historicalperiod values('0', 'Antica Roma');
+insert into Historicalperiod values('0', 'Arte contemporanea');
+
+insert into HistoricalperiodMedal values('24', '2');
+insert into HistoricalperiodMedal values('25', '1');
+insert into HistoricalperiodMedal values('26', '3');
+
+insert into Structuretype values('0', 'Anfiteatro');
+insert into Structuretype values('0', 'Monumento');
+insert into Structuretype values('0', 'Ponte');
+insert into Structuretype values('0', 'Chiesa');
+insert into Structuretype values('0', 'Museo');
+insert into Structuretype values('0', 'Castello');
+
+insert into StructuretypeMedal values('21', '5');
+insert into StructuretypeMedal values('22', '6');
+insert into StructuretypeMedal values('23', '4');
+
+insert into Heritage values('0', 'Colosseo','Il colosseo è chiamato Anfiteatro Flavio','21','true','true','true','true','108','33','1','1','1');
+insert into Heritage values('0', 'Altare della Patria','Si trova vicino Piazza Venezia','22','true','true','false','true','109','33','2','2','1');
+insert into Heritage values('0', 'Ponte Milvio','Costruito dai Romani','23','true','true','true','false','110','33','3','3','2');
+insert into Heritage values('0', 'Basilica di San Pietro','Costruita in epoche diverse','24','true','true','true','true','111','33','2','4','3');
+insert into Heritage values('0', 'Arco di Trionfo','Costruito da Costantino','25','true','true','true','false','112','33','1','2','1');
+insert into Heritage values('0', 'Nuvola di Fuksas','Usata come centro congressi','26','true','true','false','true','113','33','4','5','3');
+
+insert into Coordinates values('0', '41.90246','12.45529');
+insert into Coordinates values('0', '41.90200','12.45459');
+insert into Coordinates values('0', '41.89035','12.49264');
+insert into Coordinates values('0', '41.89000','12.49204');
+insert into Coordinates values('0', '41.83344','12.46865');
+insert into Coordinates values('0', '41.894499','12.482992');
+insert into Coordinates values('0', '41.889622','12.490733');
+insert into Coordinates values('0', '41.889822','12.490933');
+insert into Coordinates values('0', '41.934500928','12.466220066');
+insert into Coordinates values('0', '41.934862998','12.467031536');
+
+insert into Treasure values('0','Basilica di San Pietro 1','Pietro fu il primo Santo','114','4');
+insert into Treasure values('0','Basilica di San Pietro 2','La cappella sistina di Michelangelo','115','4');
+insert into Treasure values('0','Colosseo 1','Completato dai Flavi','116','1');
+insert into Treasure values('0','Colosseo 2','Piu di 500 spettacoli annuali','117','1');
+insert into Treasure values('0','Nuvola di Fuksas 1','Fuksas è un architetto','118','6');
+insert into Treasure values('0','Altare della Patria 1','InfoTesoroAltare1','119','2');
+insert into Treasure values('0','Arco di trionfo 1','InfoTesoroArco1','120','5');
+insert into Treasure values('0','Arco di trionfo 2','InfoTesoroArco2','121','5');
+insert into Treasure values('0','Ponte Milvio 1','InfoTesoroPonteMilvio1','122','3');
+insert into Treasure values('0','Ponte Milvio 2','InfoTesoroPonteMilvio2','123','3');
+
+
+insert into Question values('0','Domanda tappa x','Suggerimento sul posto tappa x','Suggerimento a pagamento tappa x','RISPOSTA X');
+insert into Question values('0','Domanda tappa y','Suggerimento sul posto tappa y','Suggerimento a pagamento tappa y','RISPOSTA Y');
+insert into Question values('0','Domanda tappa z','Suggerimento sul posto tappa z','Suggerimento a pagamento tappa z','RISPOSTA Z');
+insert into Question values('0','Domanda tappa w','Suggerimento sul posto tappa w','Suggerimento a pagamento tappa w','RISPOSTA W');
+insert into Question values('0','Domanda tappa a','Suggerimento sul posto tappa a','Suggerimento a pagamento tappa a','RISPOSTA A');
+insert into Question values('0','Domanda tappa b','Suggerimento sul posto tappa b','Suggerimento a pagamento tappa b','RISPOSTA B');
+insert into Question values('0','Domanda tappa c','Suggerimento sul posto tappa c','Suggerimento a pagamento tappa c','RISPOSTA C');
+insert into Question values('0','Domanda tappa d','Suggerimento sul posto tappa d','Suggerimento a pagamento tappa d','RISPOSTA D');
+insert into Question values('0','Domanda tappa e','Suggerimento sul posto tappa e','Suggerimento a pagamento tappa e','RISPOSTA E');
+insert into Question values('0','Domanda tappa f','Suggerimento sul posto tappa f','Suggerimento a pagamento tappa f','RISPOSTA F');
+insert into Question values('0','Domanda tappa g','Suggerimento sul posto tappa g','Suggerimento a pagamento tappa g','RISPOSTA G');
+insert into Question values('0','Domanda tappa h','Suggerimento sul posto tappa h','Suggerimento a pagamento tappa h','RISPOSTA H');
+insert into Question values('0','Domanda tappa i','Suggerimento sul posto tappa i','Suggerimento a pagamento tappa i','RISPOSTA I');
+
+insert into Path values('0','Percorso dei Gladiatori','true','1');
+insert into Path values('0','Percorso degli Imperatori','false','1');
+insert into Path values('0','Percorso Struttura','false','1');
+
+
+insert into Coordinates values('0', '41.890314', '12.493221');
+insert into Coordinates values('0', '41.890653', '12.492722');
+insert into Coordinates values('0', '41.890747', '12.491971');
+insert into Coordinates values('0', '41.890424', '12.491327');
+insert into Coordinates values('0', '41.890418', '12.491772');
+insert into Coordinates values('0', '41.890334', '12.491737');
+insert into Coordinates values('0', '41.890106', '12.491839');
+insert into Coordinates values('0', '41.890240', '12.492091');
+insert into Coordinates values('0', '41.890266', '12.492402');
+
+insert into Coordinates values('0', '41.889639', '12.492630');
+insert into Coordinates values('0', '41.890314', '12.493268');
+insert into Coordinates values('0', '41.890761', '12.492898');
+insert into Coordinates values('0', '41.890208', '12.492946');
+
+
+insert into Stage values('0','tappa x','Curiosità sulla tappa x','1','124','1','false');
+insert into Stage values('0','tappa y','Curiosità sulla tappa y','2','125','1','false');
+insert into Stage values('0','tappa z','Curiosità sulla tappa z','3','126','1','false');
+insert into Stage values('0','tappa w - finale','Curiosità sulla tappa w','4','127','1','true');
+insert into Stage values('0','tappa a','Curiosità sulla tappa a','5','128','2','false');
+insert into Stage values('0','tappa b','Curiosità sulla tappa b','6','129','2','false');
+insert into Stage values('0','tappa c','Curiosità sulla tappa c','7','130','2','false');
+insert into Stage values('0','tappa d','Curiosità sulla tappa d','8','131','2','false');
+insert into Stage values('0','tappa e - finale','Curiosità sulla tappa e','9','132','2','true');
+insert into Stage values('0','tappa f','Curiosità sulla tappa f','10','133','3','false');
+insert into Stage values('0','tappa g','Curiosità sulla tappa g','11','134','3','false');
+insert into Stage values('0','tappa h','Curiosità sulla tappa h','12','135','3','false');
+insert into Stage values('0','tappa i - finale','Curiosità sulla tappa i','13','136','3','true');
+
+insert into Player values('player1','player1','0');
+insert into Player values('player2','player2','0');
+insert into Player values('player3','player3','0');
+insert into Player values('player4','player4','0');
+insert into Player values('neptis.gopoleis@gmail.com',null,0);
+
+insert into Review values('player1','1','0','0','Molto bello');
+insert into Review values('player3','2','0','0','Quanto è grande!');
+insert into Review values('player3','1','0','0','Ci ritornerò sicuramente');
+insert into Review values('player4','1','0','0','Costa troppo');
+insert into Review values('player2','1','0','0','Mi piacciono i romani');
+
+
+
+
+
+
+insert into Mission values('0', 'Aprire 100 Scrigni nella provincia di Roma', '100', '1', '3');
+insert into Mission values('0', 'Aprire 300 scrigni nella regione Lazio', '300', '1', '2');
+insert into Mission values('0', 'Aprire 3 Scrigni al Colosseo', '3', '1', '4');
+insert into Mission values('0', 'Collezionare 1000 Carte', '1000', '2', '1');
+insert into Mission values('0', 'Collezionare 50 Carte di tipo Epic', '50', '2', '5');
+insert into Mission values('0', 'Visitare 500 Cultural Heritage', '500', '3', '1');
+insert into Mission values('0', 'Visitare 50 Cultural Heritage nella regione Lazio', '50', '3', '2');
+insert into Mission values('0', 'Visitare 50 Cultural Heritage nella provincia di Roma', '50', '3', '3');
+insert into Mission values('0', 'Visitare il Colosseo', '1', '3', '4');
+insert into Mission values('0', 'Visitare l\'Altare della Patria', '1', '3', '4');
+insert into Mission values('0', 'Collezionare 5 medaglie di tipo Regione', '5', '4', '6');
+insert into Mission values('0', 'Collezionare 2 medaglie di tipo Tipo di Struttura', '2', '4', '6');
+insert into Mission values('0', 'Collezionare Medaglia Lazio', '1', '4', '7');
+insert into Mission values('0', 'Collezionare Medaglia Rinascimento', '1', '4', '8');
+insert into Mission values('0', 'Collezionare Medaglia Museo', '1', '4', '9');
+insert into Mission values('0', 'Completare 400 percorsi', '400', '5', '1');
+insert into Mission values('0', 'Completare 70 percorsi nella regione Lazio', '70', '5', '2');
+insert into Mission values('0', 'Completare 30 percorsi nella provincia di Roma', '30', '5', '3');
+insert into Mission values('0', 'Completare 2 percorsi al Colosseo', '2', '5', '4');
+insert into Mission values('0', 'Completare 1 percorso all\'Altare della Patria', '1', '5', '4');
+insert into Mission values('0', 'Scrivere 100 recensioni', '100', '6', '1');
+insert into Mission values('0', 'Scrivere 20 recensioni nella regione Lazio', '20', '6', '2');
+insert into Mission values('0', 'Scrivere 10 recensioni nella provincia di Roma', '10', '6', '3');
+insert into Mission values('0', 'Scrivere una recensione per Ponte Milvio', '1', '6', '4');
+insert into Mission values('0', 'Scrivere una recensione per il Colosseo', '1', '6', '4');
+insert into Mission values('0', 'Scrivere una recensione per l\'Altare della Patria', '1', '6', '4');
+
+insert into RegionalMission values('2', '7');
+insert into RegionalMission values('7', '7');
+insert into RegionalMission values('17', '7');
+insert into RegionalMission values('22', '7');
+
+insert into ProvincialMission values('1', '33');
+insert into ProvincialMission values('8', '33');
+insert into ProvincialMission values('18', '33');
+insert into ProvincialMission values('23', '33');
+
+insert into HeritageMission values('3', '1');
+insert into HeritageMission values('9', '1');
+insert into HeritageMission values('10', '2');
+insert into HeritageMission values('19', '1');
+insert into HeritageMission values('20', '2');
+insert into HeritageMission values('24', '3');
+insert into HeritageMission values('25', '1');
+insert into HeritageMission values('26', '2');
+
+insert into RarityMission values('5', '3');
+
+insert into CategoryMission values('11', '1');
+insert into CategoryMission values('12', '3');
+
+insert into RegionMedalMission values('13', '7');
+
+insert into HPMedalMission values('14', '25');
+
+insert into ToSMedalMission values('15', '23');
+
+
+insert into PlayerHeritage values('player1', '1');
+insert into PlayerHeritage values('player2', '1');
+insert into PlayerHeritage values('player3', '1');
+insert into PlayerHeritage values('player4', '1');
+insert into PlayerHeritage values('player1', '2');
+insert into PlayerHeritage values('player2', '2');
+insert into PlayerHeritage values('player3', '2');
+insert into PlayerHeritage values('player1', '3');
+insert into PlayerHeritage values('player1', '4');
+insert into PlayerHeritage values('player1', '5');
+
+
+insert into HeritageMedal values(1, 7);
+insert into HeritageMedal values(2, 7);
+insert into HeritageMedal values(3, 7);
+insert into HeritageMedal values(4, 7);
+insert into HeritageMedal values(5, 7);
+insert into HeritageMedal values(6, 7);
+insert into HeritageMedal values(4, 23);
+
+
+
+
+
+

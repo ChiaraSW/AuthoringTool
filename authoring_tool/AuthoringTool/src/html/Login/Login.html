@@ -1,9 +1,17 @@
+<!-- 
+            <span ng-show="form.username.$dirty && form.username.$error.required" class="help-block">Username is required</span>
+
+            <span ng-show="form.password.$dirty && form.password.$error.required" class="help-block">Password is required</span>
+-->
+
+
+
 <div class="col-md-2 col-md-offset-5" align="center">
 
-	<div style="margin-top: 100px; margin-bottom: 80px;">
+	<div style="margin-bottom: 80px; margin-top:{{margintop}};">
 		<h1 style=""padding-rigth: 20px;">
 			<b>
-				<img src="src/images/icons/logo.png" style="width: 60px; height: 60px;">
+				<img src="../images/icons/logo.png" style="width: 60px; height: 60px;">
 				GoPoleis
 			</b>
 		</h1>
@@ -13,9 +21,9 @@
    		<h4><b>Please type your account information to log in.</b></h4>
    	</div>
 
-    <form name="form" role="form">
+    <form name="form" ng-submit="vm.login()" role="form">
     	
-    	<div class="form-group" ng-class="{ 'has-error': form.role.$dirty && form.role.$error.required }" >
+     	<div class="form-group" ng-class="{ 'has-error': form.role.$dirty && form.role.$error.required }" >
 	    	<label for="role" style="float:left">Role</label>	
 			<select class="form-control" id="role" ng-model="vm.role" name="role" ng-options="option as option.name for option in roles" required></select>			
     	</div>
@@ -31,8 +39,8 @@
         </div>
     
 		<div class="form-actions" style="margin-top: 50px;">
-            <button type="submit" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary" ng-click="login()">Login</button>
-            <img ng-if="vm.dataLoading"/>
+            <button type="submit" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-primary">Login</button>
+            <img ng-if="vm.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
         </div>
         
        	<div class="form-actions">
@@ -40,4 +48,5 @@
         </div>
         
     </form>
+    
 </div>    

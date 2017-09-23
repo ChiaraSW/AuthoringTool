@@ -22,6 +22,7 @@
     <script data-require="angular-resource@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-resource.js"></script>
     <script data-require="angular-bootstrap@0.11.0" data-semver="0.11.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
     <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
     
     <script type="text/javascript" src="ng-map/ng-map.min.js"></script>    
     
@@ -144,14 +145,14 @@
 					<label for="historicalPeriod" style="display: inline-block;">
 			     		Historical period:  
 					</label>
-					<select class="form-control" ng-model="addCH.historicalPeriod" name="historicalPeriod" ng-options="option as option.name for option in historicalPeriods" 
-							style="width:200px; display: inline-block;" required></select>	
-
-					<label for="typeOfStructure" style="display: inline-block; margin-left:20px;">
+						<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="addCH.historicalPeriod" style="width:300px; display: inline-block;"
+								typeahead="option as option.name for option in historicalPeriods | filter:$viewValue | limitTo:8" class="form-control" required>
+							
+					<label for="typeOfStructure" style="display: inline-block; margin-left:50px;">
 			     		Type of structure: 
 					</label>
-					<select class="form-control" ng-model="addCH.typeOfStructure" name="typeOfStructure" ng-options="option as option.name for option in typeOfStructures" 
-							style="width:200px; display: inline-block;" required></select>	
+						<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="addCH.typeOfStructure" style="width:300px; display: inline-block;"
+								typeahead="option as option.name for option in typeOfStructures | filter:$viewValue | limitTo:8" class="form-control" required>
 
 					<label for="region" style="display: inline-block;"></label>
 					<select ng-model="addCH.region" class="form-control" style="width:200px; display: inline-block;" required ng-show="false">

@@ -1,8 +1,46 @@
+//var todo = require('/root/todo_v2');
+
 //var todo = require('/root/todo');
 var todo = require('C:\\Users\\Chiara\\Documents\\WinSCP\\Server-AuthoringTool\\todo_v2');
 
 module.exports = {
 		configure: function(app){
+
+			app.get('/testFunction/',function(req,res){
+				todo.testFunction(res);
+			});
+
+			app.get('/search/:query',function(req,res){
+				todo.search(req.params.query, res);
+			});
+
+			app.get('/getRankingByCards/',function(req,res){
+				todo.getRankingByCards(res);
+			});
+
+			app.get('/getRankingByPaths/',function(req,res){
+				todo.getRankingByPaths(res);
+			});
+
+			app.get('/getRankingByMedals/',function(req,res){
+				todo.getRankingByMedals(res);
+			});
+
+			app.get('/canAdvanceInRankingWithNextTreasure/:email',function(req,res){
+				todo.canAdvanceInRankingWithNextTreasure(req.params.email,res);
+			});
+
+			app.get('/canAdvanceInRankingWithNextHeritage/:email',function(req,res){
+				todo.canAdvanceInRankingWithNextHeritage(req.params.email,res);
+			});
+
+			app.get('/getAllHeritages/:email',function(req,res){
+				todo.getAllHeritages(req.params.email, res);
+			});
+
+			app.get('/getAllTreasures/:email',function(req,res){
+				todo.getAllTreasures(req.params.email, res);
+			});
 			
 			app.get('/getHeritagesGame1/',function(req,res){
 				todo.getHeritagesGame1(res);
@@ -12,67 +50,48 @@ module.exports = {
 				todo.getCoordinatesHeritage(req.params.name,res);
 			});
 
-			app.get('/getVisitedHeritagesCount/:email',function(req,res){
-				todo.getVisitedHeritagesCount(req.params.email,res);
+			app.get('/getVisitedHeritagesCodes/:email',function(req,res){
+				todo.getVisitedHeritagesCodes(req.params.email,res);
 			});
 
 			app.get('/getHeritagesCount/',function(req,res){
 				todo.getHeritagesCount(res);
 			});
 
-			app.get('/getVisitedHeritagesGame2/:email',function(req,res){
-				todo.getVisitedHeritagesGame2(req.params.email,res);
+			app.get('/getInfoTreasure/:code/:email',function(req,res){
+				todo.getInfoTreasure(req.params.code, req.params.email, res);
 			});
 
-			app.get('/getInfoTreasure/:code',function(req,res){
-				todo.getInfoTreasure(req.params.code,res);
+			app.get('/getHeritagesGame2/:email',function(req,res){
+				todo.getHeritagesGame2(req.params.email,res);
 			});
+
+			app.get('/addVisitedHeritage/:email/:code/',function(req,res){
+				todo.addVisitedHeritage(req.params.email,req.params.code,res);
+			});
+
+			app.get('/getHeritageInfo/:code/:email', function(req, res){
+				todo.getHeritageInfo(req.params.code, req.params.email, res);
+			});
+
+			app.get('/getPlayerMedals/:email', function (req, res) {
+			    todo.getPlayerMedals(req.params.email, res);
+			});
+
+			app.get('/getTreasureElements/:name/:email',function(req,res){
+				todo.getTreasureElements(req.params.name,req.params.email,res);
+			});
+
+			app.get('/checkTreasureFound/:email/:code_treas',function(req,res){
+				todo.checkTreasureFound(req.params.email,req.params.code_treas,res);
+			});
+
+			app.get('/addTreasToPlayer/:email/:code_treas',function(req,res){
+				todo.addTreasToPlayer(req.params.email,req.params.code_treas,res);
+			});			
 			
-
-			app.get('/getHeritagesGame2/',function(req,res){
-				todo.getHeritagesGame2(res);
-			});
-
-			
-
-			/*app.get('/getFoundTreasures/:code',function(req,res){
-				todo.getFoundTreasures(req.params.code,res);
-			});*/
-
-			/*app.get('/getTreasureElements/:email/:code',function(req,res){
-				todo.getTreasureElements(req.params.email,req.params.code,res);
-			});*/
-
-			app.get('/getTreasureElements/:name',function(req,res){
-				todo.getTreasureElements(req.params.name,res);
-			});
-
-			app.get('/checkTreasureFound/:code_treas/:code_game',function(req,res){
-				todo.checkTreasureFound(req.params.code_treas,req.params.code_game,res);
-			});
-
-			app.get('/addTreasToGame1/:treas_code/:game',function(req,res){
-				todo.addTreasToGame1(req.params.treas_code,req.params.game,res);
-			});
-			
-			
-
-			app.get('/updateFoundTreas/:code/:game',function(req,res){
-				todo.updateFoundTreas(req.params.code,req.params.game,res);
-			});
-			
-			/*app.get('/getUserGame/:email',function(req,res){
-				todo.getUserGame(req.params.email,res);
-			});*/
-			
-
-			app.get('/getFoundTreasures/:code/:lat/:lon/:email',function(req,res){
-				todo.getFoundTreasures(req.params.code,req.params.lat,req.params.lon,req.params.email,res);
-			});
-			
-
-				
 			//********GESTIONE CARTE*********//
+
 			app.get('/getCardCount/',function(req,res){
 				todo.getCardCount(res);
 			});
@@ -81,63 +100,74 @@ module.exports = {
 				todo.getCardCode(res);
 			});
 
-			app.get('/getMyCards/:game',function(req,res){
-				todo.getMyCards(req.params.game,res);
+			app.get('/getMyCards/:email',function(req,res){
+				todo.getMyCards(req.params.email,res);
 			});
-
-			
-
-			/*app.get('/getTreasureCardInfo/:code',function(req,res){
-				todo.getTreasureCardInfo(req.params.code,res);
-			});*/
-
-			/*app.get('/getTreasureCardInfo/:email/:code',function(req,res){
-				todo.getTreasureCardInfo(req.params.email,req.params.code,res);
-			});*/
 
 			app.get('/getTreasureCardInfo/:code',function(req,res){
 				todo.getTreasureCardInfo(req.params.code,res);
 			});
 
-
-			app.get('/addCardToTreasure/:treas_code/:card_code',function(req,res){
-				todo.addCardToTreasure(req.params.treas_code,req.params.card_code,res);
+			app.get('/getFiveTreasureCardsInfo/:code1/:code2/:code3/:code4/:code5/',function(req,res){
+				todo.getFiveTreasureCardsInfo(req.params.code1,req.params.code2,req.params.code3,req.params.code4,req.params.code5,res);
 			});
 
-			app.get('/addCardToUserCollection/:game/:card_code',function(req,res){
-				todo.addCardToUserCollection(req.params.game,req.params.card_code,res);
+			app.get('/addCardToUserCollection/:email/:card_code',function(req,res){
+				todo.addCardToUserCollection(req.params.email,req.params.card_code,res);
+			});
+
+			app.get('/addFiveCardsToUserCollection/:email/:card1/:card2/:card3/:card4/:card5/',function(req,res){
+				todo.addFiveCardsToUserCollection(req.params.email,req.params.card1,req.params.card2,req.params.card3,req.params.card4,req.params.card5,res);
 			});
 			
-			
-				
-
-
-
-
-	
-			
-
 			//********FINE GESTIONE CARTE*********//
-
 
 			app.get('/getMedals/:type',function(req,res){
 				todo.getMedals(req.params.type,res);
 			});
 
-			app.get('/getPuzzle/',function(req,res){
-				todo.getPuzzle(res);
+			app.get('/getAllPaths/',function(req,res){
+				todo.getAllPaths(res);
 			});
 
-			app.get('/getPuzzleFromHeritage/:name',function(req,res){
-				todo.getPuzzleFromHeritage(req.params.name,res);
+			app.get('/getMyPathsTitles/:email',function(req,res){
+				todo.getMyPathsTitles(req.params.email,res);
 			});
 
-			app.get('/getEnabledPuzzle/',function(req,res){
-				todo.getEnabledPuzzle(res);
+			app.get('/getActivePaths/',function(req,res){
+				todo.getActivePaths(res);
 			});
 
-			app.get('/getSoonPuzzle/',function(req,res){
-				todo.getSoonPuzzle(res);
+			app.get('/getUpcomingPaths/',function(req,res){
+				todo.getUpcomingPaths(res);
+			});
+
+			app.get('/getPathStagesByTitle/:title/:email',function(req,res){
+				todo.getPathStagesByTitle(req.params.title, req.params.email, res);
+			});
+
+			app.get('/getPathByTitle/:title',function(req,res){
+				todo.getPathByTitle(req.params.title, res);
+			});
+
+			app.get('/getStageByTitle/:title',function(req,res){
+				todo.getStageByTitle(req.params.title, res);
+			});
+
+			app.get('/getActiveStages/:email',function(req,res){
+				todo.getActiveStages(req.params.email, res);
+			});
+
+			app.get('/getStageByCode/:code/:email',function(req,res){
+				todo.getStageByCode(req.params.code, req.params.email, res);
+			});
+
+			app.get('/submitStageAnswer/:code/:email/:answer',function(req,res){
+				todo.submitStageAnswer(req.params.code, req.params.email, req.params.answer, res);
+			});
+
+			app.get('/checkStageCompleted/:code/:email',function(req,res){
+				todo.checkStageCompleted(req.params.code, req.params.email, res);
 			});
 
 			app.get('/getPuzzleDescription/:code',function(req,res){
@@ -156,19 +186,6 @@ module.exports = {
 				todo.getPuzzleCode(req.params.name,res);
 			});
 
-			app.get('/getMyPuzzles/:code',function(req,res){
-				todo.getMyPuzzles(req.params.code,res);
-			});
-
-			app.get('/getGame3FromUser/:email',function(req,res){
-				todo.getGame3FromUser(req.params.email,res);
-			});
-
-			app.get('/acquirePuzzle/:game/:puzzle',function(req,res){
-				todo.acquirePuzzle(req.params.game,req.params.puzzle,res);
-			});
-
-
 			app.get('/getAchievementGame1/',function(req,res){
 				todo.getAchievementGame1(res);
 			});
@@ -176,6 +193,7 @@ module.exports = {
 			app.get('/getAchievementGame2/',function(req,res){
 				todo.getAchievementGame2(res);
 			});
+
 			app.get('/getAchievementGame3/',function(req,res){
 				todo.getAchievementGame3(res);
 			});
@@ -196,43 +214,12 @@ module.exports = {
 				todo.getAchievementDescr(req.params.code,res);
 			});*/
 
-			app.get('/getUserFromSession/:session',function(req,res){
-				todo.getUserFromSession(req.params.session,res);
-			});
-			
-			app.get('/getGame1FromSession/:session',function(req,res){
-				todo.getGame1FromSession(req.params.session,res);
+			app.get('/createPlayer/:email',function(req,res){
+				todo.createPlayer(req.params.email,res);
 			});
 
-			
-
-			//Insert email e password per login
-			app.get('/createUser/:email/:password',function(req,res){
-				todo.createUser(req.params.email,req.params.password,res);
-			});
-
-			app.get('/checkUser/:email/:password',function(req,res){
-				todo.checkUser(req.params.email,req.params.password,res);
-			});
-
-			
-			
-
-
-			app.get('/createSession/:email/:password',function(req,res){
-				todo.createSession(req.params.email,req.params.password,res);
-			});
-
-			app.get('/getSession/:email',function(req,res){
-				todo.getSession(req.params.email,res);
-			});
-
-			app.get('/deleteSession/:email',function(req,res){
-				todo.deleteSession(req.params.email,res);
-			});
-
-			app.get('/setPassword/:password/:email',function(req,res){
-				todo.setPassword(req.params.password,req.params.email,res);
+			app.get('/checkPlayer/:email/',function(req,res){
+				todo.checkPlayer(req.params.email,res);
 			});
 
 			app.get('/setTitle/:title/:email',function(req,res){
@@ -245,7 +232,7 @@ module.exports = {
 
 
 
-		//Inizio Authoring Tool------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Inizio Authoring Tool------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			
 			app.get('/addImage/:img_code/:img_path/:img_filename', function(req,res){
 				todo.addImage(req.params.img_code,req.params.img_path,req.params.img_filename,res);
@@ -253,6 +240,10 @@ module.exports = {
 			
 			app.get('/updImage/:img_path/:img_filename/:img_code',function(req,res){
 				todo.updImage(req.params.img_path,req.params.img_filename,req.params.img_code,res);
+			});
+			
+			app.get('/delImage/:img_code', function(req,res){
+				todo.delImage(req.params.img_code,res);
 			});
 			
 			app.get('/getAllCategories/',function(req,res){
@@ -278,13 +269,25 @@ module.exports = {
 			app.get('/getAllHistoricalPeriods/',function(req,res){
 				todo.getAllHistoricalPeriods(res);
 			});
+
+			app.get('/addHistoricalPeriod/:hp_code/:hp_name', function(req,res){
+				todo.addHistoricalPeriod(req.params.hp_code,req.params.hp_name,res);
+			});
 			
 			app.get('/getAllStructureTypes/',function(req,res){
 				todo.getAllStructureTypes(res);
 			});
+
+			app.get('/addStructureType/:st_code/:st_name', function(req,res){
+				todo.addStructureType(req.params.st_code,req.params.st_name,res);
+			});
 			
 			app.get('/getAllOrganizations/',function(req,res){
 				todo.getAllOrganizations(res);
+			});
+			
+			app.get('/getAllShapes/',function(req,res){
+				todo.getAllShapes(res);
 			});
 			
 			app.get('/addCoordinates/:coo_code/:coo_latitude/:coo_longitude', function(req,res){
@@ -294,15 +297,19 @@ module.exports = {
 			app.get('/updCoordinates/:coo_latitude/:coo_longitude/:coo_code',function(req,res){
 				todo.updCoordinates(req.params.coo_latitude,req.params.coo_longitude,req.params.coo_code,res);
 			});
+
+			app.get('/delCoordinates/:coo_code', function(req,res){
+				todo.delCoordinates(req.params.coo_code,res);
+			});
 			
 			app.get('/getAllMedals/',function(req,res){
 				todo.getAllMedals(res);
 			});
-
+			
 			app.get('/getMedal/:medal_code',function(req,res){
 				todo.getMedal(req.params.medal_code,res);
 			});
-
+			
 			app.get('/addMedal/:medal_code/:medal_name/:medal_category/:medal_num/:medal_image', function(req,res){
 				todo.addMedal(req.params.medal_code,req.params.medal_name,req.params.medal_category,req.params.medal_num,req.params.medal_image,res);
 			});
@@ -313,7 +320,79 @@ module.exports = {
 
 			app.get('/delMedal/:medal_code', function(req,res){
 				todo.delMedal(req.params.medal_code,res);
-			});			
+			});	
+			
+			app.get('/getAllRegionMedal',function(req,res){
+				todo.getAllRegionMedal(res);
+			});
+			
+			app.get('/getRegionMedalByMedalCode/:medal_code',function(req,res){
+				todo.getRegionMedalByMedalCode(req.params.medal_code,res);
+			});
+			
+			app.get('/getRegionMedalByRegionCode/:medal_region',function(req,res){
+				todo.getRegionMedalByRegionCode(req.params.medal_region,res);
+			});
+			
+			app.get('/addRegionMedal/:medal_code/:medal_region', function(req,res){
+				todo.addRegionMedal(req.params.medal_code,req.params.medal_region,res);
+			});
+
+			app.get('/updRegionMedal/:medal_region/:medal_code',function(req,res){
+				todo.updRegionMedal(req.params.medal_region,req.params.medal_code, res);
+			});
+			
+			app.get('/delRegionMedal/:medal_code', function(req,res){
+				todo.delRegionMedal(req.params.medal_code,res);
+			});
+			
+			app.get('/getAllHPMedal',function(req,res){
+				todo.getAllHPMedal(res);
+			});
+			
+			app.get('/getHPMedalByMedalCode/:medal_code',function(req,res){
+				todo.getHPMedalByMedalCode(req.params.medal_code,res);
+			});
+			
+			app.get('/getHPMedalByHPCode/:medal_hp',function(req,res){
+				todo.getHPMedalByHPCode(req.params.medal_hp,res);
+			});
+			
+			app.get('/addHPMedal/:medal_code/:medal_hp', function(req,res){
+				todo.addHPMedal(req.params.medal_code,req.params.medal_hp,res);
+			});
+			
+			app.get('/updHPMedal/:medal_hp/:medal_code',function(req,res){
+				todo.updHPMedal(req.params.medal_hp,req.params.medal_code, res);
+			});
+			
+			app.get('/delHPMedal/:medal_code', function(req,res){
+				todo.delHPMedal(req.params.medal_code,res);
+			});
+
+			app.get('/getAllToSMedal',function(req,res){
+				todo.getAllToSMedal(res);
+			});
+			
+			app.get('/getToSMedalByMedalCode/:medal_code',function(req,res){
+				todo.getToSMedalByMedalCode(req.params.medal_code,res);
+			});
+			
+			app.get('/getToSMedalByToSCode/:medal_tos',function(req,res){
+				todo.getToSMedalByToSCode(req.params.medal_tos,res);
+			});
+			
+			app.get('/addToSMedal/:medal_code/:medal_tos', function(req,res){
+				todo.addToSMedal(req.params.medal_code,req.params.medal_tos,res);
+			});
+			
+			app.get('/updToSMedal/:medal_tos/:medal_code',function(req,res){
+				todo.updToSMedal(req.params.medal_tos,req.params.medal_code, res);
+			});
+			
+			app.get('/delToSMedal/:medal_code', function(req,res){
+				todo.delToSMedal(req.params.medal_code,res);
+			});
 			
 			app.get('/getAllCards/',function(req,res){
 				todo.getAllCards(res);
@@ -335,6 +414,235 @@ module.exports = {
 				todo.delCard(req.params.card_code,res);
 			});
 			
+			app.get('/getMissionTypes',function(req,res){
+				todo.getMissionTypes(res);
+			});
+			
+			app.get('/getMission/:mission_code',function(req,res){
+				todo.getMission(req.params.mission_code,res);
+			});
+			
+			app.get('/getAllMissions/',function(req,res){
+				todo.getAllMissions(res);
+			});
+
+			app.get('/addMission/:mission_code/:mission_title/:mission_num/:mission_missiontype/:mission_granularity', function(req,res){
+				todo.addMission(req.params.mission_code,req.params.mission_title,req.params.mission_num,req.params.mission_missiontype,req.params.mission_granularity,res);
+			});
+			
+			app.get('/updMission/:mission_title/:mission_num/:mission_missiontype/:mission_granularity/:mission_code', function(req,res){
+				todo.updMission(req.params.mission_title,req.params.mission_num,req.params.mission_missiontype,req.params.mission_granularity,req.params.mission_code,res);
+			});
+			
+			app.get('/delMission/:mission_code', function(req,res){
+				todo.delMission(req.params.mission_code,res);
+			});
+
+			app.get('/getRegionalMission/:mission_code',function(req,res){
+				todo.getRegionalMission(req.params.mission_code,res);
+			});
+			
+			app.get('/addRegionalMission/:mission_code/:region_code', function(req,res){
+				todo.addRegionalMission(req.params.mission_code,req.params.region_code,res);
+			});
+			
+			app.get('/updRegionalMission/:region_code/:mission_code', function(req,res){
+				todo.updRegionalMission(req.params.region_code,req.params.mission_code,res);
+			});
+			
+			app.get('/delRegionalMission/:mission_code', function(req,res){
+				todo.delRegionalMission(req.params.mission_code,res);
+			});
+			
+			app.get('/getProvincialMission/:mission_code',function(req,res){
+				todo.getProvincialMission(req.params.mission_code,res);
+			});
+			
+			app.get('/addProvincialMission/:mission_code/:province_code', function(req,res){
+				todo.addProvincialMission(req.params.mission_code,req.params.province_code,res);
+			});
+			
+			app.get('/updProvincialMission/:province_code/:mission_code', function(req,res){
+				todo.updProvincialMission(req.params.province_code,req.params.mission_code,res);
+			});
+			
+			app.get('/delProvincialMission/:mission_code', function(req,res){
+				todo.delProvincialMission(req.params.mission_code,res);
+			});
+			
+			app.get('/getHeritageMission/:mission_code',function(req,res){
+				todo.getHeritageMission(req.params.mission_code,res);
+			});
+			
+			app.get('/addHeritageMission/:mission_code/:ch_code', function(req,res){
+				todo.addHeritageMission(req.params.mission_code,req.params.ch_code,res);
+			});
+			
+			app.get('/updHeritageMission/:ch_code/:mission_code', function(req,res){
+				todo.updHeritageMission(req.params.ch_code,req.params.mission_code,res);
+			});
+			
+			app.get('/delHeritageMission/:mission_code', function(req,res){
+				todo.delHeritageMission(req.params.mission_code,res);
+			});
+			
+			app.get('/getRarityMission/:mission_code',function(req,res){
+				todo.getRarityMission(req.params.mission_code,res);
+			});
+			
+			app.get('/addRarityMission/:mission_code/:rarity_code', function(req,res){
+				todo.addRarityMission(req.params.mission_code,req.params.rarity_code,res);
+			});
+			
+			app.get('/updRarityMission/:rarity_code/:mission_code', function(req,res){
+				todo.updRarityMission(req.params.rarity_code,req.params.mission_code,res);
+			});
+			
+			app.get('/delRarityMission/:mission_code', function(req,res){
+				todo.delRarityMission(req.params.mission_code,res);
+			});
+			
+			app.get('/getCategoryMission/:mission_code',function(req,res){
+				todo.getCategoryMission(req.params.mission_code,res);
+			});
+			
+			app.get('/addCategoryMission/:mission_code/:category_code', function(req,res){
+				todo.addCategoryMission(req.params.mission_code,req.params.category_code,res);
+			});
+			
+			app.get('/updCategoryMission/:category_code/:mission_code', function(req,res){
+				todo.updCategoryMission(req.params.category_code,req.params.mission_code,res);
+			});
+
+			app.get('/delCategoryMission/:mission_code', function(req,res){
+				todo.delCategoryMission(req.params.mission_code,res);
+			});
+			
+			app.get('/getRegionMedalMission/:mission_code',function(req,res){
+				todo.getRegionMedalMission(req.params.mission_code,res);
+			});
+			
+			app.get('/addRegionMedalMission/:mission_code/:regionmedal_code', function(req,res){
+				todo.addRegionMedalMission(req.params.mission_code,req.params.regionmedal_code,res);
+			});
+			
+			app.get('/updRegionMedalMission/:regionmedal_code/:mission_code', function(req,res){
+				todo.updRegionMedalMission(req.params.regionmedal_code,req.params.mission_code,res);
+			});
+
+			app.get('/delRegionMedalMission/:mission_code', function(req,res){
+				todo.delRegionMedalMission(req.params.mission_code,res);
+			});
+			
+			app.get('/getHPMedalMission/:mission_code',function(req,res){
+				todo.getHPMedalMission(req.params.mission_code,res);
+			});
+			
+			app.get('/addHPMedalMission/:mission_code/:hpmedal_code', function(req,res){
+				todo.addHPMedalMission(req.params.mission_code,req.params.hpmedal_code,res);
+			});
+			
+			app.get('/updHPMedalMission/:hpmedal_code/:mission_code', function(req,res){
+				todo.updHPMedalMission(req.params.hpmedal_code,req.params.mission_code,res);
+			});
+
+			app.get('/delHPMedalMission/:mission_code', function(req,res){
+				todo.delHPMedalMission(req.params.mission_code,res);
+			});
+			
+			app.get('/getToSMedalMission/:mission_code',function(req,res){
+				todo.getToSMedalMission(req.params.mission_code,res);
+			});
+			
+			app.get('/addToSMedalMission/:mission_code/:tosmedal_code', function(req,res){
+				todo.addToSMedalMission(req.params.mission_code,req.params.tosmedal_code,res);
+			});
+			
+			app.get('/updToSMedalMission/:tosmedal_code/:mission_code', function(req,res){
+				todo.updToSMedalMission(req.params.tosmedal_code,req.params.mission_code,res);
+			});
+
+			app.get('/delToSMedalMission/:mission_code', function(req,res){
+				todo.delToSMedalMission(req.params.mission_code,res);
+			});
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			app.get('/getTop10',function(req,res){
+				todo.getTop10(res);
+			});
+			
+			
+			//Statistiche			
+			app.get('/getAllCHsCountRegions/',function(req,res){
+				todo.getAllCHsCountRegions(res);
+			});
+			
+			app.get('/getAllCHsCountProvinces/',function(req,res){
+				todo.getAllCHsCountProvinces(res);
+			});
+			
+			app.get('/getAllCardsPacketsCountRegions/',function(req,res){
+				todo.getAllCardsPacketsCountRegions(res);
+			});
+			
+			app.get('/getAllCardsPacketsCountProvinces/',function(req,res){
+				todo.getAllCardsPacketsCountProvinces(res);
+			});
+			
+			app.get('/getAllCardsPacketsCountCHs/',function(req,res){
+				todo.getAllCardsPacketsCountCHs(res);
+			});
+			
+			app.get('/getAllPathsCountRegions/',function(req,res){
+				todo.getAllPathsCountRegions(res);
+			});
+			
+			app.get('/getAllPathsCountProvinces/',function(req,res){
+				todo.getAllPathsCountProvinces(res);
+			});
+			
+			app.get('/getAllPathsCountCHs/',function(req,res){
+				todo.getAllPathsCountCHs(res);
+			});
+			
+			app.get('/getAllMedalsCount/',function(req,res){
+				todo.getAllMedalsCount(res);
+			});
+			
+			
+			
+			
+			
+		
+			
+			
+			
+			
+
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			app.get('/getUser/:user_email',function(req,res){
 				todo.getUser(req.params.user_email,res);
 			});
@@ -350,9 +658,17 @@ module.exports = {
 			app.get('/getAllCulturalOrganizations/',function(req,res){
 				todo.getAllCulturalOrganizations(res);
 			});
+			
+			app.get('/getAllNotEnabledCulturalOrganizations/',function(req,res){
+				todo.getAllNotEnabledCulturalOrganizations(res);
+			});
 				
 			app.get('/addCulturalOrganization/:corg_code/:corg_user/:corg_name', function(req,res){
 				todo.addCulturalOrganization(req.params.corg_code,req.params.corg_user,req.params.corg_name,res);
+			});
+
+			app.get('/getAllNotEnabledCulturalOperators/:corg_email',function(req,res){
+				todo.getAllNotEnabledCulturalOperators(req.params.corg_email,res);
 			});
 			
 			app.get('/addCulturalOperator/:cop_code/:cop_user/:cop_organization', function(req,res){
@@ -367,6 +683,10 @@ module.exports = {
 				todo.getCH(req.params.ch_code,res);
 			});
 			
+			app.get('/getProvinceCHs/:prov_code',function(req,res){
+				todo.getProvinceCHs(req.params.prov_code,res);
+			});
+
 			app.get('/addCH/:ch_code/:ch_name/:ch_description/:ch_image/:ch_g1/:ch_g2/:ch_g3/:ch_g4/:ch_coordinates/:ch_province/:ch_historicalperiod/:ch_structuretype/:ch_operator', function(req,res){
 				todo.addCH(req.params.ch_code,req.params.ch_name,req.params.ch_description,req.params.ch_image,req.params.ch_g1,req.params.ch_g2,req.params.ch_g3,req.params.ch_g4,req.params.ch_coordinates,req.params.ch_province,req.params.ch_historicalperiod,req.params.ch_structuretype,req.params.ch_operator,res);
 			});
@@ -419,6 +739,66 @@ module.exports = {
 				todo.getGame2CHs(req.params.operator_email,res);
 			});
 			
+			app.get('/getCHValidityAreas/:ch_code', function(req,res){
+				todo.getCHValidityAreas(req.params.ch_code,res);
+			});
+			
+			app.get('/addValidityArea/:va_code/:va_heritage/:va_shape', function(req,res){
+				todo.addValidityArea(req.params.va_code,req.params.va_heritage,req.params.va_shape,res);
+			});
+			
+			app.get('/updValidityArea/:va_heritage/:va_shape/:va_code', function(req,res){
+				todo.updValidityArea(req.params.va_heritage,req.params.va_shape,req.params.va_code,res);
+			});
+			
+			app.get('/delValidityArea/:va_code', function(req,res){
+				todo.delValidityArea(req.params.va_code,res);
+			});
+			
+			app.get('/addPolygon/:polygon_code/:polygon_va', function(req,res){
+				todo.addPolygon(req.params.polygon_code,req.params.polygon_va,res);
+			});
+			
+			app.get('/updPolygon/:polygon_va/:polygon_code', function(req,res){
+				todo.updPolygon(req.params.polygon_va,req.params.polygon_code,res);
+			});
+			
+			app.get('/delPolygon/:polygon_code', function(req,res){
+				todo.delPolygon(req.params.polygon_code,res);
+			});
+			
+			app.get('/getPolygonVertices/:polygon_code', function(req,res){
+				todo.getPolygonVertices(req.params.polygon_code,res);
+			});
+			
+			app.get('/addVertex/:vertex_code/:vertex_polygon/:vertex_coo/:vertex_num', function(req,res){
+				todo.addVertex(req.params.vertex_code,req.params.vertex_polygon,req.params.vertex_coo,req.params.vertex_num,res);
+			});
+			
+			app.get('/updVertex/:vertex_polygon/:vertex_coo/:vertex_num/:vertex_code', function(req,res){
+				todo.updVertex(req.params.vertex_polygon,req.params.vertex_coo,req.params.vertex_num,req.params.vertex_code,res);
+			});
+			
+			app.get('/delVertex/:vertex_code', function(req,res){
+				todo.delVertex(req.params.vertex_code,res);
+			});
+			
+			app.get('/getCircle/:circle_code', function(req,res){
+				todo.getCircle(req.params.circle_code,res);
+			});
+			
+			app.get('/addCircle/:circle_code/:circle_va/:circle_center/:circle_radius', function(req,res){
+				todo.addCircle(req.params.circle_code,req.params.circle_va,req.params.circle_center,req.params.circle_radius,res);
+			});
+			
+			app.get('/updCircle/:circle_va/:circle_center/:circle_radius/:circle_code', function(req,res){
+				todo.updCircle(req.params.circle_va,req.params.circle_center,req.params.circle_radius,req.params.circle_code,res);
+			});
+			
+			app.get('/delCircle/:circle_code', function(req,res){
+				todo.delCircle(req.params.circle_code,res);
+			});
+
 			app.get('/getGame3CHs/:operator_email', function(req,res){
 				todo.getGame3CHs(req.params.operator_email,res);
 			});
@@ -435,6 +815,10 @@ module.exports = {
 				todo.updQuestion(req.params.question_question,req.params.question_hintonsite,req.params.question_hintbypaying,req.params.question_answer,req.params.question_code,res);
 			});
 			
+			app.get('/delQuestion/:question_code', function(req,res){
+				todo.delQuestion(req.params.question_code,res);
+			});
+			
 			app.get('/getCHPaths/:ch_code', function(req,res){
 				todo.getCHPaths(req.params.ch_code,res);
 			});
@@ -443,18 +827,22 @@ module.exports = {
 				todo.getPath(req.params.path_code,res);
 			});
 			
-			app.get('/addPath/:path_code/:path_title/:path_question/:path_enabled/:path_heritage', function(req,res){
-				todo.addPath(req.params.path_code,req.params.path_title,req.params.path_question,req.params.path_enabled,req.params.path_heritage,res);
+			app.get('/addPath/:path_code/:path_title/:path_enabled/:path_heritage', function(req,res){
+				todo.addPath(req.params.path_code,req.params.path_title,req.params.path_enabled,req.params.path_heritage,res);
 			});
 			
-			app.get('/updPath/:path_title/:path_question/:path_enabled/:path_heritage/:path_code', function(req,res){
-				todo.updPath(req.params.path_title,req.params.path_question,req.params.path_enabled,req.params.path_heritage,req.params.path_code,res);
+			app.get('/updPath/:path_title/:path_enabled/:path_heritage/:path_code', function(req,res){
+				todo.updPath(req.params.path_title,req.params.path_enabled,req.params.path_heritage,req.params.path_code,res);
 			});
 			
 			app.get('/delPath/:path_code', function(req,res){
 				todo.delPath(req.params.path_code,res);
 			});
 			
+			app.get('/enablePath/:path_enabled/:path_code', function(req,res){
+				todo.enablePath(req.params.path_enabled, req.params.path_code,res);
+			});
+
 			app.get('/getCHStages/:ch_code', function(req,res){
 				todo.getCHStages(req.params.ch_code,res);
 			});
@@ -467,12 +855,16 @@ module.exports = {
 				todo.getStage(req.params.stage_code,res);
 			});
 			
-			app.get('/addStage/:stage_code/:stage_title/:stage_curiosity/:stage_question/:stage_coordinates/:stage_path', function(req,res){
-				todo.addStage(req.params.stage_code,req.params.stage_title,req.params.stage_curiosity,req.params.stage_question,req.params.stage_coordinates,req.params.stage_path,res);
+			app.get('/addStage/:stage_code/:stage_title/:stage_curiosity/:stage_question/:stage_coordinates/:stage_path/:stage_isfinal', function(req,res){
+				todo.addStage(req.params.stage_code,req.params.stage_title,req.params.stage_curiosity,req.params.stage_question,req.params.stage_coordinates,req.params.stage_path,req.params.stage_isfinal,res);
 			});
 			
-			app.get('/updStage/:stage_title/:stage_curiosity/:stage_question/:stage_coordinates/:stage_path/:stage_code', function(req,res){
-				todo.updStage(req.params.stage_title,req.params.stage_curiosity,req.params.stage_question,req.params.stage_coordinates,req.params.stage_path,req.params.stage_code,res);
+			app.get('/updFinalStage/:stage_isfinal/:stage_code', function(req,res){
+				todo.updFinalStage(req.params.stage_isfinal,req.params.stage_code,res);
+			});
+			
+			app.get('/updStage/:stage_title/:stage_curiosity/:stage_question/:stage_coordinates/:stage_path/:stage_isfinal/:stage_code', function(req,res){
+				todo.updStage(req.params.stage_title,req.params.stage_curiosity,req.params.stage_question,req.params.stage_coordinates,req.params.stage_path,req.params.stage_isfinal,req.params.stage_code,res);
 			});
 			
 			app.get('/delStage/:stage_code', function(req,res){
@@ -526,9 +918,13 @@ module.exports = {
 			app.get('/delReview/:game4_code/:ch_code', function(req,res){
 				todo.delReview(req.params.game4_code,req.params.ch_code,res);
 			});
-
-		//Fine Authoring Tool ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+			
+			
+			
+			
+			
+			
+//Fine Authoring Tool ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 

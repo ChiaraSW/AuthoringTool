@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
+</head>
+<body ng-app="GoPoleis" >
+
+ 	<div class="col-sm-9" ng-controller="addMissionController">
+	
+	<h1 style="margin:20px;"><u>Create a Mission</u>:</h1><br><br>
+		
+	<form name="form" role="form" id="uploadMissionForm" enctype="multipart/form-data" method="post">
+	
+		<div class="form-group" ng-class="{ 'has-error': form.title.$dirty && form.title.$error.required }" >
+	     	<fieldset style="margin-top:10px; margin-left:20px;"> 	
+		     	<label for="title" style="display: inline-block; vertical-align: bottom;">
+		     		Title: 
+				</label>
+				<input type="text" class="form-control" ng-model="addMission.title" style="width:850px; display: inline-block;" required>
+			</fieldset>
+		</div>
+		
+		<div class="form-group" ng-class="{ 'has-error': form.mission.$dirty && form.mission.$error.required}" >
+																
+			<fieldset style="margin-top:30px; margin-left:20px;"> 		
+ 				<label for="mission" style="display: inline-block;">
+		     		Mission:  
+				</label>
+				<select class="form-control" ng-model="addMission.mission" name="mission" ng-options="option as option.name for option in missions" style="width:200px; display: inline-block;" 
+						ng-change="showParameters(addMission.mission.code)"></select>	
+			</fieldset>
+		</div>
+		
+ 		<div class="form-group" ng-class="{ 'has-error':form.region.$dirty && form.region.$error.required &&
+														form.province.$dirty && form.province.$error.required &&
+														form.ch.$dirty && form.ch.$error.required &&
+														form.rarity.$dirty && form.rarity.$error.required && 
+ 														form.category.$dirty && form.category.$error.required}" >
+ 														
+ 			<label for="localizedDescription" style="display: inline-block; margin-top:30px; margin-left:20px;" ng-show="localizedMissionSelected">
+		     		Choose the granularity level of the mission. No region selected means the whole Italy.  
+			</label>	
+			<label for="rarityDescription" style="display: inline-block; margin-top:30px; margin-left:20px;" ng-show="cardMissionSelected">
+		     		Choose the card rarity. No rarity selected means all the rarities.  
+			</label>		
+			<label for="categoryDescription" style="display: inline-block; margin-top:30px; margin-left:20px;" ng-show="medalMissionSelected">
+		     		Choose the medal category. No category selected means all the categories.  
+			</label>	
+																
+			<fieldset style="margin-top:30px; margin-left:20px;"> 	
+						
+				<label for="region" style="display: inline-block;" ng-show="localizedMissionSelected">
+		     		Region:  
+				</label>
+				<select class="form-control" ng-model="addMission.region" ng-change="showProvince(addMission.region.name)" name="region" ng-options="option as option.name for option in regions" 
+					style="width:200px; display: inline-block;" ng-show="localizedMissionSelected"></select>	
+					
+				<label for="province" style="display: inline-block; margin-left:30px;" ng-show="regionSelected">
+		     		Province:  
+				</label>
+				<select class="form-control" ng-model="addMission.province" ng-change="showCH(addMission.province.code)" name="province" ng-options="option as option.name for option in provinces" 
+					style="width:200px; display: inline-block;" ng-show="regionSelected"></select>	
+		
+				<label for="ch" style="display: inline-block; margin-left:30px;" ng-show="provinceSelected">
+		     		Cultural Heritage:  
+				</label>
+				<input name="ch" id="ch" type="text" placeholder="" ng-model="addMission.ch" style="width:300px; display: inline-block;"
+								typeahead="option as option.name for option in chs | filter:$viewValue | limitTo:8" class="form-control" ng-show="provinceSelected">	
+								
+		     	<label for="rarity" style="display: inline-block;" ng-show="cardMissionSelected">
+		     		Rarity:  
+				</label>
+				<select class="form-control" ng-model="addMission.rarity" name="rarity" ng-options="option as option.name for option in rarities"	style="width:200px; display: inline-block;" ng-show="cardMissionSelected"></select>									
+				
+		     	<label for="category" style="display: inline-block;" ng-show="medalMissionSelected">
+		     		Category:  
+				</label>
+				<select class="form-control" ng-model="addMission.category" name="category" ng-options="option as option.name for option in categories"	ng-change="showSubCategory(addMission.category.code)"
+						style="width:200px; display: inline-block;" ng-show="medalMissionSelected"></select>									
+
+				<label for="regionalCategory" style="display: inline-block; margin-left:30px;" ng-show="rcMissionSelected">
+		     		Region Medal:  
+				</label>
+				<select class="form-control" ng-model="addMission.regionalCategory" name="regionalCategory" ng-options="option as option.name for option in regionalCategories"	style="width:200px; display: inline-block;" 
+						ng-show="rcMissionSelected"></select>	
+				
+				<label for="hpCategory" style="display: inline-block; margin-left:30px;" ng-show="hpMissionSelected">
+		     		Historical Period Medal:  
+				</label>	
+				<input name="hp" id="hp" type="text" placeholder="" ng-model="addMission.hp" style="width:300px; display: inline-block;"
+								typeahead="option as option.name for option in hps | filter:$viewValue | limitTo:8" class="form-control" ng-show="hpMissionSelected">		
+								
+				<label for="tosCategory" style="display: inline-block; margin-left:30px;" ng-show="tosMissionSelected">
+		     		Type of Structure Medal:  
+				</label>	
+				<input name="tos" id="tos" type="text" placeholder="" ng-model="addMission.tos" style="width:300px; display: inline-block;"
+								typeahead="option as option.name for option in toss | filter:$viewValue | limitTo:8" class="form-control" ng-show="tosMissionSelected">								
+
+			</fieldset>
+
+		</div> 
+
+ 		<div class="form-group" ng-class="{ 'has-error': form.num.$dirty && form.num.$error.required}" >																
+			<fieldset style="margin-top:40px; margin-left:20px;"> 
+			
+				<label for="openTC" style="display: inline-block;" ng-show="openTCSelected">
+		     		Number of treasure chests to open to consider completed this mission:  
+				</label>
+				
+				<label for="collectCard" style="display: inline-block;" ng-show="collectCardSelected">
+		     		Number of cards to collect to consider completed this mission:  
+				</label>
+				
+				<label for="visitCH" style="display: inline-block;" ng-show="visitCHSelected">
+		     		Number of cultural heritages to visit to consider completed this mission:  
+				</label>
+				
+				<label for="collectMedal" style="display: inline-block;" ng-show="collectMedalSelected">
+		     		Number of medals to collect to consider completed this mission:  
+				</label>
+				
+				<label for="completePath" style="display: inline-block;" ng-show="completePathSelected">
+		     		Number of paths to complete to consider completed this mission:  
+				</label>
+				
+				<label for="writeReview" style="display: inline-block;" ng-show="writeReviewSelected">
+		     		Number of reviews to write to consider completed this mission:  
+				</label>
+				
+				<input type="number" min="1" class="form-control" ng-model="addMission.num" style="width:100px; display: inline-block;" ng-show="showNum" required>
+					
+			</fieldset>
+		</div>
+
+ 		<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+            <button type="submit" name="btnAddMission" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddMission()">Create</button>
+            <img ng-if="vm.dataLoading"/>
+            <a href="Missions_Template.html" target="_self">Cancel</a>
+        </div>
+	
+	</form>
+	</div> 
+	
+</body>
+</html>
+<script>
+var app = angular.module("GoPoleis", ["ui.bootstrap"]);
+app.controller('addMissionController', function($scope, $http, $window, $timeout) {
+
+	$scope.addMission={};
+	resetValues();
+    
+    $http({
+		method: 'GET',
+		url: '/getMissionTypes/'
+	}).then(function successCallback(response) {	
+		$scope.missions = response.data;  
+	}, function errorCallback(response) {
+		alert("Error on the query: getMissionTypes SELECT");
+	});
+    
+    $scope.showParameters = function(missionTypeCode){
+    	if(missionTypeCode != undefined){   
+			
+    		resetValues();
+    		
+    		if(missionTypeCode == 2 || missionTypeCode == 4){
+    			$scope.localizedMissionSelected=false;
+    			if(missionTypeCode == 2){
+    				$scope.cardMissionSelected=true;	
+    				$http({
+            			method: 'GET',
+            			url: '/getAllRarities'
+            		}).then(function successCallback(response) {	
+            			$scope.rarities = response.data;  
+            			$scope.collectCardSelected=true;           			
+            		}, function errorCallback(response) {
+            			alert("Error on the query: getAllRarities SELECT");
+            		});
+    			}
+    			if(missionTypeCode == 4){
+    				$scope.medalMissionSelected=true;   				
+    				$http({
+            			method: 'GET',
+            			url: '/getAllCategories'
+            		}).then(function successCallback(response) {	
+            			$scope.categories = response.data;  
+            			$scope.collectMedalSelected=true;
+            		}, function errorCallback(response) {
+            			alert("Error on the query: getAllCategories SELECT");
+            		});
+    			}
+        	}
+        	else{
+        		$scope.localizedMissionSelected=true;   
+        		if(missionTypeCode == 1)	$scope.openTCSelected=true;
+        		if(missionTypeCode == 3)	$scope.visitCHSelected=true;
+        		if(missionTypeCode == 5)	$scope.completePathSelected=true;
+        		if(missionTypeCode == 6)	$scope.writeReviewSelected=true;
+        		
+        		$http({
+        			method: 'GET',
+        			url: '/getAllRegions/'
+        		}).then(function successCallback(response) {	
+        			$scope.regions = response.data;  
+        		}, function errorCallback(response) {
+        			alert("Error on the query: getAllRegions SELECT");
+        		});
+        	}
+    		$scope.showNum=true;
+    	}	
+    };
+    
+    $scope.showProvince = function(regionName){
+    	$scope.regionSelected=false;
+		$scope.provinceSelected=false;
+		
+    	if(regionName != undefined){
+    		$scope.regionSelected=true;
+    		
+    		$http({
+    			method: 'GET',
+    			url: '/getAllProvinces/'+regionName
+    		}).then(function successCallback(response) {	
+    			$scope.provinces = response.data;  
+    		}, function errorCallback(response) {
+    			alert("Error on the query: getAllProvinces SELECT");
+    		});
+    	}
+    	
+    };
+    
+    $scope.showCH = function(provCode){  
+    	$scope.provinceSelected=false;
+    	
+    	if(provCode != undefined){
+    		$scope.provinceSelected=true;
+    		
+    		$http({
+    			method: 'GET',
+    			url: '/getProvinceCHs/'+provCode
+    		}).then(function successCallback(response) {	
+    			$scope.chs = response.data;  
+    			$scope.addMission.ch = null;
+    		}, function errorCallback(response) {
+    			alert("Error on the query: getProvinceCHs SELECT");
+    		});
+    	}
+    };
+    
+    $scope.showSubCategory = function(subCategoryCode){  
+    	$scope.rcMissionSelected=false;
+    	$scope.hpMissionSelected=false;
+    	$scope.tosMissionSelected=false;
+    	
+    	$scope.addMission.ch = null;
+		$scope.addMission.hp = null;
+		$scope.addMission.tos = null;
+		
+    	if(subCategoryCode != undefined){
+    		if(subCategoryCode==1){
+    			$scope.rcMissionSelected=true;
+    			
+    			$http({
+        			method: 'GET',
+        			url: '/getAllRegionMedal'
+        		}).then(function successCallback(response) {	
+        			$scope.regionalCategories = response.data;  
+        			$scope.addMission.regionalCategory = null;
+        		}, function errorCallback(response) {
+        			alert("Error on the query: getAllRegionMedal SELECT");
+        		});
+    		}
+    		if(subCategoryCode==2){
+    			$scope.hpMissionSelected=true;
+
+    			$http({
+        			method: 'GET',
+        			url: '/getAllHPMedal'
+        		}).then(function successCallback(response) {	
+        			$scope.hps = response.data;  
+        			$scope.addMission.hp = null;
+        		}, function errorCallback(response) {
+        			alert("Error on the query: getAllHPMedal SELECT");
+        		});
+    		}
+    		if(subCategoryCode==3){
+    			$scope.tosMissionSelected=true;
+
+    			$http({
+        			method: 'GET',
+        			url: '/getAllToSMedal'
+        		}).then(function successCallback(response) {	
+        			$scope.toss = response.data;  
+        			$scope.addMission.tos = null;
+        		}, function errorCallback(response) {
+        			alert("Error on the query: getAllToSMedal SELECT");
+        		});
+    		}
+    		
+    	}
+    };
+    
+    $scope.executeAddMission = function(){ 	  
+    	if(checkRarity()){
+    		addMission(true, "addRarityMission", $scope.addMission.rarity.code, 5);
+    	}
+    	else{
+    		if(checkRegionalCategory()){
+    			if($scope.addMission.num == 1){
+    				addMission(true, "addRegionMedalMission", $scope.addMission.regionalCategory.code, 7);
+    			}
+    			else{
+    				alert("The number of medals to collect should be equal to 1.");
+    			}      		
+        	}
+    		else{
+    			if($scope.addMission.hp != "" && $scope.addMission.hp != null){
+    				if($scope.addMission.hp.code != undefined){
+	    				if(checkHPCategory()){
+	    					if($scope.addMission.num == 1){
+	    						addMission(true, "addHPMedalMission", $scope.addMission.hp.code, 8);
+	    	    			}
+	    	    			else{
+	    	    				alert("The number of medals to collect should be equal to 1.");
+	    	    			}      		
+	    				}
+	    				
+	    			}
+    				else{
+    					alert("You should insert an existing Historical Period.");
+        			}
+    			}
+    			else{
+    				if($scope.addMission.tos != "" && $scope.addMission.tos != null){
+	    				if($scope.addMission.tos.code != undefined){
+		    				if(checkToSCategory()){
+		    					if($scope.addMission.num == 1){
+		    						addMission(true, "addToSMedalMission", $scope.addMission.tos.code, 9);
+		    	    			}
+		    	    			else{
+		    	    				alert("The number of medals to collect should be equal to 1.");
+		    	    			}      		
+		    				}
+		    			}
+	    				else{
+	    					alert("You should insert an existing Type of Structure.");
+	        			}
+    				}
+    				else{
+    					if(checkCategory()){
+    		        		addMission(true, "addCategoryMission", $scope.addMission.category.code, 6);
+    		        	}
+    		    		else{    	
+    		    			if($scope.addMission.ch != "" && $scope.addMission.ch != null){
+    		    				if($scope.addMission.ch.code != undefined){
+	   		    					if(checkCH()){
+	       		    				
+	   		    						if($scope.addMission.mission.code==3 || $scope.addMission.mission.code==6){
+				    						if($scope.addMission.num == 1){
+				    							addMission(true, "addHeritageMission", $scope.addMission.ch.code, 4);
+				    		    			}
+				    		    			else{
+				    		    				if($scope.addMission.mission.code==3){
+				    		    					alert("The number of Cultural Heritage to visit should be equal to 1.");
+				    		    				}
+				    		    				if($scope.addMission.mission.code==6){
+				    		    					alert("The number of Review to write should be equal to 1.");
+				    		    				}	
+				    		    			}      	
+				    					}
+				    					else{
+				    						addMission(true, "addHeritageMission", $scope.addMission.ch.code, 4);
+				    					}
+	   		    					}
+    		    				}
+    		    				else{
+			    					alert("You should insert an existing Cultural Heritage.");
+			        			}
+    		    			}
+    		    			else{
+    		    				if(checkProvince()){
+									addMission(true, "addProvincialMission", $scope.addMission.province.code, 3);
+				    			}
+								else{
+									if(checkRegion()){
+										addMission(true, "addRegionalMission", $scope.addMission.region.code, 2);
+				    				}
+									else{
+										addMission(false,"",0, 1);
+									}
+								}
+    		    			}
+    		    		}
+    				}
+    			}
+    		}
+    	}
+    };
+    
+    function addMission(existSubMission, missionType, codeType, granularity){
+    	$http({
+			method: 'GET',
+			url: '/addMission/0/'+$scope.addMission.title+'/'+$scope.addMission.num+'/'+$scope.addMission.mission.code+'/'+granularity
+		}).then(function successCallback(response) {	
+			var missionCodeDB = response.data.insertId;    		
+			if(existSubMission){
+				$http({
+					method: 'GET',
+					url: '/'+missionType+'/'+missionCodeDB+'/'+codeType
+				}).then(function successCallback(response) {	
+					window.open("Missions_Template.html", "_self");   
+				}, function errorCallback(response) {
+					alert("Error on the query: "+missionType+" INSERT");
+				});
+			}
+			else{
+				window.open("Missions_Template.html", "_self");   
+			}
+		}, function errorCallback(response) {
+			alert("Error on the query: addMission INSERT");
+		});
+    }
+    
+    function resetValues(){
+    	$scope.localizedMissionSelected=false;
+		$scope.cardMissionSelected=false;
+		$scope.medalMissionSelected=false;
+		$scope.regionSelected=false;
+		$scope.provinceSelected=false;
+		$scope.rcMissionSelected=false;
+		$scope.hpMissionSelected=false;
+		$scope.tosMissionSelected=false;
+		
+		$scope.addMission.region = null;
+		$scope.addMission.province = null;
+		$scope.addMission.ch = null;
+		$scope.addMission.rarity = null;
+		$scope.addMission.category = null;
+		$scope.addMission.regionalCategory = null;
+		$scope.addMission.hp = null;
+		$scope.addMission.tos = null;
+		$scope.addMission.num = null;
+		
+		$scope.openTCSelected=false;
+		$scope.collectCardSelected=false;
+		$scope.visitCHSelected=false;
+		$scope.collectMedalSelected=false;
+		$scope.completePathSelected=false;
+		$scope.writeReviewSelected=false;
+		$scope.showNum=false;
+    }
+    
+	function checkRegion(){  	
+    	if($scope.addMission.region != undefined)	return true;
+    	else	return false;
+    }
+    
+    function checkProvince(){  	
+    	if($scope.addMission.province != undefined)	return true;
+    	else	return false;
+    }
+
+    function checkCH(){ 	 	
+   	    if($scope.addMission.ch != undefined)	return true;
+   	    else	return false;
+    }
+    
+    function checkRarity(){  	
+    	if($scope.addMission.rarity != undefined)	return true;
+    	else	return false;
+    }
+    
+    function checkCategory(){   	
+    	if($scope.addMission.category != undefined)	return true;
+    	else	return false;
+    }
+    function checkRegionalCategory(){   	
+    	if($scope.addMission.regionalCategory != undefined)	return true;
+    	else	return false;
+    }
+    
+    function checkHPCategory(){
+    	if($scope.addMission.hp.code != undefined)	return true;
+    	else	return false;
+    }
+    
+    function checkToSCategory(){
+    	if($scope.addMission.tos.code != undefined)	return true;
+    	else	return false;
+    }
+ 
+});
+</script>

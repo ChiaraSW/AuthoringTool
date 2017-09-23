@@ -22,14 +22,8 @@
 </head>
 <body ng-app="GoPoleis">
 
-	<div class="col-sm-9" ng-controller="PathsMapController">
-	
-<!-- 		<map zoom-to-include-markers="auto" center="[{{ center.lat }}, {{ center.lng }}]"  style="height:400px; width:1450px;" on-rightclick="addNewPath(center.lat)">     
-	    	<marker ng-repeat="result in results track by $index" position="[{{ result.latitude }}, {{ result.longitude }}]"></marker>
-	    </map> -->
-	    
+	<div class="col-sm-9" ng-controller="PathsMapController">    
 	    <div id="map" style="width: 1450px; height: 350px"></div> 
-
 	</div>
     
 </body>
@@ -38,44 +32,179 @@
 var app = angular.module('GoPoleis', ['ui.bootstrap','ngMap']);
 app.controller('PathsMapController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
 
-	var pathCode = parent.window.getPathCode();
+	var colors=['red','green','yellow','blue','orange','black','purple','grey','white'];	
+	
 	var results;
 	var map = new google.maps.Map(document.getElementById("map"));
-	$scope.chCode = parent.window.getCode();	
-
+	var chCode = parent.window.getCode();	
+	var pathCode = parent.window.getPathCode();
+	var pathPolyline=[];
 	
-	$http({	
+	$http({
 		method : "GET",
-		url : "/getCHStages/"+$scope.chCode
+		url : "/getCHPaths/"+chCode
 	}).then(function mySucces(response) {
-		results  = response.data;
-		if(results.length > 0){
-			setMarkers(map, results);
-		}
-		else{
-			$http({
-				method : "GET",
-				url : "/getCH/"+$scope.chCode
-			}).then(function mySucces(response) {
-				results  = response.data;
+		var paths  = response.data;			
+		
+		$http({	
+			method : "GET",
+			url : "/getCHStages/"+chCode
+		}).then(function mySucces(response) {
+			results  = response.data;
+			if(results.length > 0){
+				
+				if(pathCode==undefined){		//se non si vuole la localizzazione del path
+					var path=0;
+					var index=0;
+					var color=0;
+					var currentPathCode=paths[path].code;
+					
+					for(var i=0; i < results.length; i++){
+						if(currentPathCode == results[i].pathCode){
+							index++;
+							results[i].color = colors[color];
+							results[i].index = index;
+							
+							var coordinates = new google.maps.LatLng(results[i].latitude,results[i].longitude);	
+							pathPolyline.push(coordinates);
+						}
+						else{
+							path++;
+							color++;
+							index=0;
+							currentPathCode=paths[path].code;
+							i--;
 
-				var coordinates = new google.maps.LatLng(results[0].latitude,results[0].longitude);		
-				map = new google.maps.Map(document.getElementById("map"),{
-				    zoom: 16,
-				    center: coordinates, 
-				    mapTypeId: google.maps.MapTypeId.ROADMAP
-				});
-				map.addListener('rightclick', function(event) {    //quendo si preme il tasto destro richiama la funzione addPath dalla finestra genitore [rigthclick, dblclick, click]     	
-					parent.window.addPath(map.getCenter().lat(), map.getCenter().lng(), map.getZoom());
-				});
+							var chPath = new google.maps.Polyline({
+								path: pathPolyline,
+								geodesic: true,
+								strokeColor: colors[(color)-1],
+								strokeOpacity: 1.0,
+								strokeWeight: 3
+							});
+							chPath.setMap(map);
+							pathPolyline=[];
+						}
+					}
 
-			}, function myError(response) {
-				results  = response.statusText;
-			});	
-		}
+					var chPath = new google.maps.Polyline({
+						path: pathPolyline,
+						geodesic: true,
+						strokeColor: colors[color],
+						strokeOpacity: 1.0,
+						strokeWeight: 3
+					});
+					chPath.setMap(map);
+					pathPolyline=[];
+
+					setMarkers(map, results);				
+					
+				}
+				else{				//localizzazione del path
+					var path=0;
+					var index=0;
+					var firstPassage=true;
+					var pathColor='red';
+					var currentPathCode=paths[path].code;														
+					for(var i=0; i < results.length; i++){						
+						if(results[i].pathCode == pathCode){
+							pathColor='green';
+							if(firstPassage){
+								index=1;
+								firstPassage=false;
+								var chPath = new google.maps.Polyline({
+									path: pathPolyline,
+									geodesic: true,
+									strokeColor: 'red',
+									strokeOpacity: 1.0,
+									strokeWeight: 3
+								});
+								chPath.setMap(map);
+								pathPolyline=[];
+							}
+							else{
+								index++;
+							}
+							results[i].color = colors[1];
+							results[i].index = index;
+							
+							var coordinates = new google.maps.LatLng(results[i].latitude,results[i].longitude);	
+							pathPolyline.push(coordinates);
+						}
+						else{
+							if(currentPathCode == results[i].pathCode){
+								pathColor='red';
+								index++;
+								results[i].color = colors[0];
+								results[i].index = index;
+								
+								var coordinates = new google.maps.LatLng(results[i].latitude,results[i].longitude);	
+								pathPolyline.push(coordinates);
+							}
+							else{
+								path++;
+								index=0;
+								currentPathCode=paths[path].code;
+								i--;
+								index=0;
+
+								var chPath = new google.maps.Polyline({
+									path: pathPolyline,
+									geodesic: true,
+									strokeColor: pathColor,
+									strokeOpacity: 1.0,
+									strokeWeight: 3
+								});
+								chPath.setMap(map);
+								pathPolyline=[];
+							}
+						}
+					}
+
+					var chPath = new google.maps.Polyline({
+						path: pathPolyline,
+						geodesic: true,
+						strokeColor: pathColor,
+						strokeOpacity: 1.0,
+						strokeWeight: 3
+					});
+					chPath.setMap(map);
+					pathPolyline=[];
+
+					setMarkers(map, results);
+				}	
+			}
+			else{
+				$http({
+					method : "GET",
+					url : "/getCH/"+chCode
+				}).then(function mySucces(response) {
+					results  = response.data;
+	
+					var coordinates = new google.maps.LatLng(results[0].latitude,results[0].longitude);		
+					map = new google.maps.Map(document.getElementById("map"),{
+					    zoom: 16,
+					    center: coordinates, 
+					    mapTypeId: google.maps.MapTypeId.ROADMAP
+					});
+					map.addListener('rightclick', function(event) {    //quendo si preme il tasto destro richiama la funzione addPath dalla finestra genitore [rigthclick, dblclick, click]     	
+						parent.window.addPath(map.getCenter().lat(), map.getCenter().lng(), map.getZoom());
+					});
+	
+				}, function myError(response) {
+					results  = response.statusText;
+				});	
+			}
+			
+		}, function myError(response) {
+			results  = response.statusText;
+		});	
+	
 	}, function myError(response) {
-		results  = response.statusText;
-	});	
+		alert("Error on the query: getCHPaths SELECT");
+	});
+	
+	
 
 	function setMarkers(map, markers) {		
 		var bounds = new google.maps.LatLngBounds();
@@ -83,19 +212,18 @@ app.controller('PathsMapController', function($scope, $http, $window, $timeout, 
 			var stage = markers[i];
 		    var stagePosition = new google.maps.LatLng(stage.latitude, stage.longitude);
 		    var marker;
-		    
 		   	if(stage.pathCode == pathCode){
 		    	marker = new google.maps.Marker({
 			    	position: stagePosition,
 			    	map: map,
-					icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
+			    	icon: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_'+stage.color+stage.index+'.png'
 			    });
 		    }
 		    else{
 		    	 marker = new google.maps.Marker({
 			    	position: stagePosition,
 			    	map: map,
-					icon: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+			    	icon: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_'+stage.color+stage.index+'.png'
 			    }); 
 		    }
 		    bounds.extend(stagePosition);
@@ -103,7 +231,7 @@ app.controller('PathsMapController', function($scope, $http, $window, $timeout, 
 		map.fitBounds(bounds);	    
 	}
 
-	map.addListener('rightclick', function(event) {    //quendo si preme il tasto destro richiama la funzione addPath dalla finestra genitore [rigthclick, dblclick, click]     	
+	map.addListener('rightclick', function(event) {    //quendo si preme il tasto destro apre un pop-up per l'inserimento di un nuovo path [rigthclick, dblclick, click]     	
 		parent.window.addPath();
 	});
 

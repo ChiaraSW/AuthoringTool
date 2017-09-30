@@ -8,7 +8,7 @@
 
 <body ng-app="GoPoleis" >
 
-	 <div class="col-sm-9" ng-controller="delCardController">
+	 <div class="col-sm-10" ng-controller="delCardController">
 		<div>
 			<h1 style="margin:20px;"><u>Cards</u></h1>
 			<fieldset style="margin-top:50px; margin-left:20px;""> 	
@@ -37,7 +37,7 @@
 
 	        </fieldset>
 	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
-	       		<li ng-repeat="card in results | filter:searchBoxCards | rarity:filterRarity" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+	       		<li ng-repeat="card in cards | filter:searchBoxCards | rarity:filterRarity" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
 	       			ng-model="getAllCards.selection" ng-value="card.name" id="{{card.name}}">	
 	       			<span class="glyphicon glyphicon-trash" style="float:right;" ng-click="delCard(card.code, card.image)"></span>        	
 	        		<h4 card.name="selection">
@@ -64,9 +64,9 @@
 			method : "GET",
 			url : "/getAllCards"
 		}).then(function mySucces(response) {
-			$scope.results  = response.data;
+			$scope.cards  = response.data;
 		}, function myError(response) {
-			$scope.results  = response.statusText;
+			alert("Error on the query: getAllCards SELECT");
 		});
 		
 		$scope.commonCard = function(){
@@ -132,15 +132,14 @@
   	  					method : "GET",
   	  					url : "/delCard/"+cardCode
   	  				}).then(function mySucces(response) {
-  	  					results  = response.data;	 
   	  					alert("Successful delete");
   	  					window.open("Cards_Template.html", "_self"); 
   	  				}, function myError(response) {
-  	  					$scope.results  = response.statusText;
+  	  				alert("Error on the query: delCard DELETE");
   	  				});
   						
   				}, function myError(response) {
-  					$scope.results  = response.statusText;
+  					alert("Error on the query: delImage DELETE");
   				});
 			} 
 		}	

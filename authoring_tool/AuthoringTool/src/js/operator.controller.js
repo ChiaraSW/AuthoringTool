@@ -17,15 +17,13 @@
 
     	var vm = this;
     	vm.CulturalHeritages = true;
-    	vm.Game1 = true;
-    	vm.Game2 = true;
-		vm.Game3 = true;
-		vm.Game4 = true;
-    	
-    	
-    	
+    	vm.CardsPackets = true;
+    	vm.DrawVA = true;
+    	vm.Paths = true;
+    	vm.Reviews = true;
+
     	vm.getCulturalHeritages = function(){ 
-			document.getElementById('mainFrame').src = "src/html/Operator/CulturalHeritages_Template.html";	
+			document.getElementById('mainFrame').src = "src/html/Operator/CulturalHeritages.html";	
 		}
 
 		vm.addCulturalHeritage = function(){		 	
@@ -36,80 +34,26 @@
 			document.getElementById('mainFrame').src = "src/html/Operator/CulturalHeritage_Del.html";	
 		}
 		
-		vm.getGame1 = function(){
-			document.getElementById('mainFrame').src = "src/html/Operator/Game1_Template.html";	
+		vm.getCardsPackets = function(){
+			document.getElementById('mainFrame').src = "src/html/Operator/CardsPackets_CHs.html";	
 		}
 		
-		$window.enableGame1SubButtons = function (enable, chCode){
-			code = chCode;
-			vm.Game1_subButtons = enable;
-			$scope.$apply();
-		}
-
-		vm.siteInfo = function(){
-			document.getElementById('mainFrame').src = "src/html/Operator/Game1_SiteInformation.html";		
-			/* NON BUTTARE (prendo il valore di un determinato campo del frame)!!!
-			document.getElementById('mainFrame').src = "src/html/Operator/Game1_SiteInformation.html";		
-			document.getElementById('mainFrame').onload = function() {			  	
-				var check = document.getElementById('mainFrame').contentWindow.document.getElementById('chCode').innerHTML;		
-				alert(check);
-			}	*/
-		}
-		
-		vm.chests = function(){
-			document.getElementById('mainFrame').src = "src/html/Operator/Game1_Chests.html";	
-		}
-		
-		vm.getGame2 = function(){ 
-			document.getElementById('mainFrame').src = "src/html/Operator/Game2_Template.html";	
+		vm.getDrawVA = function(){ 
+			document.getElementById('mainFrame').src = "src/html/Operator/DrawValidityArea_CHs.html";	
 		}	
-		
-		$window.enableGame2SubButtons = function (enable, chCode){
-			code = chCode;
-			vm.Game2_subButtons = enable;
-			$scope.$apply();
+
+		vm.getPaths = function(){ 
+			document.getElementById('mainFrame').src = "src/html/Operator/Paths_CHs.html";	
 		}	
-		
-		vm.drawPolygon = function(){
-			document.getElementById('mainFrame').src = "src/html/Operator/Game2_DrawValidityArea.html";	
-		}
 
-		vm.getGame3 = function(){ 
-			document.getElementById('mainFrame').src = "src/html/Operator/Game3_Template.html";	
-		}		
+		vm.getReviews = function(){ 
+			document.getElementById('mainFrame').src = "src/html/Operator/Reviews_CHs.html";	
+		}
 		
-		$window.enableGame3SubButtons = function (enable, chCode){
+		$window.setCode = function (chCode){
 			code = chCode;
-			vm.Game3_subButtons = enable;
 			$scope.$apply();
-		}		
-		
-		vm.paths = function(){
-			document.getElementById('mainFrame').src = "src/html/Operator/Game3_Paths.html";	
-		}
-
-		vm.getGame4 = function(){ 
-			document.getElementById('mainFrame').src = "src/html/Operator/Game4_Template.html";	
-		}
-		
-		$window.enableGame4SubButtons = function (enable, chCode){
-			code = chCode;
-			vm.Game4_subButtons = enable;
-			$scope.$apply();
-		}
-		
-		vm.reviewsList = function(){
-			document.getElementById('mainFrame').src = "src/html/Operator/Game4_ReviewsList.html";	
-		}
-		
-		vm.infopoints = function(){
-			document.getElementById('mainFrame').src = "src/html/Operator/Game4_Infopoints.html";	
-		}
-		
-		vm.enciclopedicPage = function(){
-			document.getElementById('mainFrame').src = "src/html/Operator/Game4_EnciclopedicPage.html";	
-		}
-		
+    	}
 		$window.getCode = function (){
 			return code;
 		}
@@ -121,6 +65,13 @@
 		$window.getPathCode = function (){
 			return path;
 		}
+		
+		/* NON BUTTARE (prendo il valore di un determinato campo del frame)!!!
+		document.getElementById('mainFrame').src = "src/html/Operator/Game1_SiteInformation.html";		
+		document.getElementById('mainFrame').onload = function() {			  	
+			var check = document.getElementById('mainFrame').contentWindow.document.getElementById('chCode').innerHTML;		
+			alert(check);
+		}	*/
 
     }
 })();

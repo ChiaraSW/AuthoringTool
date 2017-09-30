@@ -44,7 +44,7 @@
 	       			ng-model="getAllMedals.selection" ng-value="medal.name" id="{{medal.name}}" ng-click="updMedal(medal.code)">	        	
 	        		<h4 medal.name="selection">
 	        			<img ng-src="{{medal.path}}{{medal.filename}}" style="height: 80px; width: 80px;"/>
-	        			{{ medal.name }} <br><br> #Collections: ...
+	        			{{ medal.name }} <br><br> #Collections: {{medal.collections}}
 	        		</h4>	
 	       		</li>
 	        </ul>
@@ -61,7 +61,7 @@
 				     	<label for="name" style="display: inline-block; vertical-align: bottom;">
 				     		Name: 
 						</label>
-						<input type="text" class="form-control" ng-model="updMedal.name" style="width:850px; display: inline-block;" required>
+						<input type="text" class="form-control" ng-model="updMedal.name" style="width:1200px; display: inline-block;" maxlength="100" required>
 					</fieldset>
 				</div>
 				
@@ -90,25 +90,23 @@
 							<option ng-repeat="x in category">{{x.name}}</option>
 						</select>
 						
-						<label for="region" style="display: inline-block; margin-left:30px;" ng-show="regionSelected">
+						<label for="region" style="display: inline-block; margin-left:70px;" ng-show="regionSelected">
 				     		Region:  
 						</label>
 						<select class="form-control" ng-model="updMedal.region" name="region" style="width:300px; display: inline-block;" ng-show="regionSelected" ng-required="regionSelected">
 							<option ng-repeat="y in regions">{{y.name}}</option>
 						</select>
-<!-- 						<select class="form-control" ng-model="updMedal.region" name="region" ng-options="option as option.name for option in regions" style="width:300px; display: inline-block;" ng-show="regionSelected" 
-								ng-required="regionSelected"></select>	 -->
 								
- 						<label for="historicalPeriod" style="display: inline-block; margin-left:30px;" ng-show="hpSelected">
+ 						<label for="historicalPeriod" style="display: inline-block; margin-left:70px;" ng-show="hpSelected">
 				     		Historical period:  
 						</label>
-						<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="updMedal.historicalPeriod" style="width:300px; display: inline-block;"
+						<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="updMedal.historicalPeriod" style="width:678px; display: inline-block;" maxlength="60"
 									typeahead="option as option.name for option in historicalPeriods | filter:$viewValue | limitTo:8" class="form-control" ng-show="hpSelected" ng-required="hpSelected">	
 									
-						<label for="structureType" style="display: inline-block; margin-left:30px;" ng-show="stSelected">
+						<label for="structureType" style="display: inline-block; margin-left:70px;" ng-show="stSelected">
 				     		Type of structure:  
 						</label>
-						<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="updMedal.typeOfStructure" style="width:300px; display: inline-block;"
+						<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="updMedal.typeOfStructure" style="width:675px; display: inline-block;" maxlength="60"
 									typeahead="option as option.name for option in typeOfStructures | filter:$viewValue | limitTo:8" class="form-control" ng-show="stSelected" ng-required="stSelected">
 					</fieldset>
 				</div>			
@@ -122,7 +120,7 @@
 					</fieldset>
 				</div>
 		
-				<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+				<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
 		            <button type="submit" name="btnUpdMedal" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeUpdMedal()">Update</button>
 		            <img ng-if="vm.dataLoading"/>
 		            <a href="Medals_Template.html" target="_self">Cancel</a>
@@ -210,7 +208,7 @@
 		}   
 
 		$scope.updMedal = function(medalCode){ 	
-		
+			
 			$scope.getMedalsPage=false;
 			$scope.updMedalPage=true;
 			$scope.updMedal={};
@@ -222,6 +220,7 @@
 			var newImg = false;
 			var oldImgCode;
 			var type;
+			var addCHs=0;
 			
 			$http({
 				method: 'GET',
@@ -229,7 +228,7 @@
 			}).then(function successCallback(response) {	
 				$scope.category = response.data;		
 			}, function errorCallback(response) {
-				alert("Error on the query: Category SELECT *");
+				alert("Error on the query: getAllCategories SELECT");
 			});
 			
 			$http({
@@ -257,13 +256,13 @@
 				$scope.typeOfStructures = response.data;  
 			}, function errorCallback(response) {
 				alert("Error on the query: getAllStructureTypes SELECT");
-			});	
-			
+			});			
+		
 			$http({
 				method : "GET",
 				url : "/getMedal/"+medalCode
 			}).then(function mySucces(response) {
-				results  = response.data;	
+				var results  = response.data;	
 				if (results.length > 0){
 					$scope.updMedal.name=results[0].name;
 					oldImgCode=results[0].image;
@@ -283,7 +282,7 @@
 							oldMedalTypeCode=response.data[0].regionCode;
 							$scope.updMedal.region=response.data[0].region;
 						}, function myError(response) {
-							$scope.results  = response.statusText;
+							alert("Error on the query: getRegionMedalByMedalCode SELECT");
 						});	
 					}
 
@@ -299,7 +298,7 @@
 							oldMedalTypeCode=response.data[0].hpCode;
 							$scope.updMedal.historicalPeriod=response.data[0].hp;
 						}, function myError(response) {
-							$scope.results  = response.statusText;
+							alert("Error on the query: getHPMedalByMedalCode SELECT");
 						});	
 					}
 					
@@ -315,13 +314,13 @@
 							oldMedalTypeCode=response.data[0].stCode;
 							$scope.updMedal.typeOfStructure=response.data[0].structuretype;
 						}, function myError(response) {
-							$scope.results  = response.statusText;
+							alert("Error on the query: getToSMedalByMedalCode SELECT");
 						});	
 					}
 
 				}
 			}, function myError(response) {
-				$scope.results  = response.statusText;
+				alert("Error on the query: getMedal SELECT");
 			});					
 			
 		    $scope.fileReaderSupported = window.FileReader != null;
@@ -365,8 +364,8 @@
 		    		$scope.stSelected=true;
 		    		$scope.updMedal.typeOfStructure="";
 		    	}
-		    };
-			
+		    };		
+		
 		    $scope.executeUpdMedal = function(){	
 		    	$scope.imgCode="medals-" + Date.now();
 
@@ -402,7 +401,7 @@
 				}).then(function successCallback(response) {	
 					checkMedal(oldImgCode);
 				}, function errorCallback(response) {			
-					alert("Error on the query: Image UPDATE");
+					alert("Error on the query: updImage UPDATE");
 				});	
 		    }
 		    
@@ -419,14 +418,14 @@
 							}
 							else{
 								if(oldCategory == "Historical Period"){							
-									delHPMedal(imgCode);
+									delCategoryMedal("delHPMedal",imgCode);
 								}
 								if(oldCategory == "Type of Structure"){
-									delToSMedal(imgCode);
+									delCategoryMedal("delToSMedal",imgCode);
 								}
 							}	
 						}, function myError(response) {
-							$scope.results  = response.statusText;
+							alert("Error on the query: getRegionMedalByRegionCode SELECT");
 						});	
 					}
 					
@@ -441,14 +440,14 @@
 							}
 							else{
 								if(oldCategory == "Region"){
-									delRegionMedal(imgCode);	
+									delCategoryMedal("delRegionMedal",imgCode);
 								}
 								if(oldCategory == "Type of Structure"){			
-									delToSMedal(imgCode);
+									delCategoryMedal("delToSMedal",imgCode);
 								}
 							}
 						}, function myError(response) {
-							$scope.results  = response.statusText;
+							alert("Error on the query: getHPMedalByHPCode SELECT");
 						});	
 					}
 					if($scope.updMedal.category == 'Type of Structure'){
@@ -462,37 +461,24 @@
 							}
 							else{
 								if(oldCategory == "Region"){
-									delRegionMedal(imgCode);	
+									delCategoryMedal("delRegionMedal",imgCode);
 								}
 								if(oldCategory == "Historical Period"){
-									delHPMedal(imgCode);
+									delCategoryMedal("delHPMedal",imgCode);
 								}
 							}
 						}, function myError(response) {
-							$scope.results  = response.statusText;
+							alert("Error on the query: getToSMedalByToSCode SELECT");
 						});	
 					}
-				}
+				}		    
 				else{
 					if($scope.updMedal.category == 'Region'){
 						if(getRegionCode() == oldMedalTypeCode){
 							updateMedal("update", imgCode);
 						}
 						else{
-							$http({
-								method : "GET",
-								url : "/getRegionMedalByRegionCode/"+getRegionCode()
-							}).then(function mySucces(response) {
-								if(response.data.length > 0){
-									alert("There is already a medal associated with this region.");
-									window.open("Medals_Template.html", "_self");  
-								}
-								else{
-									updateMedal("update", imgCode);
-								}							
-							}, function myError(response) {
-								$scope.results  = response.statusText;
-							});	
+							getCategoryMedalByCategoryCode("getRegionMedalByRegionCode", getRegionCode(), imgCode, "Region");
 						}
 					}
 					
@@ -501,20 +487,7 @@
 							updateMedal("update", imgCode);
 						}
 						else{
-							$http({
-								method : "GET",
-								url : "/getHPMedalByHPCode/"+getHPCode()
-							}).then(function mySucces(response) {
-								if(response.data.length > 0){
-									alert("There is already a medal associated with this historical period.");
-									window.open("Medals_Template.html", "_self");   
-								}
-								else{
-									updateMedal("update", imgCode);
-								}
-							}, function myError(response) {
-								$scope.results  = response.statusText;
-							});	
+							getCategoryMedalByCategoryCode("getHPMedalByHPCode", getHPCode(), imgCode, "Historical Period");
 						}
 					}
 					
@@ -523,57 +496,11 @@
 							updateMedal("update", imgCode);
 						}
 						else{
-							$http({
-								method : "GET",
-								url : "/getToSMedalByToSCode/"+getToSCode()
-							}).then(function mySucces(response) {
-								if(response.data.length > 0){
-									alert("There is already a medal associated with this type of structure.");
-									window.open("Medals_Template.html", "_self");   
-								}
-								else{
-									updateMedal("update", imgCode);
-								}	
-							}, function myError(response) {
-								$scope.results  = response.statusText;
-							});	
+							getCategoryMedalByCategoryCode("getToSMedalByToSCode", getToSCode(), imgCode, "Type of Structure");
 						}
 					}
 					
 				}
-		    }
-		    
-		    function delRegionMedal(imgCode){
-		    	$http({
-					method: 'GET',
-					url: '/delRegionMedal/'+medalCode			
-				}).then(function successCallback(response) {										
-					updateMedal("new", imgCode);	
-				}, function errorCallback(response) {
-					alert("Error on the query: Medal UPDATE");
-				});
-		    }
-		    
-		    function delHPMedal(imgCode){
-		    	$http({
-					method: 'GET',
-					url: '/delHPMedal/'+medalCode			
-				}).then(function successCallback(response) {										
-					updateMedal("new", imgCode);	
-				}, function errorCallback(response) {
-					alert("Error on the query: Medal UPDATE");
-				});
-		    }
-		    
-		    function delToSMedal(imgCode){
-		    	$http({
-					method: 'GET',
-					url: '/delToSMedal/'+medalCode			
-				}).then(function successCallback(response) {										
-					updateMedal("new", imgCode);	
-				}, function errorCallback(response) {
-					alert("Error on the query: Medal UPDATE");
-				});
 		    }
 		    
 		    function updateMedal(state, imgCode) {
@@ -585,24 +512,10 @@
 										
 					if($scope.updMedal.category=='Region'){		
 						if(state=="update"){
-							$http({
-								method: 'GET',
-								url: '/updRegionMedal/'+getRegionCode()+'/'+medalCode			
-							}).then(function successCallback(response) {	
-								window.open("Medals_Template.html", "_self");   
-							}, function errorCallback(response) {
-								alert("Error on the query: Medal UPDATE");
-							});
+							updCategoryMedal("updRegionMedal",getRegionCode());
 						}
 						if(state=="new"){
-							$http({
-								method: 'GET',
-								url: '/addRegionMedal/'+medalCode+'/'+getRegionCode()			
-							}).then(function successCallback(response) {	
-								window.open("Medals_Template.html", "_self");   
-							}, function errorCallback(response) {
-								alert("Error on the query: Medal UPDATE");
-							});
+							addCategoryMedal("addRegionMedal", getRegionCode());
 						}
 					}
 					
@@ -614,10 +527,10 @@
 							}).then(function successCallback(response) {	
 								var hpCodeDB = response.data.insertId;
 								if(state=="update"){
-									updHPMedal(hpCodeDB);
+									updCategoryMedal("updHPMedal",hpCodeDB);
 								}
 								if(state=="new"){
-									addHPMedal(hpCodeDB);
+									addCategoryMedal("addHPMedal", hpCodeDB);
 								}
 							}, function errorCallback(response) {
 								alert("Error on the query: addHistoricalPeriod INSERT");
@@ -625,10 +538,10 @@
 						}
 						else{
 							if(state=="update"){
-								updHPMedal(getHPCode());
+								updCategoryMedal("updHPMedal",getHPCode());
 							}
 							if(state=="new"){
-								addHPMedal(getHPCode());
+								addCategoryMedal("addHPMedal", getHPCode());
 							}
 						}
 					}
@@ -641,73 +554,134 @@
 							}).then(function successCallback(response) {	
 								var tosCodeDB = response.data.insertId;
 								if(state=="update"){
-									updToSMedal(tosCodeDB);
+									updCategoryMedal("updToSMedal",tosCodeDB);
 								}
 								if(state=="new"){
-									addToSMedal(tosCodeDB);
+									addCategoryMedal("addToSMedal", tosCodeDB);
 								}
 							}, function errorCallback(response) {
-								alert("Error on the query: addHistoricalPeriod INSERT");
+								alert("Error on the query: addStructureType INSERT");
 							});
 						}
 						else{
 							if(state=="update"){
-								updToSMedal(getToSCode());
+								updCategoryMedal("updToSMedal",getToSCode());
 							}
 							if(state=="new"){
-								addToSMedal(getToSCode());
+								addCategoryMedal("addToSMedal", getToSCode());
 							}
 						}
 					}
 
 				}, function errorCallback(response) {
-					alert("Error on the query: Medal UPDATE");
+					alert("Error on the query: updMedal UPDATE");
 				});			
 			}
 		    
-		    function addHPMedal(hpCode){
+		    function getCategoryMedalByCategoryCode(query, categoryCode, imgCode, category){
+		    	$http({
+					method : "GET",
+					url : "/"+query+"/"+categoryCode
+				}).then(function mySucces(response) {
+					if(response.data.length > 0){
+						alert("There is already a medal associated with this "+category);
+						window.open("Medals_Template.html", "_self");   
+					}
+					else{
+						delHeritageMedalByMedalCode("update", imgCode);
+					}	
+				}, function myError(response) {
+					alert("Error on the query: "+query+" SELECT");
+				});	
+		    }
+		    
+		    function addCategoryMedal(query, categoryCode){
 		    	$http({
 					method: 'GET',
-					url: '/addHPMedal/'+medalCode+'/'+hpCode			
+					url: '/'+query+'/'+medalCode+'/'+categoryCode			
 				}).then(function successCallback(response) {	
-					window.open("Medals_Template.html", "_self");   
+					checkAssociatedCHs(categoryCode);
 				}, function errorCallback(response) {
-					alert("Error on the query: Medal UPDATE");
+					alert("Error on the query: "+query+" INSERT");
 				});
 		    }
 		    
-		    function updHPMedal(hpCode){
+		    function updCategoryMedal(query, categoryCode){
 		    	$http({
 					method: 'GET',
-					url: '/updHPMedal/'+hpCode+'/'+medalCode			
-				}).then(function successCallback(response) {	
-					window.open("Medals_Template.html", "_self");   
+					url: '/'+query+'/'+categoryCode+'/'+medalCode			
+				}).then(function successCallback(response) {	 
+					checkAssociatedCHs(categoryCode);
 				}, function errorCallback(response) {
-					alert("Error on the query: Medal UPDATE");
+					alert("Error on the query: "+query+" UPDATE");
 				});
 		    }
 		    
-		    function addToSMedal(tosCode){
+		    function delCategoryMedal(query, imgCode){
 		    	$http({
 					method: 'GET',
-					url: '/addToSMedal/'+medalCode+'/'+tosCode			
-				}).then(function successCallback(response) {	
-					window.open("Medals_Template.html", "_self");   
+					url: '/'+query+'/'+medalCode			
+				}).then(function successCallback(response) {										
+					delHeritageMedalByMedalCode("new", imgCode);
 				}, function errorCallback(response) {
-					alert("Error on the query: Medal UPDATE");
+					alert("Error on the query: "+query+" DELETE");
 				});
 		    }
 		    
-		    function updToSMedal(tosCode){
+		    function checkAssociatedCHs(categoryCode){
+		    	if($scope.updMedal.category=='Region'){
+					getAssociatedCHs("getRegionCHs", categoryCode);
+				}
+				if($scope.updMedal.category=='Historical Period'){
+					getAssociatedCHs("getHPCHs", categoryCode);
+				}
+				if($scope.updMedal.category=='Type of Structure'){
+					getAssociatedCHs("getToSCHs", categoryCode);
+				}
+		    }
+		    
+		    function getAssociatedCHs(query, categoryCode){
 		    	$http({
 					method: 'GET',
-					url: '/updToSMedal/'+tosCode+'/'+medalCode			
+					url: '/'+query+'/'+categoryCode			
 				}).then(function successCallback(response) {	
-					window.open("Medals_Template.html", "_self");   
+					addCHs=response.data.length;
+					for(var i=0; i < response.data.length; i++){
+						addHeritageMedal(response.data[i].code);
+					}
 				}, function errorCallback(response) {
-					alert("Error on the query: Medal UPDATE");
+					alert("Error on the query: "+query+" SELECT");
 				});
 		    }
+		    
+		    function addHeritageMedal(chCode){
+		    	$http({
+					method: 'GET',
+					url: '/addHeritageMedal/'+chCode+'/'+medalCode
+				}).then(function successCallback(response) {	
+					addCHs--;
+					canReload();
+				}, function errorCallback(response) {
+					alert("Error on the query: addHeritageMedal SELECT");
+				});
+		    }
+		    
+		    function delHeritageMedalByMedalCode(state, imgCode){
+		    	$http({
+					method: 'GET',
+					url: '/delHeritageMedalByMedalCode/'+medalCode			
+				}).then(function successCallback(response) {										
+					updateMedal(state, imgCode);	
+				}, function errorCallback(response) {
+					alert("Error on the query: delHeritageMedalByMedalCode DELETE");
+				});
+		    }
+
+		    function canReload(){
+				if(addCHs==0){
+					window.open("Medals_Template.html", "_self");   
+		   		}
+			}
 		    
 			function getCategoryCode(){
 				var catCode=0;

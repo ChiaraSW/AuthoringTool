@@ -322,6 +322,22 @@ module.exports = {
 				todo.delMedal(req.params.medal_code,res);
 			});	
 			
+			app.get('/addHeritageMedal/:ch_code/:medal_code', function(req,res){
+				todo.addHeritageMedal(req.params.ch_code,req.params.medal_code,res);
+			});
+			
+			/*app.get('/updHeritageMedal/:new_medal_code/:new_ch_code/:old_medal_code/:old_ch_code', function(req,res){
+				todo.updHeritageMedal(req.params.new_medal_code,req.params.new_ch_code,req.params.old_medal_code,req.params.old_ch_code,res);
+			});*/
+			
+			app.get('/delHeritageMedal/:ch_code/:medal_code', function(req,res){
+				todo.delHeritageMedal(req.params.ch_code,req.params.medal_code,res);
+			});	
+			
+			app.get('/delHeritageMedalByMedalCode/:medal_code', function(req,res){
+				todo.delHeritageMedalByMedalCode(req.params.medal_code,res);
+			});	
+			
 			app.get('/getAllRegionMedal',function(req,res){
 				todo.getAllRegionMedal(res);
 			});
@@ -332,6 +348,10 @@ module.exports = {
 			
 			app.get('/getRegionMedalByRegionCode/:medal_region',function(req,res){
 				todo.getRegionMedalByRegionCode(req.params.medal_region,res);
+			});
+			
+			app.get('/getRegionMedalByRegionName/:medal_region',function(req,res){
+				todo.getRegionMedalByRegionName(req.params.medal_region,res);
 			});
 			
 			app.get('/addRegionMedal/:medal_code/:medal_region', function(req,res){
@@ -565,19 +585,7 @@ module.exports = {
 			app.get('/delToSMedalMission/:mission_code', function(req,res){
 				todo.delToSMedalMission(req.params.mission_code,res);
 			});
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
-			
+
 			app.get('/getTop10',function(req,res){
 				todo.getTop10(res);
 			});
@@ -620,17 +628,65 @@ module.exports = {
 				todo.getAllMedalsCount(res);
 			});
 			
+			/*MANCANO LE STATISTICHE DI GIOCO DELLE MISSIONS*/
+					
+			app.get('/getAllCHsVisitedRegions/',function(req,res){
+				todo.getAllCHsVisitedRegions(res);
+			});
 			
+			app.get('/getAllCHsVisitedProvinces/',function(req,res){
+				todo.getAllCHsVisitedProvinces(res);
+			});
 			
+			app.get('/getAllCHsVisitedCHs/',function(req,res){
+				todo.getAllCHsVisitedCHs(res);
+			});
 			
+			app.get('/getAllCardsPacketsOpenRegions/',function(req,res){
+				todo.getAllCardsPacketsOpenRegions(res);
+			});
 			
-		
+			app.get('/getAllCardsPacketsOpenProvinces/',function(req,res){
+				todo.getAllCardsPacketsOpenProvinces(res);
+			});
 			
+			app.get('/getAllCardsPacketsOpenCHs/',function(req,res){
+				todo.getAllCardsPacketsOpenCHs(res);
+			});
 			
+			app.get('/getAllPathsCompletedRegions/',function(req,res){
+				todo.getAllPathsCompletedRegions(res);
+			});
 			
+			app.get('/getAllPathsCompletedProvinces/',function(req,res){
+				todo.getAllPathsCompletedProvinces(res);
+			});
 			
-
+			app.get('/getAllPathsCompletedCHs/',function(req,res){
+				todo.getAllPathsCompletedCHs(res);
+			});
 			
+			app.get('/getAllReviewsWrittenRegions/',function(req,res){
+				todo.getAllReviewsWrittenRegions(res);
+			});
+			
+			app.get('/getAllReviewsWrittenProvinces/',function(req,res){
+				todo.getAllReviewsWrittenProvinces(res);
+			});
+			
+			app.get('/getAllReviewsWrittenCHs/',function(req,res){
+				todo.getAllReviewsWrittenCHs(res);
+			});
+			
+			app.get('/getAllMedalsWonCategories/',function(req,res){
+				todo.getAllMedalsWonCategories(res);
+			});
+			
+			app.get('/getAllMedalsWonMedals/',function(req,res){
+				todo.getAllMedalsWonMedals(res);
+			});
+			
+			/*MANCANO LE STATISTICHE USERS DELLE MISSIONS*/
 			
 			
 			
@@ -679,6 +735,18 @@ module.exports = {
 				todo.getOperatorCHs(req.params.operator_email,res);
 			});
 			
+			app.get('/getRegionCHs/:region_code', function(req,res){
+				todo.getRegionCHs(req.params.region_code,res);
+			});
+			
+			app.get('/getHPCHs/:hp_code', function(req,res){
+				todo.getHPCHs(req.params.hp_code,res);
+			});
+			
+			app.get('/getToSCHs/:tos_code', function(req,res){
+				todo.getToSCHs(req.params.tos_code,res);
+			});
+			
 			app.get('/getCH/:ch_code',function(req,res){
 				todo.getCH(req.params.ch_code,res);
 			});
@@ -687,32 +755,16 @@ module.exports = {
 				todo.getProvinceCHs(req.params.prov_code,res);
 			});
 
-			app.get('/addCH/:ch_code/:ch_name/:ch_description/:ch_image/:ch_g1/:ch_g2/:ch_g3/:ch_g4/:ch_coordinates/:ch_province/:ch_historicalperiod/:ch_structuretype/:ch_operator', function(req,res){
-				todo.addCH(req.params.ch_code,req.params.ch_name,req.params.ch_description,req.params.ch_image,req.params.ch_g1,req.params.ch_g2,req.params.ch_g3,req.params.ch_g4,req.params.ch_coordinates,req.params.ch_province,req.params.ch_historicalperiod,req.params.ch_structuretype,req.params.ch_operator,res);
+			app.get('/addCH/:ch_code/:ch_name/:ch_description/:ch_image/:ch_regionmedal/:ch_hpmedal/:ch_tosmedal/:ch_coordinates/:ch_province/:ch_historicalperiod/:ch_structuretype/:ch_operator', function(req,res){
+				todo.addCH(req.params.ch_code,req.params.ch_name,req.params.ch_description,req.params.ch_image,req.params.ch_regionmedal,req.params.ch_hpmedal,req.params.ch_tosmedal,req.params.ch_coordinates,req.params.ch_province,req.params.ch_historicalperiod,req.params.ch_structuretype,req.params.ch_operator,res);
 			});
 			
-			app.get('/updCH/:ch_name/:ch_description/:ch_image/:ch_g1/:ch_g2/:ch_g3/:ch_g4/:ch_coordinates/:ch_province/:ch_historicalperiod/:ch_structuretype/:ch_operator/:ch_code', function(req,res){
-				todo.updCH(req.params.ch_name,req.params.ch_description,req.params.ch_image,req.params.ch_g1,req.params.ch_g2,req.params.ch_g3,req.params.ch_g4,req.params.ch_coordinates,req.params.ch_province,req.params.ch_historicalperiod,req.params.ch_structuretype,req.params.ch_operator,req.params.ch_code,res);
+			app.get('/updCH/:ch_name/:ch_description/:ch_image/:ch_regionmedal/:ch_hpmedal/:ch_tosmedal/:ch_coordinates/:ch_province/:ch_historicalperiod/:ch_structuretype/:ch_operator/:ch_code', function(req,res){
+				todo.updCH(req.params.ch_name,req.params.ch_description,req.params.ch_image,req.params.ch_regionmedal,req.params.ch_hpmedal,req.params.ch_tosmedal,req.params.ch_coordinates,req.params.ch_province,req.params.ch_historicalperiod,req.params.ch_structuretype,req.params.ch_operator,req.params.ch_code,res);
 			});
 			
 			app.get('/delCH/:ch_code', function(req,res){
 				todo.delCH(req.params.ch_code,res);
-			});
-			
-			app.get('/getGame1CHs/:operator_email', function(req,res){
-				todo.getGame1CHs(req.params.operator_email,res);
-			});
-			
-			app.get('/getCHSiteInformation/:ch_code', function(req,res){
-				todo.getCHSiteInformation(req.params.ch_code,res);
-			});
-			
-			app.get('/addCHSiteInformation/:chsi_code/:chsi_title/:chsi_description/:chsi_image/:chsi_heritage', function(req,res){
-				todo.addCHSiteInformation(req.params.chsi_code,req.params.chsi_title,req.params.chsi_description,req.params.chsi_image,req.params.chsi_heritage,res);
-			});
-
-			app.get('/updCHSiteInformation/:chsi_title/:chsi_description/:chsi_image/:chsi_heritage/:chsi_code', function(req,res){
-				todo.updCHSiteInformation(req.params.chsi_title,req.params.chsi_description,req.params.chsi_image,req.params.chsi_heritage,req.params.chsi_code,res);
 			});
 
 			app.get('/getCHTreasureChests/:ch_code', function(req,res){
@@ -735,9 +787,9 @@ module.exports = {
 				todo.delTreasureChest(req.params.chest_code,res);
 			});
 			
-			app.get('/getGame2CHs/:operator_email', function(req,res){
+			/*app.get('/getGame2CHs/:operator_email', function(req,res){
 				todo.getGame2CHs(req.params.operator_email,res);
-			});
+			});*/
 			
 			app.get('/getCHValidityAreas/:ch_code', function(req,res){
 				todo.getCHValidityAreas(req.params.ch_code,res);
@@ -799,9 +851,9 @@ module.exports = {
 				todo.delCircle(req.params.circle_code,res);
 			});
 
-			app.get('/getGame3CHs/:operator_email', function(req,res){
+			/*app.get('/getGame3CHs/:operator_email', function(req,res){
 				todo.getGame3CHs(req.params.operator_email,res);
-			});
+			});*/
 			
 			app.get('/getGame3CHsWithPaths/:operator_email', function(req,res){
 				todo.getGame3CHsWithPaths(req.params.operator_email,res);
@@ -870,47 +922,11 @@ module.exports = {
 			app.get('/delStage/:stage_code', function(req,res){
 				todo.delStage(req.params.stage_code,res);
 			});
-			
-			
-			
-			
-			
-			app.get('/getGame4CHs/:operator_email', function(req,res){
-				todo.getGame4CHs(req.params.operator_email,res);
-			});
-			
-			/*app.get('/getCHInfopoints/:ch_code', function(req,res){
-				todo.getCHInfopoints(req.params.ch_code,res);
-			});
-			
-			app.get('/getInfopoint/:ip_code', function(req,res){
-				todo.getInfopoint(req.params.ip_code,res);
-			});
-			
-			app.get('/addInfopoint/:ip_code/:ip_description/:ip_path/:ip_latitude/:ip_longitude/:ip_views/:ip_heritage', function(req,res){
-				todo.addInfopoint(req.params.ip_code,req.params.ip_description,req.params.ip_path,req.params.ip_latitude,req.params.ip_longitude,req.params.ip_views,req.params.ip_heritage,res);
-			});
-			
-			app.get('/updInfopoint/:ip_description/:ip_path/:ip_latitude/:ip_longitude/:ip_views/:ip_heritage/:ip_code', function(req,res){
-				todo.updInfopoint(req.params.ip_description,req.params.ip_path,req.params.ip_latitude,req.params.ip_longitude,req.params.ip_views,req.params.ip_heritage,req.params.ip_code,res);
-			});
-			
-			app.get('/delInfopoint/:ip_code', function(req,res){
-				todo.delInfopoint(req.params.ip_code,res);
-			});
-			*/
-			app.get('/getCHEnciclopedicPage/:ch_code', function(req,res){
-				todo.getCHEnciclopedicPage(req.params.ch_code,res);
-			});
-			
-			app.get('/addCHEnciclopedicPage/:chep_code/:chep_title/:chep_description/:chep_curiosity/:chep_image/:chep_heritage', function(req,res){
-				todo.addCHEnciclopedicPage(req.params.chep_code,req.params.chep_title,req.params.chep_description,req.params.chep_curiosity,req.params.chep_image,req.params.chep_heritage,res);
-			});
-			
-			app.get('/updCHEnciclopedicPage/:chep_title/:chep_description/:chep_curiosity/:chep_image/:chep_heritage/:chep_code', function(req,res){
-				todo.updCHEnciclopedicPage(req.params.chep_title,req.params.chep_description,req.params.chep_curiosity,req.params.chep_image,req.params.chep_heritage,req.params.chep_code,res);
-			});
 
+			/*app.get('/getGame4CHs/:operator_email', function(req,res){
+				todo.getGame4CHs(req.params.operator_email,res);
+			});*/
+			
 			app.get('/getCHReviewsList/:ch_code', function(req,res){
 				todo.getCHReviewsList(req.params.ch_code,res);
 			});

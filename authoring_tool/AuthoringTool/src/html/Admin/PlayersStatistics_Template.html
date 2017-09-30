@@ -11,118 +11,108 @@
 </head>
 <body ng-app="GoPoleis" >
 
-	<div class="col-sm-10" ng-controller="getGameStatisticsController">
+	<div class="col-sm-10" ng-controller="getPlayersStatisticsController">
 			
 		<h1 style="margin:20px;"><u>Statistics</u></h1>
 		
 		<form name="form" role="form" enctype="multipart/form-data" method="post"  style="margin-top:50px; margin-left:20px;">															
 			<fieldset> 		
  				<label for="game" style="margin-right:30px;">
-		     		Select the game for which you want to view its statistics:  
+		     		Select the game for which you want to view its players' statistics:  
 				</label>
 				<input type="radio" ng-model="selectGame" value="Cultural Heritages" style="margin-right:5px;" ng-change="updateGameStatistics()"><b>Cultural Heritages</b>
 				<input type="radio" ng-model="selectGame" value="Cards' Packets" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Cards' Packets</b>
-				<input type="radio" ng-model="selectGame" value="Paths" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Paths</b>	
+				<input type="radio" ng-model="selectGame" value="Paths" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Paths</b>			
+ 				<input type="radio" ng-model="selectGame" value="Reviews" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Reviews</b>
 				<input type="radio" ng-model="selectGame" value="Medals" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Medals</b>
 				<input type="radio" ng-model="selectGame" value="Missions" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Missions</b>			
 			</fieldset>
 		</form>
 
-		<div id="container" style="min-width: 310px; height: 600px; margin-left:20px; margin-top:50px; "></div>
-		
+		<div id="container" style="min-width: 310px; height: 600px; margin-left:20px; margin-top:50px;"></div>
+
 	</div>
 
 </body>
 </html>
+
 <script>
 var app = angular.module("GoPoleis", []);
-app.controller('getGameStatisticsController', function($scope, $http, $window, $timeout) {
+app.controller('getPlayersStatisticsController', function($scope, $http, $window, $timeout) {
 	
 	$scope.selectGame = null;
 	
 	$scope.updateGameStatistics = function(){
 		
 		if($scope.selectGame == 'Cultural Heritages'){
-			$http({
-				method : "GET",
-				url : "/getAllCHsCountRegions"
-			}).then(function mySucces(response) {
-				var regionsData = response.data;
-				$http({
-					method : "GET",
-					url : "/getAllCHsCountProvinces"
-				}).then(function mySucces(response) {
-					var provincesData = response.data;
-					var title = $scope.selectGame;
-					var subtitle = "Click on the histogram for a more detailed view, if available.";
-					var yAxis = 'Total Cultural Heritages';			
-					var series = [{
-					     name: 'Regions',
-					     colorByPoint: false,
-					     data: regionsData
-					 }];
-					var drilldown=[];
-
-					if(provincesData.length > 0){
-						var actualRegion = provincesData[0].drilldown;
-						var data = [];
-						var provinceData = {};
-						
-						for(var i=0; i < provincesData.length; i++){	
-							if(actualRegion == provincesData[i].drilldown){
-								provinceData = {name:provincesData[i].name, y:provincesData[i].y};
-								data.push(provinceData);
-							}
-							else{
-								var serie = {name: actualRegion, id: actualRegion, data: data};
-								drilldown.push(serie);
-								actualRegion = provincesData[i].drilldown;
-								data = [];
-								provinceData = {};
-								i--;
-							}
-						}
-						var serie = {name: actualRegion, id: actualRegion, data: data};
-						drilldown.push(serie);
-					}
-					else{
-						alert("No data available!");
-					}					
-					createChart(title, subtitle, yAxis, series, drilldown);
-				}, function myError(response) {
-					alert("Error on the query: getAllCHsCountProvinces SELECT");
-				});
-				
-			}, function myError(response) {
-				alert("Error on the query: getAllCHsCountRegions SELECT");
-			});
+			localizedChart ("getAllCHsVisitedRegions", "getAllCHsVisitedProvinces", "getAllCHsVisitedCHs", "Total visits of Cultural Heritages");		
 		}
-		
-		if($scope.selectGame == 'Cards\' Packets'){
-			localizedChart ("getAllCardsPacketsCountRegions", "getAllCardsPacketsCountProvinces", "getAllCardsPacketsCountCHs", "Total Cards\' Packets");
+		if($scope.selectGame == 'Cards\' Packets'){	
+			localizedChart ("getAllCardsPacketsOpenRegions", "getAllCardsPacketsOpenProvinces", "getAllCardsPacketsOpenCHs", "Total open Cards\' Packets");		
 		}
 		
 		if($scope.selectGame == 'Paths'){
-			localizedChart ("getAllPathsCountRegions", "getAllPathsCountProvinces", "getAllPathsCountCHs", "Total Paths");
+			localizedChart ("getAllPathsCompletedRegions", "getAllPathsCompletedProvinces", "getAllPathsCompletedCHs", "Total completed Paths");
 		}
 		
-		if($scope.selectGame == 'Medals'){	
+		if($scope.selectGame == 'Reviews'){			
+			localizedChart ("getAllReviewsWrittenRegions", "getAllReviewsWrittenProvinces", "getAllReviewsWrittenCHs", "Total written Reviews");
+		}
+
+		if($scope.selectGame == 'Medals'){			
 			$http({
 				method : "GET",
-				url : "/getAllMedalsCount"
+				url : "/getAllMedalsWonCategories"
 			}).then(function mySucces(response) {
-				var title = $scope.selectGame;
-				var subtitle = "Click on the histogram for a more detailed view, if available.";
-				var yAxis = 'Total medals';			
-				var series = [{
-				     name: 'Categories',
-				     colorByPoint: false,
-				     data: response.data
-				 }];
-				var drilldown = [];
-				createChart(title, subtitle, yAxis, series, drilldown);
+				var categoriesData = response.data;
+				$http({
+					method : "GET",
+					url : "/getAllMedalsWonMedals"
+				}).then(function mySucces(response) {
+					var medalsData = response.data;
+					
+					var title = $scope.selectGame;
+					var subtitle = "Click on the histogram for a more detailed view, if available.";
+					var yAxis = "Total Medals won";			
+					var series = [{
+					     name: 'Categories',
+					     colorByPoint: false,
+					     data: categoriesData
+					 }];
+					var drilldown=[];
+					var serie = {};
+					
+					if(medalsData.length > 0){
+						var actualCategory = medalsData[0].drilldown;
+						var data = [];
+						var medalData = {};
+						for(var i=0; i < medalsData.length; i++){	
+							if(actualCategory == medalsData[i].drilldown){
+								medalData = {name:medalsData[i].name, y:medalsData[i].y, drilldown:medalsData[i].name};
+								data.push(medalData);
+							}
+							else{
+								serie = {name: "Medals", id: actualCategory, data: data};
+								drilldown.push(serie);
+								actualCategory = medalsData[i].drilldown;
+								data = [];
+								medalData = {};
+								i--;
+							}
+						}
+						var serie = {name: actualCategory, id: actualCategory, data: data};
+						drilldown.push(serie);	
+					}
+					else{
+						alert("No Medals data available!");
+					}					
+					createChart(title, subtitle, yAxis, series, drilldown);
+					
+				}, function myError(response) {
+					alert("Error on the query: getAllMedalsWonMedals SELECT");
+				});
 			}, function myError(response) {
-				alert("Error on the query: getAllMedalsCount SELECT");
+				alert("Error on the query: getAllMedalsWonCategories SELECT");
 			});
 		}
 		
@@ -134,9 +124,19 @@ app.controller('getGameStatisticsController', function($scope, $http, $window, $
 		
 		
 		
-		if($scope.selectGame == 'Missions'){													//Missions------------------------------------------------------
-			alert("Missions non ancora implementato!!");
+		
+		
+		
+		
+		
+		
+		
+		
 
+		if($scope.selectGame == 'Missions'){			
+			alert("Missions non ancora implementato!!");
+			
+			
 			/*series: [{
 			     name: 'Regions',
 			     colorByPoint: true,
@@ -159,6 +159,10 @@ app.controller('getGameStatisticsController', function($scope, $http, $window, $
 			 }*/
 
 		}
+		
+		
+		
+		
 		
 		
 		
@@ -260,7 +264,6 @@ app.controller('getGameStatisticsController', function($scope, $http, $window, $
 				alert("Error on the query: "+regions+" SELECT");
 			});
 		}
-
 	}
 	
 	function createChart(title, subtitle, yAxis, series, drilldown){

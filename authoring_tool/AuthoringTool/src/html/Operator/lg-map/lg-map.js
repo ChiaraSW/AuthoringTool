@@ -4,12 +4,12 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 	var type;
 	var imageSelected=false;
 	var isProvinceSelected=false;
+	var associatedMedals=0;
 		
 	$scope.addCH={};
-	$scope.g1=false;
-	$scope.g2=false;
-	$scope.g3=false;
-	$scope.g4=false;
+	$scope.rmedal=false;
+	$scope.hpmedal=false;
+	$scope.tosmedal=false;
 	$scope.addCH.latitude = null;
 	$scope.addCH.longitude = null;
 	$scope.provinces = null;
@@ -24,7 +24,7 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 	}).then(function mySucces(response) {
 		$scope.regions = response.data;
 	}, function myError(response) {
-		$scope.regions = response.statusText;
+		alert("Error on the query: getAllRegions SELECT");
 	});
 	
 	$http({
@@ -33,7 +33,7 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 	}).then(function mySucces(response) {
 		$scope.historicalPeriods = response.data;
 	}, function myError(response) {
-		$scope.historicalPeriods = response.statusText;
+		alert("Error on the query: getAllHistoricalPeriods SELECT");
 	});
 	
 	$http({
@@ -42,7 +42,7 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 	}).then(function mySucces(response) {
 		$scope.typeOfStructures = response.data;
 	}, function myError(response) {
-		$scope.typeOfStructures = response.statusText;
+		alert("Error on the query: getAllStructureTypes SELECT");
 	});	
 	
 		
@@ -67,7 +67,7 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
         imageSelected=true;
     };
 	
-	$scope.executeAddCH = function(){	
+	$scope.executeAddCH = function(){
 		if(imageSelected){
 			$scope.imgCode="heritages-" + Date.now();
 			
@@ -108,11 +108,11 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 						}
 
 					}, function errorCallback(response) {
-						alert("Error on the query: Coordinates INSERT");
+						alert("Error on the query: addCoordinates INSERT");
 					});
 	
 				}, function errorCallback(response) {			
-					alert("Error on the query: Image INSERT");
+					alert("Error on the query: addImage INSERT");
 				});
 			});
 		}
@@ -156,12 +156,90 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 		//Query: INSERT CH on DB
 		$http({
 			method: 'GET',
-			url:	'/addCH/0/'+$scope.addCH.name+'/'+$scope.addCH.description+'/'+imgCodeDB+'/'+$scope.g1+'/'+$scope.g2+'/'+$scope.g3+'/'+$scope.g4+'/'+cooCodeDB+'/'+$scope.addCH.province.code
-					+'/'+hpCodeDB+'/'+tosCodeDB+'/1' 																									//PRENDI LO USERNAME E METTILO AL POSTO DELL'ULTIMO 1
+			url:	'/addCH/0/'+$scope.addCH.name+'/'+$scope.addCH.description+'/'+imgCodeDB+'/'+$scope.rmedal+'/'+$scope.hpmedal+'/'+$scope.tosmedal+'/'+cooCodeDB+'/'+$scope.addCH.province.code+'/'+hpCodeDB+'/'+tosCodeDB+'/1' 	//PRENDI LO USERNAME E METTILO AL POSTO DELL'ULTIMO 1
 		}).then(function successCallback(response) {
-			window.open("CulturalHeritages_Template.html", "_self");   
+			var chCodeDB = response.data.insertId;
+			
+			if($scope.rmedal){
+				associatedMedals++;
+				$http({
+					method: 'GET',
+					url:	'/getRegionMedalByRegionName/'+$scope.addCH.region
+				}).then(function successCallback(response) {	
+					if(response.data.length > 0){
+						$http({
+							method: 'GET',
+							url:	'/addHeritageMedal/'+chCodeDB+'/'+response.data[0].medal
+						}).then(function successCallback(response) {
+							associatedMedals--; 
+							canReload();							
+						}, function errorCallback(response) {
+							alert("Error on the query: addHeritageMedal INSERT");
+						});	
+					}
+					else{
+						associatedMedals--;
+						canReload();
+					}
+				}, function errorCallback(response) {
+					alert("Error on the query: getRegionMedalByRegionName SELECT");
+				});
+			}
+			
+			if($scope.hpmedal){
+				associatedMedals++;
+				$http({
+					method: 'GET',
+					url:	'/getHPMedalByHPCode/'+hpCodeDB
+				}).then(function successCallback(response) {	
+					if(response.data.length > 0){
+						$http({
+							method: 'GET',
+							url:	'/addHeritageMedal/'+chCodeDB+'/'+response.data[0].medal
+						}).then(function successCallback(response) {
+							associatedMedals--; 
+							canReload();							
+						}, function errorCallback(response) {
+							alert("Error on the query: addHeritageMedal INSERT");
+						});	
+					}
+					else{
+						associatedMedals--;
+						canReload();
+					}
+				}, function errorCallback(response) {
+					alert("Error on the query: getHPMedalByHPCode SELECT");
+				});
+			}
+					
+			if($scope.tosmedal){
+				associatedMedals++;
+				$http({
+					method: 'GET',
+					url:	'/getToSMedalByToSCode/'+tosCodeDB
+				}).then(function successCallback(response) {	
+					if(response.data.length > 0){
+						$http({
+							method: 'GET',
+							url:	'/addHeritageMedal/'+chCodeDB+'/'+response.data[0].medal
+						}).then(function successCallback(response) {
+							associatedMedals--; 
+							canReload();							
+						}, function errorCallback(response) {
+							alert("Error on the query: addHeritageMedal INSERT");
+						});	
+					}
+					else{
+						associatedMedals--;
+						canReload();
+					}
+				}, function errorCallback(response) {
+					alert("Error on the query: getToSMedalByToSCode SELECT");
+				});
+			}
+
 		}, function errorCallback(response) {
-			alert("Error on the query: Heritage INSERT");
+			alert("Error on the query: addCH INSERT");
 		});
 	}
 	
@@ -206,26 +284,26 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
     };
     
     
-    $scope.game1 = function(){
-    	if($scope.g1){$scope.g1=false;}
-    	else{$scope.g1=true;}
+    $scope.rm = function(){
+    	if($scope.rmedal){$scope.rmedal=false;}
+    	else{$scope.rmedal=true;}
+    }  
+    
+    $scope.hpm = function(){
+    	if($scope.hpmedal){$scope.hpmedal=false;}
+    	else{$scope.hpmedal=true;}
     }
     
-    $scope.game2 = function(){
-    	if($scope.g2){$scope.g2=false;}
-    	else{$scope.g2=true;}
-    }
+    $scope.tosm = function(){
+    	if($scope.tosmedal){$scope.tosmedal=false;}
+    	else{$scope.tosmedal=true;}
+    }  	
     
-    $scope.game3 = function(){
-    	if($scope.g3){$scope.g3=false;}
-    	else{$scope.g3=true;}
-    }
-    
-    $scope.game4 = function(){
-    	if($scope.g4){$scope.g4=false;}
-    	else{$scope.g4=true;}
-    }
-   	
+    function canReload(){
+		if(associatedMedals==0){
+			window.open("CulturalHeritages_Template.html", "_self");   
+   		}
+	}
 	
 	$(function() {
 		
@@ -275,7 +353,7 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 
 		    	//start map
 		    	r = new ScaleRaphael('lg-map', config.mapWidth, config.mapHeight), attributes = {
-		        	fill: '#d9d9d9',
+		    		fill: '#ffffff',
 		        	cursor: 'crosshair',
 		        	stroke: config.strokeColor,
 		        	'stroke-width': 1,
@@ -544,7 +622,7 @@ app.controller("MapCtrl", function($scope, $log, $modalInstance, $rootScope, $ht
     	
     	$http({			 
 			method : "GET",
-			url : "/getOperatorCHs/statoitaliano@gmail.com" // NON APPENA FAI LA PARTE DEL LOGIN imposta l'email uguale a quella dell'organizzazione loggata			
+			url : "/getOperatorCHs/user3" // NON APPENA FAI LA PARTE DEL LOGIN imposta l'email uguale a quella dell'organizzazione loggata			
 			}).then(function mySucces(response) {
 				$scope.results  = response.data;
 				for (var i=0; i<$scope.results.length; i++){				
@@ -553,7 +631,7 @@ app.controller("MapCtrl", function($scope, $log, $modalInstance, $rootScope, $ht
 			        setMarker($scope.map, coordinates, name, "red", false);			
 				}
 			}, function myError(response) {
-				$scope.results  = response.statusText;
+				alert("Error on the query: getOperatorCHs SELECT");
 		});	
     	
     	//Aggiunge un marker alla mappa e gli aggiunge un clickListener (se risultato della query) o un dragendListener(se marker da aggiungere)

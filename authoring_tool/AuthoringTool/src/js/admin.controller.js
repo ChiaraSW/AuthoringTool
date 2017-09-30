@@ -59,7 +59,7 @@
     	vm.Missions = true;
     	vm.Leaderboard = true;
     	vm.GamesStatistics = true;
-    	vm.UsersStatistics = true;
+    	vm.PlayersStatistics = true;
     	
     	var mission = null;
 
@@ -111,8 +111,8 @@
     		document.getElementById('mainFrame').src = "src/html/Admin/GameStatistics_Template.html";	
     	}
     	
-    	vm.getUsersStatistics = function(){ 
-    		document.getElementById('mainFrame').src = "src/html/Admin/UsersStatistics_Template.html";	
+    	vm.getPlayersStatistics = function(){ 
+    		document.getElementById('mainFrame').src = "src/html/Admin/PlayersStatistics_Template.html";	
     	}
        	
     }

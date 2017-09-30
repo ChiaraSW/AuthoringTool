@@ -13,7 +13,7 @@
 
 				    	<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Medals" 
 				    		ng-click="vm.Medals_subButtons=true; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getMedals();">
-							Medals' Template
+							Medals
 						</button>	
 						<div class='sub_container' align="center" ng-show="vm.Medals_subButtons">
 							<button id="addMedal" type="button" class="btn sub-btn btn-success" ng-click="vm.addMedal();">Add a Medal</button>
@@ -23,7 +23,7 @@
 						
 						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Cards"
 							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=true; vm.Missions_subButtons=false; vm.getCards();">
-							Cards' Template
+							Cards
 						</button>
 						<div class='sub_container' align="center" ng-show="vm.Cards_subButtons">
 							<button id="addCard" type="button" class="btn sub-btn btn-success" ng-click="vm.addCard();">Add a Card</button>
@@ -33,7 +33,7 @@
 						
 						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Missions"
 							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=true; vm.getMissions();">
-							Missions' Template
+							Missions
 						</button>
 						<div class='sub_container' align="center" ng-show="vm.Missions_subButtons">
 							<button id="addMission" type="button" class="btn sub-btn btn-success" ng-click="vm.addMission();">Add a Mission</button>
@@ -48,13 +48,13 @@
 						
 						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.GamesStatistics"
 							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getGamesStatistics();">
-							View Games' Statistics
+							Game's Statistics
 						</button>
 						
 						
-						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.UsersStatistics"
-							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getUsersStatistics();">
-							View Users' Statistics
+						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.PlayersStatistics"
+							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getPlayersStatistics();">
+							Players' Statistics
 						</button>	
 						
 			        </div>  

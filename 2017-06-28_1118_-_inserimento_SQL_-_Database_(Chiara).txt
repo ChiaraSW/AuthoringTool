@@ -102,36 +102,20 @@ create table Heritage(
 	name varchar (100) NOT NULL,
 	description varchar (999) NOT NULL,
 	image int NOT NULL,
-	g1 ENUM('false', 'true') NOT NULL DEFAULT 'false',
-	g2 ENUM('false', 'true') NOT NULL DEFAULT 'false',
-	g3 ENUM('false', 'true') NOT NULL DEFAULT 'false',
-	g4 ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	regionmedal ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	hpmedal ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	tosmedal ENUM('false', 'true') NOT NULL DEFAULT 'false',
 	coordinates int NOT NULL,
 	province int NOT NULL,
 	historicalperiod int NOT NULL,
 	structuretype int NOT NULL,
 	operator int NOT NULL);
 
-create table Siteinformation(
-	code INT NOT NULL AUTO_INCREMENT primary key,
-	title varchar (150) NOT NULL,
-	description varchar (999) NOT NULL,
-	image int NOT NULL,
-	heritage int NOT NULL);
-
 create table Treasure(
 	code INT NOT NULL AUTO_INCREMENT primary key,
 	title varchar (150) NOT NULL,
 	description varchar (999) NOT NULL,
 	coordinates int NOT NULL,
-	heritage int NOT NULL);
-
-create table Enciclopedicpage(
-	code INT NOT NULL AUTO_INCREMENT primary key,
-	title varchar (150) NOT NULL,
-	description varchar (999) NOT NULL,
-	curiosity varchar (999) NOT NULL,
-	image int NOT NULL,
 	heritage int NOT NULL);
 
 create table Question(
@@ -157,12 +141,12 @@ create table Stage(
 	isfinal ENUM('false', 'true') NOT NULL DEFAULT 'false');
 
 create table Review(
+	code INT NOT NULL AUTO_INCREMENT primary key,
 	player varchar (100) NOT NULL,
 	heritage int NOT NULL,
 	likes int NOT NULL DEFAULT 0,
 	dislikes int NOT NULL DEFAULT 0,
-	review varchar (999),
-	primary key (player,heritage));
+	review varchar (999));
 
 create table Shape(
 	code INT NOT NULL AUTO_INCREMENT primary key,
@@ -193,18 +177,6 @@ create table Player(
 	email varchar (100) NOT NULL primary key,
 	title varchar (100),
 	coins int NOT NULL DEFAULT 0);
-
-create table PlayerEP(
-	id varchar (100) NOT NULL,
-	code int NOT NULL,
-	viewed ENUM('false', 'true') NOT NULL DEFAULT 'false',
-	primary key (id, code));
-
-create table PlayerSI(
-	id varchar (100) NOT NULL,
-	code int NOT NULL,
-	viewed ENUM('false', 'true') NOT NULL DEFAULT 'false',
-	primary key (id, code));
 
 create table PlayerPath(
 	player varchar (100) NOT NULL,
@@ -288,6 +260,17 @@ create table HeritageMedal(
 	medal INT NOT NULL,
 	primary key (heritage, medal));
 
+create table PlayerReview(
+	player varchar (100) NOT NULL,
+	review INT NOT NULL,
+	likes ENUM('false', 'true') NOT NULL DEFAULT 'false',
+	primary key (player, review, likes));
+
+create table PlayerMission(
+	player varchar (100) NOT NULL,
+	mission INT NOT NULL,
+	primary key (player, mission));
+
 
 alter table Medal
 add constraint fk1 foreign key Medal (category) references Category (code) ON DELETE CASCADE,
@@ -323,128 +306,120 @@ alter table Province
 add constraint fk17 foreign key Province (region) references Region (code) ON DELETE CASCADE,
 add constraint fk18 foreign key Province (coordinates) references Coordinates (code) ON DELETE CASCADE;
 
-alter table Siteinformation
-add constraint fk19 foreign key Siteinformation (image) references Image (code) ON DELETE CASCADE,
-add constraint fk20 foreign key Siteinformation (heritage) references Heritage (code) ON DELETE CASCADE;
-
 alter table Treasure
-add constraint fk21 foreign key Treasure (coordinates) references Coordinates (code) ON DELETE CASCADE,
-add constraint fk22 foreign key Treasure (heritage) references Heritage (code) ON DELETE CASCADE;
-
-alter table Enciclopedicpage
-add constraint fk23 foreign key Enciclopedicpage (image) references Image (code) ON DELETE CASCADE,
-add constraint fk24 foreign key Enciclopedicpage (heritage) references Heritage (code) ON DELETE CASCADE;
+add constraint fk19 foreign key Treasure (coordinates) references Coordinates (code) ON DELETE CASCADE,
+add constraint fk20 foreign key Treasure (heritage) references Heritage (code) ON DELETE CASCADE;
 
 alter table Path
-add constraint fk26 foreign key Path (heritage) references Heritage (code) ON DELETE CASCADE;
+add constraint fk21 foreign key Path (heritage) references Heritage (code) ON DELETE CASCADE;
 
 alter table Stage
-add constraint fk27 foreign key Stage (question) references Question (code) ON DELETE CASCADE,
-add constraint fk28 foreign key Stage (coordinates) references Coordinates (code) ON DELETE CASCADE,
-add constraint fk29 foreign key Stage (path) references Path (code) ON DELETE CASCADE;
+add constraint fk22 foreign key Stage (question) references Question (code) ON DELETE CASCADE,
+add constraint fk23 foreign key Stage (coordinates) references Coordinates (code) ON DELETE CASCADE,
+add constraint fk24 foreign key Stage (path) references Path (code) ON DELETE CASCADE;
 
 alter table Review
-add constraint fk30 foreign key Review (heritage) references Heritage (code) ON DELETE CASCADE,
-add constraint fk31 foreign key Review (player) references Player (email) ON DELETE CASCADE;
-
-alter table PlayerEP
-add constraint fk32 foreign key PlayerEP (id) references Player (email) ON DELETE CASCADE,
-add constraint fk33 foreign key PlayerEP (code) references Enciclopedicpage (code) ON DELETE CASCADE;
-
-alter table PlayerSI
-add constraint fk34 foreign key PlayerSI (id) references Player (email) ON DELETE CASCADE,
-add constraint fk35 foreign key PlayerSI (code) references Siteinformation (code) ON DELETE CASCADE;
+add constraint fk25 foreign key Review (heritage) references Heritage (code) ON DELETE CASCADE,
+add constraint fk26 foreign key Review (player) references Player (email) ON DELETE CASCADE;
 
 alter table PlayerPath
-add constraint fk36 foreign key PlayerPath (player) references Player (email) ON DELETE CASCADE,
-add constraint fk37 foreign key PlayerPath (path) references Path (code) ON DELETE CASCADE;
+add constraint fk27 foreign key PlayerPath (player) references Player (email) ON DELETE CASCADE,
+add constraint fk28 foreign key PlayerPath (path) references Path (code) ON DELETE CASCADE;
 
 alter table PlayerStage
-add constraint fk38 foreign key PlayerStage (player) references Player (email) ON DELETE CASCADE,
-add constraint fk39 foreign key PlayerStage (stage) references Stage (code) ON DELETE CASCADE;
+add constraint fk29 foreign key PlayerStage (player) references Player (email) ON DELETE CASCADE,
+add constraint fk30 foreign key PlayerStage (stage) references Stage (code) ON DELETE CASCADE;
 
 alter table PlayerCard
-add constraint fk40 foreign key PlayerCard (player) references Player (email) ON DELETE CASCADE,
-add constraint fk41 foreign key PlayerCard (card) references Card (code) ON DELETE CASCADE;
+add constraint fk31 foreign key PlayerCard (player) references Player (email) ON DELETE CASCADE,
+add constraint fk32 foreign key PlayerCard (card) references Card (code) ON DELETE CASCADE;
 
 alter table PlayerTreasure
-add constraint fk42 foreign key PlayerTreasure (player) references Player (email) ON DELETE CASCADE,
-add constraint fk43 foreign key PlayerTreasure (treasure) references Treasure (code) ON DELETE CASCADE;
+add constraint fk33 foreign key PlayerTreasure (player) references Player (email) ON DELETE CASCADE,
+add constraint fk34 foreign key PlayerTreasure (treasure) references Treasure (code) ON DELETE CASCADE;
 
 alter table Validityarea
-add constraint fk44 foreign key Validityarea (heritage) references Heritage (code) ON DELETE CASCADE,
-add constraint fk45 foreign key Validityarea (shape) references Shape (code) ON DELETE CASCADE;
+add constraint fk35 foreign key Validityarea (heritage) references Heritage (code) ON DELETE CASCADE,
+add constraint fk36 foreign key Validityarea (shape) references Shape (code) ON DELETE CASCADE;
 
 alter table Polygon
-add constraint fk46 foreign key Polygon (validityarea) references Validityarea (code) ON DELETE CASCADE;
+add constraint fk37 foreign key Polygon (validityarea) references Validityarea (code) ON DELETE CASCADE;
 
 alter table Vertex
-add constraint fk47 foreign key Vertex (polygon) references Polygon (code) ON DELETE CASCADE,
-add constraint fk48 foreign key Vertex (coordinates) references Coordinates (code) ON DELETE CASCADE;
+add constraint fk38 foreign key Vertex (polygon) references Polygon (code) ON DELETE CASCADE,
+add constraint fk39 foreign key Vertex (coordinates) references Coordinates (code) ON DELETE CASCADE;
 
 alter table Circle
-add constraint fk49 foreign key Circle (validityarea) references Validityarea (code) ON DELETE CASCADE,
-add constraint fk50 foreign key Circle (center) references Coordinates (code) ON DELETE CASCADE;
+add constraint fk40 foreign key Circle (validityarea) references Validityarea (code) ON DELETE CASCADE,
+add constraint fk41 foreign key Circle (center) references Coordinates (code) ON DELETE CASCADE;
 
 alter table PlayerHeritage
-add constraint fk51 foreign key PlayerHeritage (player) references Player (email) ON DELETE CASCADE,
-add constraint fk52 foreign key PlayerHeritage (heritage) references Heritage (code) ON DELETE CASCADE;
+add constraint fk42 foreign key PlayerHeritage (player) references Player (email) ON DELETE CASCADE,
+add constraint fk43 foreign key PlayerHeritage (heritage) references Heritage (code) ON DELETE CASCADE;
 
 alter table PlayerMedal
-add constraint fk53 foreign key PlayerMedal (player) references Player (email) ON DELETE CASCADE,
-add constraint fk54 foreign key PlayerMedal (medal) references Medal (code) ON DELETE CASCADE;
+add constraint fk44 foreign key PlayerMedal (player) references Player (email) ON DELETE CASCADE,
+add constraint fk45 foreign key PlayerMedal (medal) references Medal (code) ON DELETE CASCADE;
 
 alter table RegionMedal
-add constraint fk55 foreign key RegionMedal (medal) references Medal (code) ON DELETE CASCADE,
-add constraint fk56 foreign key RegionMedal (region) references Region (code) ON DELETE CASCADE;
+add constraint fk46 foreign key RegionMedal (medal) references Medal (code) ON DELETE CASCADE,
+add constraint fk47 foreign key RegionMedal (region) references Region (code) ON DELETE CASCADE;
 
 alter table HistoricalperiodMedal
-add constraint fk57 foreign key HistoricalperiodMedal (medal) references Medal (code) ON DELETE CASCADE,
-add constraint fk58 foreign key HistoricalperiodMedal (historicalperiod) references Historicalperiod (code) ON DELETE CASCADE;
+add constraint fk48 foreign key HistoricalperiodMedal (medal) references Medal (code) ON DELETE CASCADE,
+add constraint fk49 foreign key HistoricalperiodMedal (historicalperiod) references Historicalperiod (code) ON DELETE CASCADE;
 
 alter table StructuretypeMedal
-add constraint fk59 foreign key StructuretypeMedal (medal) references Medal (code) ON DELETE CASCADE,
-add constraint fk60 foreign key StructuretypeMedal (structuretype) references Structuretype (code) ON DELETE CASCADE;
+add constraint fk50 foreign key StructuretypeMedal (medal) references Medal (code) ON DELETE CASCADE,
+add constraint fk51 foreign key StructuretypeMedal (structuretype) references Structuretype (code) ON DELETE CASCADE;
 
 alter table Mission
-add constraint fk61 foreign key Mission (missiontype) references Missiontype (code) ON DELETE CASCADE,
-add constraint fk62 foreign key Mission (granularitylevel) references Granularitylevel (code) ON DELETE CASCADE;
+add constraint fk52 foreign key Mission (missiontype) references Missiontype (code) ON DELETE CASCADE,
+add constraint fk53 foreign key Mission (granularitylevel) references Granularitylevel (code) ON DELETE CASCADE;
 
 alter table RegionalMission
-add constraint fk63 foreign key RegionalMission (mission) references Mission (code) ON DELETE CASCADE,
-add constraint fk64 foreign key RegionalMission (region) references Region (code) ON DELETE CASCADE;
+add constraint fk54 foreign key RegionalMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk55 foreign key RegionalMission (region) references Region (code) ON DELETE CASCADE;
 
 alter table ProvincialMission
-add constraint fk65 foreign key ProvincialMission (mission) references Mission (code) ON DELETE CASCADE,
-add constraint fk66 foreign key ProvincialMission (province) references Province (code) ON DELETE CASCADE;
+add constraint fk56 foreign key ProvincialMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk57 foreign key ProvincialMission (province) references Province (code) ON DELETE CASCADE;
 
 alter table HeritageMission
-add constraint fk67 foreign key HeritageMission (mission) references Mission (code) ON DELETE CASCADE,
-add constraint fk68 foreign key HeritageMission (heritage) references Heritage (code) ON DELETE CASCADE;
+add constraint fk58 foreign key HeritageMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk59 foreign key HeritageMission (heritage) references Heritage (code) ON DELETE CASCADE;
 
 alter table RarityMission
-add constraint fk69 foreign key RarityMission (mission) references Mission (code) ON DELETE CASCADE,
-add constraint fk70 foreign key RarityMission (rarity) references Rarity (code) ON DELETE CASCADE;
+add constraint fk60 foreign key RarityMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk61 foreign key RarityMission (rarity) references Rarity (code) ON DELETE CASCADE;
 
 alter table CategoryMission
-add constraint fk71 foreign key CategoryMission (mission) references Mission (code) ON DELETE CASCADE,
-add constraint fk72 foreign key CategoryMission (category) references Category (code) ON DELETE CASCADE;
+add constraint fk62 foreign key CategoryMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk63 foreign key CategoryMission (category) references Category (code) ON DELETE CASCADE;
 
 alter table RegionMedalMission
-add constraint fk73 foreign key RegionMedalMission (mission) references Mission (code) ON DELETE CASCADE,
-add constraint fk74 foreign key RegionMedalMission (regionmedal) references RegionMedal (medal) ON DELETE CASCADE;
+add constraint fk64 foreign key RegionMedalMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk65 foreign key RegionMedalMission (regionmedal) references RegionMedal (medal) ON DELETE CASCADE;
 
 alter table HPMedalMission
-add constraint fk75 foreign key HPMedalMission (mission) references Mission (code) ON DELETE CASCADE,
-add constraint fk76 foreign key HPMedalMission (hpmedal) references HistoricalperiodMedal (medal) ON DELETE CASCADE;
+add constraint fk66 foreign key HPMedalMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk67 foreign key HPMedalMission (hpmedal) references HistoricalperiodMedal (medal) ON DELETE CASCADE;
 
 alter table ToSMedalMission
-add constraint fk77 foreign key ToSMedalMission (mission) references Mission (code) ON DELETE CASCADE,
-add constraint fk78 foreign key ToSMedalMission (tosmedal) references StructuretypeMedal (medal) ON DELETE CASCADE;
+add constraint fk68 foreign key ToSMedalMission (mission) references Mission (code) ON DELETE CASCADE,
+add constraint fk69 foreign key ToSMedalMission (tosmedal) references StructuretypeMedal (medal) ON DELETE CASCADE;
 
 alter table HeritageMedal
-add constraint fk79 foreign key HeritageMedal (heritage) references Heritage (code) ON DELETE CASCADE,
-add constraint fk80 foreign key HeritageMedal (medal) references Medal (code) ON DELETE CASCADE;
+add constraint fk70 foreign key HeritageMedal (heritage) references Heritage (code) ON DELETE CASCADE,
+add constraint fk71 foreign key HeritageMedal (medal) references Medal (code) ON DELETE CASCADE;
+
+alter table PlayerReview
+add constraint fk72 foreign key PlayerReview (player) references Player (email) ON DELETE CASCADE,
+add constraint fk73 foreign key PlayerReview (review) references Review (code) ON DELETE CASCADE;
+
+alter table PlayerMission
+add constraint fk74 foreign key PlayerMission (player) references Player (email) ON DELETE CASCADE,
+add constraint fk75 foreign key PlayerMission (mission) references Mission (code) ON DELETE CASCADE;
 
 
 
@@ -760,7 +735,7 @@ insert into Province values('0','Verona','106','15','20');
 insert into Province values('0','Vicenza','107','15','20');
 
 
-insert into Missiontype values('0','Open Treasure Chest');
+insert into Missiontype values('0','Open Cards\' Packet');
 insert into Missiontype values('0','Collect Card');
 insert into Missiontype values('0','Visit Cultural Heritage');
 insert into Missiontype values('0','Collect Medal');
@@ -852,9 +827,9 @@ insert into Card values('0','Museo Maxxi','19','Il MAXXI - Museo nazionale delle
 insert into Card values('0','Stadio Olimpico','20','Lo Stadio Olimpico è un impianto sportivo polifunzionale italiano di Roma. Sorge presso il Foro Italico, alle pendici di Monte Mario, nel settore nordoccidentale della Capitale','15','1','110','1');
 
 
-insert into User values('0', 'user1', 'user1', null, '1');
-insert into User values('0', 'user2', 'user2', null, '2');
-insert into User values('0', 'user3', 'user3', null, '3');
+insert into User values('0', 'user1', 'user1', '1', '1');
+insert into User values('0', 'user2', 'user2', '1', '2');
+insert into User values('0', 'user3', 'user3', '1', '3');
 insert into User values('0', 'user4', 'user4', null, '3');
 insert into User values('0', 'user5', 'user5', null, '2');
 insert into User values('0', 'user6', 'user6', null, '3');
@@ -899,12 +874,12 @@ insert into StructuretypeMedal values('21', '5');
 insert into StructuretypeMedal values('22', '6');
 insert into StructuretypeMedal values('23', '4');
 
-insert into Heritage values('0', 'Colosseo','Il colosseo è chiamato Anfiteatro Flavio','21','true','true','true','true','108','33','1','1','1');
-insert into Heritage values('0', 'Altare della Patria','Si trova vicino Piazza Venezia','22','true','true','false','true','109','33','2','2','1');
-insert into Heritage values('0', 'Ponte Milvio','Costruito dai Romani','23','true','true','true','false','110','33','3','3','2');
-insert into Heritage values('0', 'Basilica di San Pietro','Costruita in epoche diverse','24','true','true','true','true','111','33','2','4','3');
-insert into Heritage values('0', 'Arco di Trionfo','Costruito da Costantino','25','true','true','true','false','112','33','1','2','1');
-insert into Heritage values('0', 'Nuvola di Fuksas','Usata come centro congressi','26','true','true','false','true','113','33','4','5','3');
+insert into Heritage values('0', 'Colosseo','Il colosseo è chiamato Anfiteatro Flavio','21','false','false','false','108','33','1','1','1');
+insert into Heritage values('0', 'Altare della Patria','Si trova vicino Piazza Venezia','22','false','false','false','109','33','2','2','1');
+insert into Heritage values('0', 'Ponte Milvio','Costruito dai Romani','23','false','false','false','110','33','3','3','2');
+insert into Heritage values('0', 'Basilica di San Pietro','Costruita in epoche diverse','24','false','false','false','111','33','2','4','3');
+insert into Heritage values('0', 'Arco di Trionfo','Costruito da Costantino','25','false','false','false','112','33','1','2','1');
+insert into Heritage values('0', 'Nuvola di Fuksas','Usata come centro congressi','26','false','false','false','113','33','4','5','3');
 
 insert into Coordinates values('0', '41.90246','12.45529');
 insert into Coordinates values('0', '41.90200','12.45459');
@@ -984,20 +959,21 @@ insert into Player values('player3','player3','0');
 insert into Player values('player4','player4','0');
 insert into Player values('neptis.gopoleis@gmail.com',null,0);
 
-insert into Review values('player1','1','0','0','Molto bello');
-insert into Review values('player3','2','0','0','Quanto è grande!');
-insert into Review values('player3','1','0','0','Ci ritornerò sicuramente');
-insert into Review values('player4','1','0','0','Costa troppo');
-insert into Review values('player2','1','0','0','Mi piacciono i romani');
+insert into Review values('0','player1','1','0','0','Molto bello');
+insert into Review values('0','player3','2','0','0','Quanto è grande!');
+insert into Review values('0','player3','1','0','0','Ci ritornerò sicuramente');
+insert into Review values('0','player4','1','0','0','Costa troppo');
+insert into Review values('0','player2','1','0','0','Mi piacciono i romani');
 
 
 
 
 
 
-insert into Mission values('0', 'Aprire 100 Scrigni nella provincia di Roma', '100', '1', '3');
-insert into Mission values('0', 'Aprire 300 scrigni nella regione Lazio', '300', '1', '2');
-insert into Mission values('0', 'Aprire 3 Scrigni al Colosseo', '3', '1', '4');
+insert into Mission values('0', 'Aprire 100 Pacchetti di Carte nella provincia di Roma', '100', '1', '3');
+insert into Mission values('0', 'Aprire 300 Pacchetti di Carte nella regione Lazio', '300', '1', '2');
+insert into Mission values('0', 'Aprire 500 Pacchetti di Carte', '500', '1', '1');
+insert into Mission values('0', 'Aprire 3 Pacchetti di Carte al Colosseo', '3', '1', '4');
 insert into Mission values('0', 'Collezionare 1000 Carte', '1000', '2', '1');
 insert into Mission values('0', 'Collezionare 50 Carte di tipo Epic', '50', '2', '5');
 insert into Mission values('0', 'Visitare 500 Cultural Heritage', '500', '3', '1');
@@ -1072,9 +1048,3 @@ insert into HeritageMedal values(4, 7);
 insert into HeritageMedal values(5, 7);
 insert into HeritageMedal values(6, 7);
 insert into HeritageMedal values(4, 23);
-
-
-
-
-
-

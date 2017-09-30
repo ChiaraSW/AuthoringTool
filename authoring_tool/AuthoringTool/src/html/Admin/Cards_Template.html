@@ -7,7 +7,7 @@
 </head>
 
 <body ng-app="GoPoleis" >
-	<div class="col-sm-9" ng-controller="getCardsController">
+	<div class="col-sm-10" ng-controller="getCardsController">
 		<div ng-show="getCardsPage">
 		
 			<h1 style="margin:20px;"><u>Cards</u></h1>
@@ -58,10 +58,10 @@
 				     	<label for="name" style="display: inline-block; vertical-align: bottom;">
 				     		Name: 
 						</label>
-						<input type="text" class="form-control" ng-model="updCard.name" style="width:850px; display: inline-block;" required>
+						<input type="text" class="form-control" ng-model="updCard.name" style="width:1200px; display: inline-block;" maxlength="100" required>
 					</fieldset>
 				</div>	
-					
+
 				<div class="form-group" ng-class="{ 'has-error': form.image.$dirty && form.image.$error.required }" >
 					<fieldset style="margin-top:30px; margin-left:20px;"> 	
 						<p id="imgCode" ng-show="false" ng-model="imgCode"></p> 
@@ -79,49 +79,44 @@
 				     	<label for="description" style="display: inline-block; vertical-align: top;">
 				     		Short description:  
 						</label>
-						<textarea class="form-control" ng-model="updCard.description" style="resize:none; display:inline-block; width:850px;" required></textarea>
+						<textarea class="form-control" ng-model="updCard.description" style="resize:none; display:inline-block; width:1117px;" maxlength="999" required></textarea>
 					</fieldset>
 				</div>
-				
-				<div class="form-group" ng-class="{ 'has-error': form.cardValue.$dirty && form.cardValue.$error.required }" >
+
+				<div class="form-group" ng-class="{ 'has-error': form.cost.$dirty && form.cost.$error.required && 
+																form.cardValue.$dirty && form.cardValue.$error.required && 
+																form.destructionValue.$dirty && form.destructionValue.$error.required }" >
+																
 					<fieldset style="margin-top:30px; margin-left:20px;"> 	
-				     	<label for="cardValue" style="display: inline-block; vertical-align: bottom;">
-				     		Card's value in coins: 
-						</label>
-						<input type="number" min="1"class="form-control" ng-model="updCard.cardValue" style="width:100px; display: inline-block;" required>
-					</fieldset>
-				</div>
-					
-				<div class="form-group" ng-class="{ 'has-error': form.destructionValue.$dirty && form.destructionValue.$error.required }" >
-					<fieldset style="margin-top:30px; margin-left:20px;"> 	
-				     	<label for="destructionValue" style="display: inline-block; vertical-align: bottom;">
-				     		Coins obtained in case of destruction of a dual card: 
-						</label>
-						<input type="number" min="1"class="form-control" ng-model="updCard.destructionValue" style="width:100px; display: inline-block;" required>
-					</fieldset>
-				</div>	
-					
-				<div class="form-group" ng-class="{ 'has-error': form.cost.$dirty && form.cost.$error.required }" >
-					<fieldset style="margin-top:30px; margin-left:20px;"> 	
-				     	<label for="cost" style="display: inline-block; vertical-align: bottom;">
+						<label for="cost" style="display: inline-block; vertical-align: bottom;">
 				     		Card's cost in coins: 
 						</label>
-						<input type="number" min="1"class="form-control" ng-model="updCard.cost" style="width:100px; display: inline-block;" required>
+						<input type="number" min="1"class="form-control" ng-model="updCard.cost" style="width:140px; display: inline-block;" required>
+						
+				     	<label for="cardValue" style="display: inline-block; vertical-align: bottom; margin-left:75px;">
+				     		Card's value in coins: 
+						</label>
+						<input type="number" min="1"class="form-control" ng-model="updCard.cardValue" style="width:140px; display: inline-block;" required>
+						
+						<label for="destructionValue" style="display: inline-block; vertical-align: bottom; margin-left:75px;">
+				     		Coins obtained in case of destruction of a dual card: 
+						</label>
+						<input type="number" min="1"class="form-control" ng-model="updCard.destructionValue" style="width:140px; display: inline-block;" required>
 					</fieldset>
-				</div>		
+				</div>	
 		 			
 				<div class="form-group" ng-class="{ 'has-error': form.rarity.$dirty && form.rarity.$error.required }" >
 					<fieldset style="margin-top:30px; margin-left:20px;"> 	
 				     	<label for="rarity" style="display: inline-block;">
 				     		Rarity:  
 						</label>
- 						<select ng-model="updCard.rarity" class="form-control" style="width:250px; display: inline-block;">
+ 						<select ng-model="updCard.rarity" class="form-control" style="width:300px; display: inline-block;">
 							<option ng-repeat="x in rarity">{{x.name}}</option>
 						</select>
 					</fieldset>
 				</div>
 
-				<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+				<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
 		            <button type="submit" name="btnUpdCard" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeUpdCard()">Update</button>
 		            <img ng-if="vm.dataLoading"/>
 		            <a href="Cards_Template.html" target="_self">Cancel</a>
@@ -222,14 +217,14 @@
 			}).then(function successCallback(response) {	
 				$scope.rarity = response.data;		
 			}, function errorCallback(response) {
-				alert("Error on the query: Rarity SELECT *");
+				alert("Error on the query: getAllRarities SELECT");
 			});
 
 			$http({
 				method : "GET",
 				url : "/getCard/"+cardCode
 			}).then(function mySucces(response) {
-				results  = response.data;	
+				var results  = response.data;	
 				if (results.length > 0){
 					$scope.updCard.name=results[0].name;
 					oldImgCode=results[0].image;
@@ -241,7 +236,7 @@
 					$scope.updCard.rarity = results[0].rName;	
 				}
 			}, function myError(response) {
-				$scope.results  = response.statusText;
+				alert("Error on the query: getCard SELECT");
 			});	
 			
 			$scope.fileReaderSupported = window.FileReader != null;
@@ -284,7 +279,7 @@
 						}).then(function successCallback(response) {								
 							updateCard();							
 						}, function errorCallback(response) {			
-							alert("Error on the query: Image UPDATE");
+							alert("Error on the query: updImage UPDATE");
 						});						
 					});
 			    	
@@ -310,7 +305,7 @@
 				}).then(function successCallback(response) {	
 					window.open("Cards_Template.html", "_self");   
 				}, function errorCallback(response) {
-					alert("Error on the query: Card UPDATE");
+					alert("Error on the query: updCard UPDATE");
 				});
 			}
 		
@@ -334,15 +329,13 @@
 				return cards;
 			}
 			var arr = [];
-			angular.forEach(cards, function(card){
-				
+			angular.forEach(cards, function(card){				
 				for(var i=0; i<rarity.length; i++){
 					if(card.rCode == rarity[i].rarity){
 						arr.push(card);
 					}
 				}
 			})
-
 			return arr;
 		}
 	})

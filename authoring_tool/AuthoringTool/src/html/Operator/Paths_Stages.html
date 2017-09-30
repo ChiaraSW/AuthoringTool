@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCrHxpT62yPIguYjilGuX_pGkOqQYvS-NQ&sensor=false"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js" type="text/javascript"></script>
+	
+	<link data-require="bootstrap-css@3.1.1" data-semver="3.1.1" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <script>document.write('<base href="' + document.location + '" />');</script>
+    <script data-require="jquery@*" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script data-require="angular.js@1.2.x" src="https://code.angularjs.org/1.2.22/angular.js" data-semver="1.2.22"></script>
+    <script data-require="angular-route@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-route.js"></script>
+    <script data-require="angular-resource@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-resource.js"></script>
+    <script data-require="angular-bootstrap@0.11.0" data-semver="0.11.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
+    <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    
+	<script src="https://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.debug.js"></script>
+    <script type="text/javascript" src="ng-map/ng-map.min.js"></script> 
+  
+  
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<style>
+		md-switch .md-bar 				{	background-color: #ff8080;	}
+		
+		md-switch.md-checked .md-bar 	{	background-color: #4dff4d;	}
+		
+		md-switch[disabled] .md-bar 	{	background-color: #bfbfbf;	}
+
+		md-switch .md-thumb 			{	background-color: #e60000;	}
+		
+		md-switch.md-checked .md-thumb 	{	background-color: #00cc00;	}
+		
+		md-switch[disabled] .md-thumb 	{	background-color: #808080;	}
+	</style>
+    
+</head>
+<body ng-app="GoPoleis" >
+
+			<script type="text/ng-template" id="Stagemap.html">
+				<p ng-model="heigth"></p>
+				<p ng-model="readonly"></p>
+				<p ng-model="required"></p>
+        		<div class="modal-content" style="margin-left: -300px; height: {{heigth}}; margin-top: -20px; width: 1200px;">		
+					<div class="modal-body">
+
+						<fieldset ng-show="AddStageTitle"> 	
+		     				<label for="string1" style="display: inline-block;">
+		     					Right-click to add a new Stage.  
+							</label>
+						</fieldset>
+
+						<fieldset ng-show="UpdStageTitle"> 	
+		     				<label for="string2" style="display: inline-block;">
+		     					Drag the marker to update its coordinates.  
+							</label>
+						</fieldset>
+
+						<fieldset ng-show="DuplicateStageTitle"> 	
+		     				<label for="string3" style="display: inline-block;">
+		     					Select a Cultural Heritage and a path where to copy this stage.  
+							</label>
+						</fieldset>
+
+						<map ng-show="addMap" style="display: block; height: 385px; zoom="8" center="[41.902650, 12.496022]" on-click="click()"></map>
+
+						<map ng-show="updMap" style="display: block; height: 385px; zoom="8" center="[41.902650, 12.496022]" on-click="click()"></map>
+
+						<form name="form" role="form">
+
+							<div class="form-group" ng-class="{ 'has-error': form.title.$dirty && form.title.$error.required }" >
+								<fieldset style="margin-top:15px;"> 	
+		     						<label for="title" style="display: inline-block; vertical-align: bottom;">
+		     							Title: 
+									</label>
+									<input type="text" class="form-control" ng-model="title" style="width:1120px; display: inline-block;" ng-readonly="readonly" required>
+								</fieldset>
+							</div>
+
+							<div class="form-group" ng-class="{ 'has-error': form.curiosity.$dirty && form.curiosity.$error.required }" >
+								<fieldset style="margin-top:10px;"> 	
+		     						<label for="curiosity" style="display: inline-block; vertical-align: bottom;">
+		     							Curiosity: 
+									</label>
+									<input type="text" class="form-control" ng-model="curiosity" style="width:1088px; display: inline-block;" ng-readonly="readonly" required>
+								</fieldset>
+							</div>
+
+							<div class="form-group" ng-class="{ 'has-error': form.question.$dirty && form.question.$error.required }" >
+		     					<fieldset style="margin-top:10px;"> 	
+			     					<label for="question" style="display: inline-block; vertical-align: top;">
+			     						Question:  
+									</label>
+									<textarea class="form-control" ng-model="question" style="resize:none; display:inline-block; width:1086px;" ng-readonly="readonly" required></textarea>
+								</fieldset>
+							</div>
+
+							<div class="form-group" ng-class="{ 'has-error': form.hintonsite.$dirty && form.hintonsite.$error.required }" >
+		     					<fieldset style="margin-top:10px; "> 	
+			     					<label for="hintonsite" style="display: inline-block; vertical-align: bottom;">
+			    				 		Hint on site: 
+									</label>
+									<input type="text" class="form-control" ng-model="hintonsite" style="width:1070px; display: inline-block;" ng-readonly="readonly"  required>
+								</fieldset>
+							</div>	
+
+							<div class="form-group" ng-class="{ 'has-error': form.hintbypaying.$dirty && form.hintbypaying.$error.required }" >
+		     					<fieldset style="margin-top:10px; "> 	
+			     					<label for="hintbypaying" style="display: inline-block; vertical-align: bottom;">
+			     						Hint by paying: 
+									</label>
+									<input type="text" class="form-control" ng-model="hintbypaying" style="width:1052px; display: inline-block;" ng-readonly="readonly" required>
+								</fieldset>
+							</div>	
+			
+							<div class="form-group" ng-class="{ 'has-error': form.answer.$dirty && form.answer.$error.required }" >
+		  					   	<fieldset style="margin-top:10px;"> 	
+							     	<label for="answer" style="display: inline-block; vertical-align: bottom;">
+							     		Correct answer: 
+									</label>
+									<input type="text" class="form-control" ng-model="answer" style="width:1042px; display: inline-block;" ng-readonly="readonly" required>
+								</fieldset>
+							</div>
+
+							<div class="form-group" ng-show="chpathShow">
+								<label for="ch" style="display: inline-block;">
+			     					Cultural Heritage:  
+								</label>
+								<select class="form-control" ng-model="ch" name="ch" ng-options="option as option.name for option in chs" ng-change="chSelected(ch)" style="width:200px; display: inline-block;" 
+										ng-required='required'></select>	
+								<label for="path" style="display: inline-block; margin-left:20px;" >
+			     					Path:  
+								</label>
+								<select class="form-control" ng-model="path" name="path" ng-options="option as option.title for option in paths" style="width:200px; display: inline-block;" ng-required='required'></select>	
+							</div>
+
+							<div class="form-group" ng-class="{ 'has-error': form.latitude.$dirty && form.latitude.$error.required && form.longitude.$dirty && form.longitude.$error.required }" >
+								<fieldset style="margin-top:10px;"> 	
+		     						<label for="latitude" style="display: inline-block; vertical-align: bottom;">
+		     							Latitude: 
+									</label>
+									<input type="text" class="form-control" id="latitude" ng-model="latitude" style="width:100px; display: inline-block;" ng-readonly="true" disabled required>
+									<label for="longitude" style="display: inline-block; margin-left:20px; vertical-align: bottom;">
+		     							Longitude: 
+									</label>
+									<input type="text" class="form-control" id="longitude"ng-model="longitude" style="width:100px; display: inline-block;" ng-readonly="true" disabled required>
+
+									<button class="btn btn-secondary pull-right" ng-click="cancel()" style="width:100px; margin-left:10px; display: inline-block;">Cancel</button>
+									<button type="submit" class="btn btn-primary pull-right" ng-disabled="form.$invalid" ng-show="CreateBtn" ng-click="executeAddStage(title, curiosity, question, hintonsite, hintbypaying, answer)" style="width:100px;">Create</button>
+									<button type="submit" class="btn btn-primary pull-right" ng-disabled="form.$invalid" ng-show="UpdateBtn" ng-click="executeUpdStage(title, curiosity, question, hintonsite, hintbypaying, answer)" style="width:100px;">Update</button>
+									<button type="submit" class="btn btn-primary pull-right" ng-disabled="form.$invalid" ng-show="DuplicateBtn" ng-click="executeDuplicateStage(title, curiosity, question, hintonsite, hintbypaying, answer, ch, path)" style="width:100px;">Copy</button>
+
+								</fieldset>
+							</div>
+							
+						</form>
+
+					</div>
+				</div> 
+			</script>
+
+	<div class="col-sm-10" ng-controller="updPathController">
+			
+		<h1 style="margin-left:20px;"><u>Update Path</u>: [{{updPath.title}}]</h1><br><br>          
+		
+		<form name="form" role="form">     
+       
+       		<div class="form-group" ng-class="{ 'has-error': form.title.$dirty && form.title.$error.required }" >
+		     	<fieldset style="margin-top:10px; margin-left:20px;"> 	
+			     	<label for="title" style="display: inline-block; vertical-align: bottom;">
+			     		Title: 
+					</label>
+					<input type="text" class="form-control" ng-model="updPath.title" style="width:1080px; display: inline-block;" required>
+				</fieldset>
+			</div>	
+			
+			<div class="form-group">
+		     	<fieldset style="margin-left:20px; width:175px;"> 	
+					<div id="switchContainer" ng-cloak>	
+						<md-switch ng-model="data.switch1">
+							<label for="enabled" style="margin-left:10px;"> Enabled path: </label> {{ data.switch1 }}	    									
+						</md-switch>				  	
+					</div>					  
+				</fieldset>
+			</div>
+			
+			
+			<div>
+	        	<iframe id="mapFrame"  src="Paths_StagesMap.html" style="height:360px; width: 1500px; border: none;"></iframe>
+	        </div>
+			
+			<fieldset style="margin-top:10px; margin-left:20px;"> 	 	
+				<label for="search" style="display: inline-block; vertical-align: bottom;" >
+		        	<span class="glyphicon glyphicon-search"></span>
+		        	Search: 
+		        </label>
+	      		<input type="text" ng-model="searchStages.info" class="form-control" style="width:250px; display: inline-block; vertical-align: bottom;"/>
+	      		<label for="string1" style="display: inline-block; vertical-align: bottom; margin-left:20px;">
+		     		Right-click on the map to add a new stage: 
+				</label>
+			</fieldset>
+			
+			<fieldset style="margin-top:30px; margin-left:20px;"> 	
+				<ol style="list-item-style:circle; margin-left:20px; padding-left:0px;">
+					<b>
+			       		<li ng-repeat="stage in stages | filter:searchStages" ng-model="getPathStages.selection">	          	
+			        		<h4 stage.title="selection" style="display: inline-block; margin-left: 10px;">     			
+			        			<span class="glyphicon glyphicon-map-marker" ng-click="localizeStage(stage.code)"></span> 
+			        			<span class="glyphicon glyphicon-pencil" ng-click="updStageModal(stage.code)"></span> 
+	 		        			<span class="glyphicon glyphicon-duplicate" ng-click="duplicateStageModal(stage.code)"></span>
+			        			<span class="glyphicon glyphicon-trash" ng-click="delStage(stage.code, stage.questionCode, stage.cooCode, stage.isfinal)"></span> 
+			        			<h4 style="display: inline-block; margin-left: 30px; color:{{stage.color}}"><b> [#Solving ... ] {{ stage.title }}</b></h4>
+			        		</h4>	
+			       		</li>
+		       		</b>
+		        </ol>
+			</fieldset>
+
+			<div class="form-actions" style="margin-top:100px; margin-bottom:30px; margin-left:20px;">
+	            <button type="submit" name="btnUpdPath" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeUpdPath()">Update</button>
+	            <img ng-if="vm.dataLoading"/>
+	            <a href="Paths_PathsList.html" target="_self">Cancel</a>
+	        </div>		
+ 
+	    </form>
+
+	</div>
+	
+</body>
+</html>
+<script>
+var sCode=null;
+	var app = angular.module("GoPoleis", ['ui.bootstrap','ngMap','ngMaterial']);
+	app.controller('updPathController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
+
+		$scope.updPath={};
+		var pathCode = parent.window.getPathCode();
+		var chCode;
+		$scope.data = {switch1: false};
+		
+		var map = new google.maps.Map(document.getElementById("mapFrame"));
+					
+		$http({
+			method : "GET",
+			url : "/getPath/"+pathCode
+		}).then(function mySucces(response) {
+			var path  = response.data;	
+			$scope.updPath.title = path[0].title;
+			chCode = path[0].heritage;
+			if(path[0].enabled == "true"){
+				$scope.data.switch1=true;
+			}
+		}, function myError(response) {
+			alert("Error on the query: getPath SELECT");
+		});
+		
+		$http({
+			method : "GET",
+			url : "/getPathStages/"+pathCode
+		}).then(function mySucces(response) {		
+			var stages  = response.data;	
+			$scope.stages = [];
+			if (stages.length > 0){
+				$timeout(function() {
+					$scope.stages  = stages;	
+					for(var i=0; i < stages.length; i++){
+						$scope.paths[i].color='black';
+					}
+			    }, 10);
+			}
+		}, function myError(response) {
+			alert("Error on the query: getPathStages SELECT");
+		});
+		
+		$rootScope.$on('mapsInitialized', function(evt, maps){		
+	    	$scope.mapAdd = maps[0];
+	    	$scope.mapUpd = maps[1];
+	    });
+		
+		$window.getCode = function (){
+			return chCode;
+		};
+		
+		$window.getPathCode = function (){
+			return pathCode;
+		};
+		
+		$window.getStageLocation = function (){
+			return sCode;
+		};
+		
+		$scope.localizeStage = function (stageCode) {	
+			sCode = stageCode;
+			
+			for(var i=0; i < $scope.stages.length; i++){		   	
+	   			if($scope.stages[i].code == sCode){
+	   				$scope.stages[i].color='#00cc00';
+	   			}
+	   			else{
+	   				$scope.stages[i].color='black';			//o red?
+	   			}
+			}
+			
+			document.getElementById('mapFrame').src = "Game3_StagesMap.html";
+		};
+
+		$window.addStage = function(centerLat, centerLng, centerZoom) {   	
+			//pCode=pathCode;
+			$scope.addStageModal(centerLat, centerLng, centerZoom);
+	   	};
+	   	
+	   	$scope.addStageModal = function (centerLat, centerLng, centerZoom) {
+	   		var modalInstance = $modal.open({
+	    		templateUrl : 'Stagemap.html',
+	    		controller : 'addStageCtrl'
+	    	});
+	    	modalInstance.result.then(function() {
+	    	}, function() {
+	    	});
+	    	
+	    	$timeout(function() {
+	    		google.maps.event.trigger($scope.mapAdd, 'resize');
+	    		$scope.mapAdd.setCenter(new google.maps.LatLng(centerLat,centerLng));
+	    		$scope.mapAdd.setZoom(parseInt(centerZoom));    
+	    	}, 500);
+		};
+
+		$scope.updStageModal = function (stageCode) {	
+			sCode = stageCode;
+			var result;
+			$http({			 
+				method : "GET",
+				url : "/getStage/"+stageCode
+				}).then(function mySucces(response) {
+					result  = response.data;
+				}, function myError(response) {
+					result  = response.statusText;
+			});
+			
+			var modalInstance = $modal.open({
+	    		templateUrl : 'Stagemap.html',
+	    		controller : 'updStageCtrl'
+	    	});
+	    	modalInstance.result.then(function() {
+	    	}, function() {
+	    	});
+	    	
+	    	$timeout(function() {
+	    		google.maps.event.trigger($scope.mapUpd, 'resize');
+	    		$scope.mapUpd.setCenter(new google.maps.LatLng(result[0].latitude,result[0].longitude));
+	    		$scope.mapUpd.setZoom(16);    		 	
+	    	}, 500);
+		};
+		
+		$scope.duplicateStageModal = function (stageCode) {	
+			sCode = stageCode;
+			var modalInstance = $modal.open({
+	    		templateUrl : 'Stagemap.html',
+	    		controller : 'duplicateStageCtrl'
+	    	});
+	    	modalInstance.result.then(function() {
+	    	}, function() {
+	    	});    	
+		};
+		
+		$scope.executeUpdPath = function(){		
+			//Query: UPDATE Path on DB
+			$http({
+				method: 'GET',
+				url: '/updPath/'+$scope.updPath.title+'/'+$scope.data.switch1+'/'+chCode+'/'+pathCode
+			}).then(function successCallback(response) {	
+				window.open("Paths_PathsList.html", "_self");   
+			}, function errorCallback(response) {
+				alert("Error on the query: Path UPDATE");
+			});
+		}
+		
+		$scope.delStage = function (stageCode, questionCode, cooCode, isFinal) {
+        	if ($window.confirm("Are you sure you want to delete this Stage?")) {
+
+        		//Query: DELETE Stage on DB
+    			$http({
+    				method : "GET",
+    				url : "/delStage/"+stageCode
+    			}).then(function mySucces(response) {
+    				
+	  				//Query: DELETE Question on DB
+	          		$http({
+	   					method : "GET",
+	   					url : "/delQuestion/"+questionCode
+	  				}).then(function mySucces(response) {
+	  				
+	  					//Query: DELETE Coordinates on DB
+	              		$http({
+	       					method : "GET",
+	       					url : "/delCoordinates/"+cooCode
+	      				}).then(function mySucces(response) {
+				  				
+	      					if(isFinal=='true'){		
+	      						
+	      						//Query: SELECT getPathStages on DB
+	      						$http({
+	      							method : "GET",
+	      							url : "/getPathStages/"+pathCode
+	      						}).then(function mySucces(response) {		
+	      							var remainingStages = response.data;
+	      							if(remainingStages.length > 0){
+	      									      						
+	      								//Query: UPDATE updFinalStage on DB
+	    	      						$http({
+	    	      							method : "GET",
+	    	      							url : "/updFinalStage/true/"+remainingStages[remainingStages.length - 1].code
+	    	      						}).then(function mySucces(response) {			    	      							
+	    	      							alert("Successful delete");
+	    	      							window.open("Paths_Stages.html", "_self");   
+	    	      						}, function myError(response) {
+	    	      							alert("Error on the query: updFinalStage UPDATE");
+	    	      						});
+	      							}
+	      							else{
+	      								alert("Successful delete");
+    	      							window.open("Paths_Stages.html", "_self");   
+	      							}
+	      
+	      						}, function myError(response) {
+	      							alert("Error on the query: getPathStages SELECT");
+	      						});
+	      					}			
+	      					else{
+	      						alert("Successful delete");
+								window.open("Paths_Stages.html", "_self"); 
+	      					}	
+					    					
+	      				}, function myError(response) {
+	       					alert("Error on the query: Coordinates DELETE");
+	       				});
+	  				
+	   				}, function myError(response) {
+	   					alert("Error on the query: Question DELETE");
+	   				});	
+
+    			}, function myError(response) {
+    				alert("Error on the query: Stage DELETE");
+    			});
+			}
+		};
+
+		$scope.switchController = function() {
+			$scope.onChange = function(state) {
+				$scope.message = state;
+			};
+		}
+		
+	});
+	
+
+	
+//Pop-up per l'inserimento di un nuovo Stage	
+app.controller("addStageCtrl", function($scope, $log, $modalInstance, $rootScope, $http) {
+
+	$scope.heigth= "830px";
+	var pathCode = parent.window.getPathCode();	
+	var newMarker=true;
+	
+	$rootScope.$on('mapsInitialized', function(evt, maps){			
+		
+		
+		var results;
+		
+		$scope.latitude = null;
+    	$scope.longitude = null; 
+    	
+    	$scope.AddStageTitle=true;
+    	$scope.UpdStageTitle=false;
+    	$scope.DuplicateStageTitle=false;
+    	$scope.CreateBtn=true;
+    	$scope.UpdateBtn=false;
+    	$scope.DuplicateBtn=false;
+    	$scope.addMap=true;
+    	$scope.updMap=false;
+    	$scope.chpathShow=false;
+    	$scope.readonly=false;
+    	$scope.required=false;
+            
+    	$scope.map = maps[0];   
+    	var path=[];
+    	
+    	$http({			 
+			method : "GET",
+			url : "/getPathStages/"	+ pathCode
+			}).then(function mySucces(response) {
+				results  = response.data;
+				for (var i=0; i< results.length; i++){				
+					var coordinates = new google.maps.LatLng(results[i].latitude,results[i].longitude);		
+					path.push(coordinates);
+			        setMarker($scope.map, coordinates, "red", false, (i+1));	
+			        
+				}
+			}, function myError(response) {
+				results  = response.statusText;
+		});	
+    	
+    	//Aggiunge un marker alla mappa e gli aggiunge un dragendListener(se marker da aggiungere)
+	    function setMarker(map, coordinates, icon, draggable, index) {
+	    	var marker = new google.maps.Marker({
+	        	position: coordinates,
+	        	map: map,
+	        	draggable: draggable,
+	        	//icon: 'https://maps.google.com/mapfiles/ms/icons/'+icon+'-dot.png',
+	        	icon: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_'+icon+index+'.png'
+			});
+	    	if (draggable){
+	    		google.maps.event.addListener(marker, 'dragend', function () {
+					$scope.latitude = marker.position.lat().toPrecision(8);
+		        	$scope.longitude = marker.position.lng().toPrecision(8);
+		        	path[(path.length)-1] = new google.maps.LatLng($scope.latitude,$scope.longitude);	
+		        	chPath.setPath(path);
+		        	$scope.$apply();
+	    		});
+	    	}
+	    	var chPath = new google.maps.Polyline({
+				path: path,
+				geodesic: true,
+				strokeColor: '#FF0000',
+				strokeOpacity: 1.0,
+				strokeWeight: 3
+			});
+			chPath.setMap(map);
+	    }
+    	
+    	$scope.map.addListener('rightclick', function(event) {    //aggiunge UN marker in base al rigthclick sulla mappa [rigthclick, dblclick, click]     	
+	    	if (newMarker == true){
+	    		$scope.latitude = event.latLng.lat().toPrecision(8);
+	        	$scope.longitude = event.latLng.lng().toPrecision(8);
+	        	$scope.$apply();
+	        	path.push(event.latLng);
+	    		newMarker = false;
+	    		setMarker($scope.map, event.latLng, "green", true, ((results.length)+1));  
+	    	}
+	    });
+
+    });
+
+	$scope.executeAddStage = function(title, curiosity, question, hintonsite, hintbypaying, answer){	
+		//Query: INSERT Coordinates on DB
+		$http({
+			method: 'GET',
+			url:	'/addCoordinates/0/'+$scope.latitude+'/'+$scope.longitude
+		}).then(function successCallback(response) {	
+
+			var cooCode = response.data.insertId;
+			
+			//Query: INSERT Question on DB
+			$http({
+				method: 'GET',
+				url: '/addQuestion/0/'+question+'/'+hintonsite+'/'+hintbypaying+'/'+formatAnswer(answer)		
+			}).then(function successCallback(response) {	
+				
+				var questionCode = response.data.insertId;
+
+				//Query: SELECT getPathStages on DB
+				$http({
+					method : "GET",
+					url : "/getPathStages/"+pathCode
+				}).then(function mySucces(response) {		
+					var remainingStages = response.data;
+					if(remainingStages.length > 0){
+						//Query: UPDATE updFinalStage on DB
+ 						$http({
+ 							method : "GET",
+ 							url : "/updFinalStage/false/"+remainingStages[remainingStages.length - 1].code
+ 						}).then(function mySucces(response) {	
+ 							insertStage(title, curiosity, questionCode, cooCode, pathCode)
+ 						}, function myError(response) {
+ 							alert("Error on the query: updFinalStage UPDATE");
+ 						});
+					}
+					else{
+						insertStage(title, curiosity, questionCode, cooCode, pathCode);
+					}
+					
+				}, function myError(response) {
+					alert("Error on the query: getPathStages SELECT");
+				});
+	
+			}, function errorCallback(response) {
+				alert("Error on the query: Question INSERT");
+			});
+
+		}, function errorCallback(response) {
+			alert("Error on the query: Coordinates INSERT");
+		});
+	};
+
+	function formatAnswer(text){
+		return text.replace(/\s\s+/g, ' ').toUpperCase();
+	}
+
+	function insertStage(title, curiosity, questionCode, cooCode, pathCode){
+		//Query: INSERT Stage on DB
+		$http({
+			method: 'GET',
+			url: '/addStage/0/'+title+'/'+curiosity+'/'+questionCode+'/'+cooCode+'/'+pathCode+'/true'
+		}).then(function successCallback(response) {	
+			newMarker = true;
+				window.open("Paths_Stages.html", "_self");
+		}, function errorCallback(response) {
+			alert("Error on the query: Stage INSERT");
+		});
+	}
+
+	$scope.cancel = function() { 
+		newMarker = false;
+		$modalInstance.dismiss('cancel');
+	};
+});	
+	
+	
+//Pop-up per l'update dello Stage selezionato		
+app.controller("updStageCtrl", function($scope, $log, $modalInstance, $rootScope, $http) {
+	
+	$scope.heigth= "830px";
+	var newMarker = true;
+	var chPath;
+	var marker = null;
+	var questionCode=null;
+	var cooCode=null;
+	var oldLat=null;
+	var oldLong=null;
+	var isFinal=false;
+	
+	var pathCode = parent.window.getPathCode();	
+	
+	$rootScope.$on('mapsInitialized', function(evt, maps){	
+		var results;
+		var path=[];
+		var updatedStage=0;		
+    	$scope.mapUpd = maps[1];
+    	
+    	$scope.AddStageTitle=false;
+    	$scope.UpdStageTitle=true;
+    	$scope.DuplicateStageTitle=false;
+    	$scope.CreateBtn=false;
+    	$scope.UpdateBtn=true;
+    	$scope.DuplicateBtn=false;
+    	$scope.addMap=false;
+    	$scope.updMap=true;
+    	$scope.chpathShow=false;
+    	$scope.readonly=false;
+    	$scope.required=false;
+		
+    	
+    	
+    	
+    	if(newMarker){
+    		newMarker=false;
+    		
+    		$http({			 
+    			method : "GET",
+    			url : "/getPathStages/"+pathCode		
+    			}).then(function mySucces(response) {
+    				results  = response.data;
+
+    				for (var i=0; i< results.length; i++){				
+    					var coordinates = new google.maps.LatLng( results[i].latitude,  results[i].longitude);	
+    					path.push(coordinates);
+    					if (results[i].code != sCode){
+    						setMarker($scope.mapUpd, coordinates, "red", false, (i+1));
+    					} 
+    					else{
+    						updatedStage=i+1;
+    					}
+    				}					
+    				$http({			 
+    					method : "GET",
+    					url : "/getStage/"+sCode		
+    					}).then(function mySucces(response) {
+    						var stage  = response.data;
+    						var coordinates = new google.maps.LatLng( stage[0].latitude,  stage[0].longitude);	
+    						cooCode = stage[0].cooCode;
+    						$scope.latitude = stage[0].latitude;
+    						oldLat=$scope.latitude;
+    				    	$scope.longitude = stage[0].longitude;    
+    				    	oldLong=$scope.longitude;
+    				    	$scope.title = stage[0].title; 
+    				    	$scope.curiosity = stage[0].curiosity; 
+    				    	questionCode=stage[0].questionCode;
+    				    	$scope.question = stage[0].question; 
+    				    	$scope.hintonsite = stage[0].hintonsite; 
+    				    	$scope.hintbypaying = stage[0].hintbypaying; 
+    				    	$scope.answer = stage[0].answer; 
+    				    	isFinal=stage[0].isFinal; 
+    				    				
+							setMarker($scope.mapUpd, coordinates, "green", true, updatedStage);	
+
+    					}, function myError(response) {
+    						results  = response.statusText;
+    				});	
+    				
+    			}, function myError(response) {
+    				results  = response.statusText;
+    		});
+    	}
+
+    	//Aggiunge un marker alla mappa
+	    function setMarker(map, coordinates, icon, draggable, index) {
+	    	marker = new google.maps.Marker({
+	        	position: coordinates,
+	        	map: map,
+	        	draggable: draggable,
+	        	icon: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_'+icon+index+'.png'
+			});
+
+	    	if (draggable){	        		
+	    		chPath = new google.maps.Polyline({
+	    			path: path,
+	    			geodesic: true,
+	    			strokeColor: '#FF0000',
+	    			strokeOpacity: 1.0,
+	    			strokeWeight: 3
+	    		});
+	        	chPath.setMap(map);
+	        	
+	    		google.maps.event.addListener(marker, 'dragend', function () {
+					$scope.latitude = marker.position.lat().toPrecision(8);
+		        	$scope.longitude = marker.position.lng().toPrecision(8);
+		        	$scope.$apply();
+		        	path[updatedStage - 1] = new google.maps.LatLng($scope.latitude,$scope.longitude);	
+		        	chPath.setPath(path);  	
+	    		});
+	    	}
+	    }  	
+    	
+    });
+
+	$scope.executeUpdStage = function(title, curiosity, question, hintonsite, hintbypaying, answer){	
+		//Query: UPDATE Question on DB
+		$http({
+			method: 'GET',
+			url: '/updQuestion/'+question+'/'+hintonsite+'/'+hintbypaying+'/'+formatAnswer(answer)+'/'+questionCode
+		}).then(function successCallback(response) {	
+			
+			//Query: UPDATE Coordinates on DB
+			$http({
+				method: 'GET',
+				url:	'/updCoordinates/'+$scope.latitude+'/'+$scope.longitude+'/'+cooCode			
+			}).then(function successCallback(response) {	
+								
+				//Query: UPDATE Stage on DB
+				$http({
+					method: 'GET',
+					url:	'/updStage/'+title+'/'+curiosity+'/'+questionCode+'/'+cooCode+'/'+pathCode+'/'+isFinal+'/'+sCode
+				}).then(function successCallback(response) {	
+					window.open("Paths_Stages.html", "_self");   
+				}, function errorCallback(response) {
+					alert("Error on the query: Stage UPDATE");
+				});				
+			
+			}, function errorCallback(response) {
+				alert("Error on the query: Coordinates UPDATE");
+			});
+
+		}, function errorCallback(response) {
+			alert("Error on the query: Question UPDATE");
+		});								
+	}
+
+	function formatAnswer(text){
+		return text.replace(/\s\s+/g, ' ').toUpperCase();
+	}
+	
+	$scope.cancel = function() {
+		newMarker = false;
+		$modalInstance.dismiss('cancel');
+	};
+});	
+
+//Pop-up per il duplicate dello Stage selezionato		
+app.controller("duplicateStageCtrl", function($scope, $log, $modalInstance, $rootScope, $http) {
+
+	$scope.heigth= "530px";	
+	$scope.AddStageTitle=false;
+	$scope.UpdStageTitle=false;
+	$scope.DuplicateStageTitle=true;
+	$scope.CreateBtn=false;
+	$scope.UpdateBtn=false;			
+	$scope.DuplicateBtn=true;			
+	$scope.addMap=false;
+	$scope.updMap=false;		
+	$scope.chpathShow=true;
+	$scope.readonly=true;
+	$scope.required=true;
+	var path;
+	
+			    	
+	$http({
+		method: 'GET',
+		url:	'/getStage/'+sCode
+	}).then(function successCallback(response) {	
+		var stage  = response.data;
+		$scope.latitude = stage[0].latitude;
+    	$scope.longitude = stage[0].longitude;    
+    	$scope.title = stage[0].title; 
+    	$scope.curiosity = stage[0].curiosity; 
+    	$scope.question = stage[0].question; 
+    	$scope.hintonsite = stage[0].hintonsite; 
+    	$scope.hintbypaying = stage[0].hintbypaying; 
+    	$scope.answer = stage[0].answer; 
+    	path = stage[0].pathCode; 
+
+    	$http({
+    		method: 'GET',
+    		url:	'/getGame3CHsWithPaths/user3'
+    	}).then(function successCallback(response) {	
+    		$scope.chs = response.data;    		
+    	}, function errorCallback(response) {
+    		alert("Error on the query: getGame3CHs SELECT");
+    	});					
+	}, function errorCallback(response) {
+		alert("Error on the query: Stage SELECT");
+	});					    	
+			    	
+	$scope.chSelected = function(selection){
+		$http({
+    		method: 'GET',
+    		url:	'/getCHPaths/'+selection.code
+    	}).then(function successCallback(response) {	
+    		$scope.paths = response.data;    		
+    	}, function errorCallback(response) {
+    		alert("Error on the query: getCHPaths SELECT");
+    	});			
+    };
+    
+    $scope.executeDuplicateStage = function(title, curiosity, question, hintonsite, hintbypaying, answer, ch, path){	
+
+		//Query: INSERT Coordinates on DB
+		$http({
+			method: 'GET',
+			url:	'/addCoordinates/0/'+$scope.latitude+'/'+$scope.longitude
+		}).then(function successCallback(response) {	
+
+			var cooCode = response.data.insertId;
+			
+			//Query: INSERT Question on DB
+			$http({
+				method: 'GET',
+				url: '/addQuestion/0/'+question+'/'+hintonsite+'/'+hintbypaying+'/'+answer
+			}).then(function successCallback(response) {	
+				
+				var questionCode = response.data.insertId;
+			
+				//Query: SELECT getPathStages on DB
+				$http({
+					method : "GET",
+					url : "/getPathStages/"+path.code
+				}).then(function mySucces(response) {		
+					var remainingStages = response.data;
+					if(remainingStages.length > 0){						      						
+						//Query: UPDATE updFinalStage on DB
+ 						$http({
+ 							method : "GET",
+ 							url : "/updFinalStage/false/"+remainingStages[remainingStages.length - 1].code
+ 						}).then(function mySucces(response) {
+ 							insertStage(title, curiosity, questionCode, cooCode, path.code); 
+ 						}, function myError(response) {
+ 							alert("Error on the query: updFinalStage UPDATE");
+ 						});
+					}
+					else{
+						insertStage(title, curiosity, questionCode, cooCode, path.code); 
+					}
+				}, function myError(response) {
+					alert("Error on the query: getPathStages SELECT");
+				});
+
+			}, function errorCallback(response) {
+				alert("Error on the query: Question INSERT");
+			});
+
+		}, function errorCallback(response) {
+			alert("Error on the query: Coordinates INSERT");
+		});
+
+	};
+	
+	function insertStage(title, curiosity, questionCode, cooCode, pathCode){
+		//Query: INSERT Stage on DB
+		$http({
+			method: 'GET',
+			url: 	'/addStage/0/'+title+'/'+curiosity+'/'+questionCode+'/'+cooCode+'/'+pathCode+'/true'
+		}).then(function successCallback(response) {	
+			window.open("Paths_Stages.html", "_self");   
+		}, function errorCallback(response) {
+			alert("Error on the query: Stage INSERT");
+		});
+	}
+    
+    $scope.cancel = function() {
+		newMarker = false;
+		$modalInstance.dismiss('cancel');
+	};
+});	
+</script>

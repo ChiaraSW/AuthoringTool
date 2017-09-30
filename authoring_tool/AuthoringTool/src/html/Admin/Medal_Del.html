@@ -8,15 +8,15 @@
 
 <body ng-app="GoPoleis" >
 
-	 <div class="col-sm-9" ng-controller="delMedalController">
+	 <div class="col-sm-10" ng-controller="delMedalController">
 		<div>
 			<h1 style="margin:20px;"><u>Medals</u></h1>
-			<fieldset style="margin-top:50px; margin-left:20px;""> 	
+			<fieldset style="margin-top:50px; margin-left:20px;"> 	
 	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
 		        	<span class="glyphicon glyphicon-search"></span>
 		        	Search: 
 		        </label>
-	      		<input type="text" ng-model="searchBoxMedals.name" class="form-control" style="width:250px; display: inline-block; vertical-align: bottom;"/>
+	      		<input type="text" ng-model="searchBoxMedals.name" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
 	      		<label style="display: inline-block; margin-left: 120px;">
 		     		Filter by medal's category:  
 				</label>
@@ -36,7 +36,7 @@
 				</h5>
 	        </fieldset>
 	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
-	       		<li ng-repeat="medal in results | filter:searchBoxMedals | category:filterCategory" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+	       		<li ng-repeat="medal in medals | filter:searchBoxMedals | category:filterCategory" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
 	       			ng-model="getAllMedals.selection" ng-value="medal.name" id="{{medal.name}}">	
 	       			<span class="glyphicon glyphicon-trash" style="float:right;" ng-click="delMedal(medal.code, medal.image)"></span>        	
 	        		<h4 medal.name="selection">
@@ -59,9 +59,9 @@
 			method : "GET",
 			url : "/getAllMedals"
 		}).then(function mySucces(response) {
-			$scope.results  = response.data;
+			$scope.medals  = response.data;
 		}, function myError(response) {
-			$scope.results  = response.statusText;
+			alert("Error on the query: getAllMedals SELECT");
 		});
 		
 		$scope.regionFilter=false;
@@ -131,15 +131,14 @@
 	   					method : "GET",
 	   					url : "/delMedal/"+medalCode
 	   				}).then(function mySucces(response) {
-	   					results  = response.data;	 
 	   					alert("Successful delete");
 	   					window.open("Medals_Template.html", "_self"); 
 	   				}, function myError(response) {
-	   					$scope.results  = response.statusText;
+	   					alert("Error on the query: delMedal DELETE");
 	   				});
 	   				
   				}, function myError(response) {
-  					$scope.results  = response.statusText;
+  					alert("Error on the query: delImage DELETE");
   				});
 			} 
 		}	

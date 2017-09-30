@@ -26,36 +26,18 @@
     
     <script type="text/javascript" src="ng-map/ng-map.min.js"></script>    
     
-	 	
   	<style type="text/css">
   		.lg-map-wrapper {			
 		    position:relative;
 		}
-
 	    .container {
-			width: 350px;
-			margin: 30px;
+			width: 300px;	   		
 	    }
-	    .tooltip {
-			position:fixed;
-			display:none;
-			padding:10px 15px;
-			background:#f2f2f2;
-			font-size:15px;
-			font-weight:bold;
-			border:1px solid #262626;
-			
-			-moz-border-radius: 4px; /* FF1-3.6 */
-			-webkit-border-radius: 4px; /* Saf3-4, iOS 1-3.2, Android <1.6 */
-			 border-radius: 4px 4px 4px 4px; /* Opera 10.5, IE9, Saf5, Chrome, FF4, iOS 4, Android 2.1+ */    
-			/* useful if you don't want a bg color from leaking outside the border: */        
-			-moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;
-		}
 	</style>
 </head>
 
 <body ng-app="GoPoleis" >
-	<div class="col-sm-9" ng-controller="addCHController">   
+	<div class="col-sm-10" ng-controller="addCHController">   
 			    
 		<h1 style="margin:20px;"><u>Create a Cultural Heritage</u>:</h1><br><br>        
 	        
@@ -70,18 +52,19 @@
 						form.province.$dirty && form.province.$error.required && 
 						form.historicalPeriod.$dirty && form.historicalPeriod.$error.required && 
 						form.typeOfStructure.$dirty && form.typeOfStructure.$error.required  }" >
-		     	<fieldset style="margin-top:20px; margin-left:20px;"> 	
+						
+		     	<fieldset style="margin-top:30px; margin-left:20px;"> 	
 			     	<label for="name" style="display: inline-block; vertical-align: bottom;">
 			     		Name: 
 					</label>
-					<input type="text" class="form-control" ng-model="addCH.name" style="width:850px; display: inline-block;" required>
+					<input type="text" class="form-control" ng-model="addCH.name" style="width:800px; display: inline-block;" maxlength="100" required>
 				</fieldset>
 				
 				<fieldset style="margin-top:30px; margin-left:20px;"> 	
 			     	<label for="description" style="display: inline-block; vertical-align: top;">
 			     		Description:  
 					</label>
-					<textarea class="form-control" ng-model="addCH.description" style="resize:none; display:inline-block; width:850px;" required></textarea>
+					<textarea class="form-control" ng-model="addCH.description" style="resize:none; display:inline-block; width:758px;" maxlength="999" required></textarea>
 				</fieldset>
 				
 				<fieldset style="margin-top:30px; margin-left:20px;"> 	
@@ -91,82 +74,82 @@
 					</label>
 					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
 							style="display:inline-block; margin-left:20px;" ngf-max-size="2MB" required/>
-					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
+					<img ng-src="{{ thumbnail.dataUrl }}" style="width:150px; heigth:150px; border: 1px solid black;"/>
 				</fieldset>
-
-				<fieldset style="margin-top:30px; margin-left:20px; "> 	
-					<label style="display: inline-block;">
-			     		Games:  
-					</label>
-					
-					<span class="glyphicon glyphicon-check" ng-click="game1()" style="margin-left: 30px;" ng-show="g1">1 </span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="game1()" style="margin-left: 30px;" ng-hide="g1">1 </span>
+				
+				<fieldset style="margin-top:30px; margin-left:20px; "> 			
+					<label>
+			     		Select the medals' categories to which this Cultural Heritage participates:  
+					</label> 		
+				</fieldset>
+				
+				<fieldset style="margin-left:20px;"> 			
+					<span class="glyphicon glyphicon-check" ng-click="rm()" style="display:inline-block;" ng-show="rmedal" value='Region Medal'></span>
+		     		<span class="glyphicon glyphicon-unchecked" ng-click="rm()" style="display:inline-block;" ng-hide="rmedal"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Region Medal</h5>   		
 		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="game2()" style="margin-left: 30px;" ng-show="g2">2 </span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="game2()" style="margin-left: 30px;" ng-hide="g2">2 </span>
+		     		<span class="glyphicon glyphicon-check" ng-click="hpm()" style="margin-left: 100px; display:inline-block;" ng-show="hpmedal" value='Historical period Medal'></span>
+	     			<span class="glyphicon glyphicon-unchecked" ng-click="hpm()" style="margin-left: 100px; display:inline-block;" ng-hide="hpmedal"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Historical period Medal</h5>
 		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="game3()" style="margin-left: 30px;" ng-show="g3">3 </span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="game3()" style="margin-left: 30px;" ng-hide="g3">3 </span>
-		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="game4()" style="margin-left: 30px;" ng-show="g4">4 </span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="game4()" style="margin-left: 30px;" ng-hide="g4">4 </span>
+		     		<span class="glyphicon glyphicon-check" ng-click="tosm()" style="margin-left: 100px; display:inline-block;" ng-show="tosmedal" value='Type of structure Medal'></span>
+	     			<span class="glyphicon glyphicon-unchecked" ng-click="tosm()" style="margin-left: 100px; display:inline-block;" ng-hide="tosmedal"></span>
+		     		<h5 style="display: inline-block;  margin-left: 5px;">Type of structure Medal</h5>     		
+				</fieldset>
+				
 
-				</fieldset>	
-							
-		   		<div class="container" >
-				    <div class="lg-map-wrapper" data-map="lg-map/italy.js">
-						<div id="lg-map"></div> 
-					</div>	
-					
-				</div>	
-
-				<fieldset style="margin-top:30px; margin-left:20px;"> 		
-					<label for="province" style="display: inline-block; float:rigth">
+				<fieldset style="margin-left:20px; margin-top:30px;"> 					
+			   		<div class="container" style="display:inline-block;  margin-top:25px;" >
+					    <div class="lg-map-wrapper" data-map="lg-map/italy.js">
+							<div id="lg-map"></div> 
+						</div>		
+					</div>
+					<label for="province" style="margin-top:125px; margin-left:35px; float:rigth; vertical-align:top; display: inline-block;  width:100px;">
 			     		Province:  
 					</label>
-					<select ng-model="addCH.province" class="form-control" style="width:220px; display: inline-block;" ng-change="provSelected(addCH.province)" ng-options="p.name for p in provinces" required>					
-					</select>
-				</fieldset>	
-						
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-			     	<label for="coordinates" style="display: inline-block; vertical-align: bottom; width:150px;">
-			     		Coordinates: 
-					</label>
-					Latitude <input type="text" class="form-control" ng-model="addCH.latitude" style="width:120px; display: inline-block;" ng-readonly="true" disabled required>
-					Longitude <input type="text" class="form-control" ng-model="addCH.longitude" style="width:120px; display: inline-block;" ng-readonly="true" disabled required> 
-					<span class="glyphicon glyphicon-map-marker" ng-click="opendialog(addCH.province.latitude, addCH.province.longitude, addCH.province.zoom)" style="color:#00cc00; margin-left: 30px;">
-						<h4 style="display: inline-block; color:#00cc00;"> Select coordinates</h4>
-					</span>
+					<select ng-model="addCH.province" class="form-control" style="margin-top:115px; width:200px; display: inline-block; vertical-align:top;" ng-change="provSelected(addCH.province)" ng-options="p.name for p in provinces" required>					
+					</select>	
 					
+			     	<label for="coordinates" style="margin-top:180px; margin-left:-310px; vertical-align:top; display: inline-block;">
+			     		Coordinates: 
+			     		<span style="font-weight:normal; margin-left:30px;">Latitude</span>
+			     		<input type="text" class="form-control" ng-model="addCH.latitude" style="width:120px; display: inline-block; " ng-readonly="true" disabled required>
+			     		<span style="font-weight:normal; margin-left:20px;">Longitude</span>
+			     		<input type="text" class="form-control" ng-model="addCH.longitude" style="width:120px; display: inline-block;" ng-readonly="true" disabled required> 		     		
+			     		<br>
+			     		<span class="glyphicon glyphicon-map-marker" ng-click="opendialog(addCH.province.latitude, addCH.province.longitude, addCH.province.zoom)" style="color:#00cc00; float:right;">
+							<h4 style="display: inline-block; color:#00cc00;"> Select coordinates</h4>
+						</span>
+					</label>				
 				</fieldset>	
-				
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-							     	
+
+				<fieldset style="margin-top:30px; margin-left:20px;"> 								     	
 					<label for="historicalPeriod" style="display: inline-block;">
 			     		Historical period:  
 					</label>
-						<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="addCH.historicalPeriod" style="width:300px; display: inline-block;"
+						<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="addCH.historicalPeriod" style="width:723px; display: inline-block;" maxlength="60"
 								typeahead="option as option.name for option in historicalPeriods | filter:$viewValue | limitTo:8" class="form-control" required>
-							
-					<label for="typeOfStructure" style="display: inline-block; margin-left:50px;">
+				</fieldset>
+				
+				<fieldset style="margin-top:30px; margin-left:20px;"> 				
+					<label for="typeOfStructure" style="display: inline-block;">
 			     		Type of structure: 
 					</label>
-						<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="addCH.typeOfStructure" style="width:300px; display: inline-block;"
+						<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="addCH.typeOfStructure" style="width:720px; display: inline-block;" maxlength="60"
 								typeahead="option as option.name for option in typeOfStructures | filter:$viewValue | limitTo:8" class="form-control" required>
 
 					<label for="region" style="display: inline-block;"></label>
 					<select ng-model="addCH.region" class="form-control" style="width:200px; display: inline-block;" required ng-show="false">
 						<option ng-repeat="x in regions">{{x.name}}</option>
-					</select>	
-							
+					</select>			
 				</fieldset>
 				
 			</div>
 
-			<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+			<div class="form-actions" style="margin-top:100px; margin-bottom:30px; margin-left:20px;">
 	            <button type="submit" name="btnAddCH" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddCH()">Create</button>
 	            <img ng-if="vm.dataLoading"/>
-	            <a href="CulturalHeritages_Template.html" target="_self">Cancel</a>
+	            <a href="CulturalHeritages.html" target="_self">Cancel</a>
 	        </div>
 	        
 		</form>

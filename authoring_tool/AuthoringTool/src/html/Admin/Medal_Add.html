@@ -10,7 +10,7 @@
 
 <body ng-app="GoPoleis" >
 
-	<div class="col-sm-9" ng-controller="addMedalController">
+	<div class="col-sm-10" ng-controller="addMedalController">
 		
 		<h1 style="margin:20px;"><u>Create a Medal</u>:</h1><br><br>
 		
@@ -22,7 +22,7 @@
 			     	<label for="name" style="display: inline-block; vertical-align: bottom;">
 			     		Name: 
 					</label>
-					<input type="text" class="form-control" ng-model="addMedal.name" style="width:850px; display: inline-block;" required>
+					<input type="text" class="form-control" ng-model="addMedal.name" style="width:1200px; display: inline-block;" maxlength="100" required>
 				</fieldset>
 			</div>
 		
@@ -49,23 +49,23 @@
 					</label>
 					<select class="form-control" ng-model="addMedal.category" ng-change="showCategory()" name="category" ng-options="option as option.name for option in category" style="width:300px; display: inline-block;" required></select>	
 
-			     	<label for="region" style="display: inline-block; margin-left:30px;" ng-show="regionSelected">
+			     	<label for="region" style="display: inline-block; margin-left:70px;" ng-show="regionSelected">
 			     		Region:  
 					</label>
 					<select class="form-control" ng-model="addMedal.region" name="region" ng-options="option as option.name for option in regions" style="width:300px; display: inline-block;" ng-show="regionSelected" 
 							ng-required="regionSelected"></select>	
 					
- 			     	<label for="historicalPeriod" style="display: inline-block; margin-left:30px;" ng-show="hpSelected">
+ 			     	<label for="historicalPeriod" style="display: inline-block; margin-left:70px;" ng-show="hpSelected">
 			     		Historical period:  
 					</label>
-					<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="addMedal.historicalPeriod" style="width:300px; display: inline-block;"
+					<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="addMedal.historicalPeriod" style="width:678px; display: inline-block;" maxlength="60"
 								typeahead="option as option.name for option in historicalPeriods | filter:$viewValue | limitTo:8" class="form-control" ng-show="hpSelected" ng-required="hpSelected">	
 								
 											
-					<label for="structureType" style="display: inline-block; margin-left:30px;" ng-show="stSelected">
+					<label for="structureType" style="display: inline-block; margin-left:70px;" ng-show="stSelected">
 			     		Type of structure:  
 					</label>
-					<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="addMedal.typeOfStructure" style="width:300px; display: inline-block;"
+					<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="addMedal.typeOfStructure" style="width:675px; display: inline-block;" maxlength="60"
 								typeahead="option as option.name for option in typeOfStructures | filter:$viewValue | limitTo:8" class="form-control" ng-show="stSelected" ng-required="stSelected">	
 				</fieldset>
 			</div>
@@ -79,7 +79,7 @@
 				</fieldset> 
 			</div>
 
-			<div class="form-actions" style="margin-top:60px; margin-bottom:30px; margin-left:200px;">
+			<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
 	            <button type="submit" name="btnAddMedal" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddMedal()">Create</button>
 	            <img ng-if="vm.dataLoading"/>
 	            <a href="Medals_Template.html" target="_self">Cancel</a>
@@ -97,6 +97,7 @@ var app = angular.module("GoPoleis", ["ui.bootstrap"]);
 	app.controller('addMedalController', function($scope, $http, $window, $timeout) {
 		
 		var type;
+		var hm=0;
 		var imageSelected=false;
 		
 		$http({
@@ -182,7 +183,6 @@ var app = angular.module("GoPoleis", ["ui.bootstrap"]);
 	    };
 
 		$scope.executeAddMedal = function(){
-
 			if(imageSelected){
 				$scope.imgCode="medals-" + Date.now();
 	
@@ -277,7 +277,18 @@ var app = angular.module("GoPoleis", ["ui.bootstrap"]);
 							method: 'GET',
 							url: '/addRegionMedal/'+medalCodeDB+'/'+$scope.addMedal.region.code
 						}).then(function successCallback(response) {	
-							window.open("Medals_Template.html", "_self");   
+							$http({
+								method: 'GET',
+								url: '/getRegionCHs/'+$scope.addMedal.region.code
+							}).then(function successCallback(response) {	
+								hm=response.data.length;
+								for(var i=0; i < response.data.length; i++){
+									addHeritageMedal(response.data[i].code, medalCodeDB);
+								}
+								canReload();
+							}, function errorCallback(response) {
+								alert("Error on the query: getRegionCHs SELECT");
+							});	
 						}, function errorCallback(response) {
 							alert("Error on the query: addRegionMedal INSERT");
 						});
@@ -309,7 +320,7 @@ var app = angular.module("GoPoleis", ["ui.bootstrap"]);
 								var tosCodeDB = response.data.insertId;
 								addToSMedal(medalCodeDB, tosCodeDB);
 							}, function errorCallback(response) {
-								alert("Error on the query: addHistoricalPeriod INSERT");
+								alert("Error on the query: addStructureType INSERT");
 							});
 						}
 						else{
@@ -322,7 +333,7 @@ var app = angular.module("GoPoleis", ["ui.bootstrap"]);
 				});
 				
 			}, function errorCallback(response) {			
-				alert("Error on the query: Image INSERT");
+				alert("Error on the query: addImage INSERT");
 			});
 			
 		}
@@ -333,7 +344,20 @@ var app = angular.module("GoPoleis", ["ui.bootstrap"]);
 				method: 'GET',
 				url: '/addHPMedal/'+medalCodeDB+'/'+hpCodeDB
 			}).then(function successCallback(response) {	
-				window.open("Medals_Template.html", "_self");   
+
+				$http({
+					method: 'GET',
+					url: '/getHPCHs/'+hpCodeDB
+				}).then(function successCallback(response) {	
+					hm=response.data.length;
+					for(var i=0; i < response.data.length; i++){
+						addHeritageMedal(response.data[i].code, medalCodeDB);
+					}
+					canReload();
+				}, function errorCallback(response) {
+					alert("Error on the query: getHPCHs SELECT");
+				});	
+				
 			}, function errorCallback(response) {
 				alert("Error on the query: addHPMedal INSERT");
 			});
@@ -344,11 +368,42 @@ var app = angular.module("GoPoleis", ["ui.bootstrap"]);
 			$http({
 				method: 'GET',
 				url: '/addToSMedal/'+medalCodeDB+'/'+tosCodeDB
-			}).then(function successCallback(response) {	
-				window.open("Medals_Template.html", "_self");   
+			}).then(function successCallback(response) {
+				
+				$http({
+					method: 'GET',
+					url: '/getToSCHs/'+tosCodeDB
+				}).then(function successCallback(response) {	
+					hm=response.data.length;
+					for(var i=0; i < response.data.length; i++){
+						addHeritageMedal(response.data[i].code, medalCodeDB);
+					}
+					canReload();
+				}, function errorCallback(response) {
+					alert("Error on the query: getToSCHs SELECT");
+				});	
+				
 			}, function errorCallback(response) {
 				alert("Error on the query: addToSMedal INSERT");
 			});	
+		}
+		
+		function addHeritageMedal(ch_code, medal_code){
+			$http({
+				method: 'GET',
+				url: '/addHeritageMedal/'+ch_code+'/'+medal_code
+			}).then(function successCallback(response) {	
+				hm--;
+				canReload();
+			}, function errorCallback(response) {
+				alert("Error on the query: addHeritageMedal INSERT");
+			});	
+		}
+		
+		function canReload(){
+			if(hm==0){ 
+				window.open("Medals_Template.html", "_self");
+	   		}
 		}
 	});
 

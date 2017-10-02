@@ -707,6 +707,10 @@ module.exports = {
 				todo.addUser(req.params.user_code,req.params.user_email,req.params.user_password,req.params.user_role,res);
 			});
 			
+			app.get('/updUser/:user_enabled/:user_code', function(req,res){
+				todo.updUser(req.params.user_enabled,req.params.user_code,res);
+			});
+			
 			app.get('/addAdmin/:admin_code/:admin_user', function(req,res){
 				todo.addAdmin(req.params.admin_code,req.params.admin_user,res);
 			});
@@ -715,22 +719,50 @@ module.exports = {
 				todo.getAllCulturalOrganizations(res);
 			});
 			
+			app.get('/getAllNotEnabledCulturalOrganizationsCount/',function(req,res){
+				todo.getAllNotEnabledCulturalOrganizationsCount(res);
+			});
+			
 			app.get('/getAllNotEnabledCulturalOrganizations/',function(req,res){
 				todo.getAllNotEnabledCulturalOrganizations(res);
+			});
+			
+			app.get('/getAllApprovedCulturalOrganizations/',function(req,res){
+				todo.getAllApprovedCulturalOrganizations(res);
+			});
+			
+			app.get('/getAllRejectedCulturalOrganizations/',function(req,res){
+				todo.getAllRejectedCulturalOrganizations(res);
 			});
 				
 			app.get('/addCulturalOrganization/:corg_code/:corg_user/:corg_name', function(req,res){
 				todo.addCulturalOrganization(req.params.corg_code,req.params.corg_user,req.params.corg_name,res);
 			});
+			
+			app.get('/updCulturalOrganization/:corg_admin/:corg_user', function(req,res){
+				todo.updCulturalOrganization(req.params.corg_admin,req.params.corg_user,res);
+			});
 
-			app.get('/getAllNotEnabledCulturalOperators/:corg_email',function(req,res){
-				todo.getAllNotEnabledCulturalOperators(req.params.corg_email,res);
+			app.get('/getAllNotEnabledCulturalOperatorsCount/:cop_email',function(req,res){
+				todo.getAllNotEnabledCulturalOperatorsCount(req.params.cop_email,res);
+			});
+			
+			app.get('/getAllNotEnabledCulturalOperators/:cop_email',function(req,res){
+				todo.getAllNotEnabledCulturalOperators(req.params.cop_email,res);
+			});
+
+			app.get('/getAllApprovedCulturalOperators/:cop_email',function(req,res){
+				todo.getAllApprovedCulturalOperators(req.params.cop_email,res);
+			});
+			
+			app.get('/getAllRejectedCulturalOperators/:cop_email',function(req,res){
+				todo.getAllRejectedCulturalOperators(req.params.cop_email,res);
 			});
 			
 			app.get('/addCulturalOperator/:cop_code/:cop_user/:cop_organization', function(req,res){
 				todo.addCulturalOperator(req.params.cop_code,req.params.cop_user,req.params.cop_organization,res);
 			});
-			
+
 			app.get('/getOperatorCHs/:operator_email', function(req,res){
 				todo.getOperatorCHs(req.params.operator_email,res);
 			});
@@ -786,11 +818,7 @@ module.exports = {
 			app.get('/delTreasureChest/:chest_code', function(req,res){
 				todo.delTreasureChest(req.params.chest_code,res);
 			});
-			
-			/*app.get('/getGame2CHs/:operator_email', function(req,res){
-				todo.getGame2CHs(req.params.operator_email,res);
-			});*/
-			
+
 			app.get('/getCHValidityAreas/:ch_code', function(req,res){
 				todo.getCHValidityAreas(req.params.ch_code,res);
 			});
@@ -851,12 +879,8 @@ module.exports = {
 				todo.delCircle(req.params.circle_code,res);
 			});
 
-			/*app.get('/getGame3CHs/:operator_email', function(req,res){
-				todo.getGame3CHs(req.params.operator_email,res);
-			});*/
-			
-			app.get('/getGame3CHsWithPaths/:operator_email', function(req,res){
-				todo.getGame3CHsWithPaths(req.params.operator_email,res);
+			app.get('/getCHsWithPaths/:operator_email', function(req,res){
+				todo.getCHsWithPaths(req.params.operator_email,res);
 			});
 
 			app.get('/addQuestion/:question_code/:question_question/:question_hintonsite/:question_hintbypaying/:question_answer', function(req,res){
@@ -923,16 +947,12 @@ module.exports = {
 				todo.delStage(req.params.stage_code,res);
 			});
 
-			/*app.get('/getGame4CHs/:operator_email', function(req,res){
-				todo.getGame4CHs(req.params.operator_email,res);
-			});*/
-			
 			app.get('/getCHReviewsList/:ch_code', function(req,res){
 				todo.getCHReviewsList(req.params.ch_code,res);
 			});
 			
-			app.get('/delReview/:game4_code/:ch_code', function(req,res){
-				todo.delReview(req.params.game4_code,req.params.ch_code,res);
+			app.get('/delReview/:player_code/:ch_code', function(req,res){
+				todo.delReview(req.params.player_code,req.params.ch_code,res);
 			});
 			
 			

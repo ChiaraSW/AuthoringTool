@@ -38,35 +38,41 @@
 				var user = response.data;
 				if (user.length > 0){
 					if(user[0].enabled != null){
-					
-						if((user[0].email == vm.email) && (user[0].password == vm.password)  && (user[0].role == vm.role.code) ){		//la password va trasformata in token e confrontata con quello nel db!!!
-							
-							AuthenticationService.SetCredentials(vm.email, vm.password);
-							
-							if (vm.role.name == "Admin"){
-				    			$rootScope.loggedIn = true;
-				    			$rootScope.username = vm.email;
-				    			AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, vm.role.name);
-				    			$location.path('/admin');			
-				    		}
-							
-							if (vm.role.name == "Cultural Organization"){
-								$rootScope.loggedIn = true;
-								$rootScope.username = vm.email;
-								AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, vm.role.name);
-				    			$location.path('/organization');
-				    		}
-
-							if (vm.role.name == "Cultural Operator"){
-								$rootScope.loggedIn = true;
-								$rootScope.username = vm.email;
-								AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, vm.role.name);
-				    			$location.path('/operator');
-				    		}
+						
+						if(user[0].enabled == 1){
+						
+							if((user[0].email == vm.email) && (user[0].password == vm.password)  && (user[0].role == vm.role.code) ){		//la password va trasformata in token e confrontata con quello nel db!!!
+								
+								AuthenticationService.SetCredentials(vm.email, vm.password);
+								
+								if (vm.role.name == "Admin"){
+					    			$rootScope.loggedIn = true;
+					    			$rootScope.username = vm.email;
+					    			AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, vm.role.name, user[0].code);
+					    			$location.path('/admin');			
+					    		}
+								
+								if (vm.role.name == "Cultural Organization"){
+									$rootScope.loggedIn = true;
+									$rootScope.username = vm.email;
+									AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, vm.role.name, user[0].code);
+					    			$location.path('/organization');
+					    		}
+	
+								if (vm.role.name == "Cultural Operator"){
+									$rootScope.loggedIn = true;
+									$rootScope.username = vm.email;
+									AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, vm.role.name, user[0].code);
+					    			$location.path('/operator');
+					    		}
+							}
+							else{
+								ErrorHandling("Wrong password or role.");
+							}
 						}
 						else{
-							ErrorHandling("Wrong password or role.");
-						}
+							ErrorHandling("User \""+ vm.email +"\" has been rejected.");
+						}	
 					}
 					else{
 						ErrorHandling("User \""+ vm.email +"\" not yet enabled.");

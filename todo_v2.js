@@ -1671,6 +1671,15 @@ function Todo(){
   		});
   	};
   	
+  	this.updUser = function(user_enabled, user_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('UPDATE User set enabled=? WHERE code=?', [user_enabled, user_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
   	this.addAdmin = function(admin_code, admin_user, res){
   		connection.acquire(function(err,con){
   			con.query('INSERT into Admin (code, user) value (?,?)', [admin_code, admin_user], function(err,result){
@@ -1689,7 +1698,7 @@ function Todo(){
   		});
   	};
   	
-  	this.getAllNotEnabledCulturalOrganizations = function(res){
+  	this.getAllNotEnabledCulturalOrganizationsCount = function(res){
   		connection.acquire(function(err,con){
   			con.query('SELECT Count(code) as count from User WHERE role=2 AND enabled is NULL', function(err,result){
   				con.release();
@@ -1698,6 +1707,33 @@ function Todo(){
   		});
   	};
   	
+  	this.getAllNotEnabledCulturalOrganizations = function(res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT code, email from User WHERE role=2 AND enabled is NULL', function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllApprovedCulturalOrganizations = function(res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT code, email from User WHERE role=2 AND enabled=\'1\'', function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllRejectedCulturalOrganizations = function(res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT code, email from User WHERE role=2 AND enabled=\'0\'', function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+
   	this.addCulturalOrganization = function(corg_code, corg_user, corg_name, res){
   		connection.acquire(function(err,con){
   			con.query('INSERT into Organization (code, user, admin, name) value (?,?,null,?)', [corg_code, corg_user, corg_name], function(err,result){
@@ -1706,10 +1742,46 @@ function Todo(){
   			});
   		});
   	};
-
-  	this.getAllNotEnabledCulturalOperators = function(corg_email, res){
+  	
+  	this.updCulturalOrganization = function(corg_admin, corg_user, res){
   		connection.acquire(function(err,con){
-  			con.query('SELECT Count(opU.code) as count FROM (User orgU, Organization org, Operator op, User opU) WHERE orgU.email=? AND orgU.code=org.user AND org.code=op.organization AND op.user=opU.code AND opU.enabled is NULL', [corg_email], function(err,result){
+  			con.query('UPDATE Organization set admin=? WHERE user=?', [corg_admin, corg_user], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+
+  	this.getAllNotEnabledCulturalOperatorsCount = function(cop_email, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT Count(opU.code) as count FROM (User orgU, Organization org, Operator op, User opU) WHERE orgU.email=? AND orgU.code=org.user AND org.code=op.organization AND op.user=opU.code AND opU.enabled is NULL', [cop_email], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllNotEnabledCulturalOperators = function(cop_email, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT * FROM (User orgU, Organization org, Operator op, User opU) WHERE orgU.email=? AND orgU.code=org.user AND org.code=op.organization AND op.user=opU.code AND opU.enabled is NULL', [cop_email], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+
+  	this.getAllApprovedCulturalOperators = function(cop_email, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT * from (User orgU, Organization org, Operator op, User opU) WHERE orgU.email=? AND orgU.code=org.user AND org.code=op.organization AND op.user=opU.code AND opU.enabled=\'1\'', [cop_email], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllRejectedCulturalOperators = function(cop_email, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT * from (User orgU, Organization org, Operator op, User opU) WHERE orgU.email=? AND orgU.code=org.user AND org.code=op.organization AND op.user=opU.code AND opU.enabled=\'0\'', [cop_email], function(err,result){
   				con.release();
   				res.send(result);
   			});
@@ -1851,15 +1923,6 @@ function Todo(){
   		});
   	};
 
-  	/*this.getGame2CHs = function(operator_email, res){
-  		connection.acquire(function(err,con){
-  			con.query('SELECT h.code, h.name, h.description, i.path, i.filename, c.latitude, c.longitude, p.name as province, hp.name as historicalperiod, s.name as structuretype FROM (Heritage h, Image i, Coordinates c, Province p, Historicalperiod hp, Structuretype s, Operator o, User u) WHERE h.g2="true" AND h.image=i.code AND h.coordinates=c.code AND h.province=p.code AND h.historicalperiod=hp.code AND h.structuretype=s.code AND h.operator=o.code AND o.user=u.code AND u.email = ?', [operator_email], function(err,result){
-  				con.release();
-  				res.send(result);
-  			});
-  		});
-  	};*/
-  	
   	this.getCHValidityAreas = function(ch_code, res){
   		connection.acquire(function(err,con){
   			con.query('SELECT v.code, v.heritage as hCode, h.name as heritage, s.code as shapeCode, s.type as shape FROM (Validityarea v, Heritage h, Shape s) WHERE v.heritage=h.code AND v.shape=s.code AND h.code=? ', [ch_code], function(err,result){
@@ -1994,19 +2057,10 @@ function Todo(){
   			});
   		});
   	};
-  	
-  	/*this.getGame3CHs = function(operator_email, res){
+
+  	this.getCHsWithPaths= function(operator_email, res){
   		connection.acquire(function(err,con){
-  			con.query('SELECT h.code, h.name, h.description, i.path, i.filename, c.latitude, c.longitude, p.name as province, hp.name as historicalperiod, s.name as structuretype FROM (Heritage h, Image i, Coordinates c, Province p, Historicalperiod hp, Structuretype s, Operator o, User u) WHERE h.g3="true" AND h.image=i.code AND h.coordinates=c.code AND h.province=p.code AND h.historicalperiod=hp.code AND h.structuretype=s.code AND h.operator=o.code AND o.user=u.code AND u.email = ?', [operator_email], function(err,result){
-  				con.release();
-  				res.send(result);
-  			});
-  		});
-  	};*/
-  	
-  	this.getGame3CHsWithPaths= function(operator_email, res){
-  		connection.acquire(function(err,con){
-  			con.query('SELECT distinct h.code, h.name FROM (Path p, Heritage h, Operator o, User u) WHERE p.heritage=h.code AND h.g3="true" AND h.operator=o.code AND o.user=u.code AND u.email = ?', [operator_email], function(err,result){
+  			con.query('SELECT distinct h.code, h.name FROM (Path p, Heritage h, Operator o, User u) WHERE p.heritage=h.code AND h.operator=o.code AND o.user=u.code AND u.email = ?', [operator_email], function(err,result){
   				con.release();
   				res.send(result);
   			});
@@ -2042,7 +2096,7 @@ function Todo(){
   		
   	this.getCHPaths = function(ch_code, res){
   		connection.acquire(function(err,con){
-  			con.query('SELECT p.code, p.title, h.name as heritage, p.enabled FROM (Path p, Heritage h) WHERE p.heritage=h.code AND h.code=? ', [ch_code], function(err,result){
+  			con.query('SELECT p.code, p.title, h.name as heritage, p.enabled, (SELECT Count(pp.player) FROM (PlayerPath pp) WHERE pp.path=p.code) as completions FROM (Path p, Heritage h) WHERE p.heritage=h.code AND h.code=? ', [ch_code], function(err,result){
   				con.release();
   				res.send(result);
   			});
@@ -2105,7 +2159,7 @@ function Todo(){
   	
   	this.getPathStages = function(path_code, res){
   		connection.acquire(function(err,con){
-  			con.query('SELECT s.code, s.title, s.curiosity, q.code as questionCode, q.question, q.hintonsite, q.hintbypaying, q.answer, c.code as cooCode, c.latitude, c.longitude, p.code as pathCode, s.isfinal FROM (Stage s, Question q, Coordinates c, Path p) WHERE s.path=p.code AND s.question=q.code AND s.coordinates=c.code AND p.code=? ', [path_code], function(err,result){
+  			con.query('SELECT s.code, s.title, s.curiosity, q.code as questionCode, q.question, q.hintonsite, q.hintbypaying, q.answer, c.code as cooCode, c.latitude, c.longitude, p.code as pathCode, s.isfinal, (SELECT Count(ps.player) FROM (PlayerStage ps) WHERE ps.stage=s.code) as solving  FROM (Stage s, Question q, Coordinates c, Path p) WHERE s.path=p.code AND s.question=q.code AND s.coordinates=c.code AND p.code=? ', [path_code], function(err,result){
   				con.release();
   				res.send(result);
   			});
@@ -2157,22 +2211,9 @@ function Todo(){
   		});
   	};
   	
-  	
-  	
-  	
-  	
-  	/*this.getGame4CHs = function(operator_email, res){
-  		connection.acquire(function(err,con){
-  			con.query('SELECT h.code, h.name, h.description, i.path, i.filename, c.latitude, c.longitude, p.name as province, hp.name as historicalperiod, s.name as structuretype FROM (Heritage h, Image i, Coordinates c, Province p, Historicalperiod hp, Structuretype s, Operator o, User u) WHERE h.g4="true" AND h.image=i.code AND h.coordinates=c.code AND h.province=p.code AND h.historicalperiod=hp.code AND h.structuretype=s.code AND h.operator=o.code AND o.user=u.code AND u.email = ?', [operator_email], function(err,result){
-  				con.release();
-  				res.send(result);
-  			});
-  		});
-  	};*/
-  	
   	this.getCHReviewsList = function(ch_code, res){			
   		connection.acquire(function(err,con){
-  			con.query('SELECT h.name as chName, h.code as chCode, r.review, r.likes, r.dislikes, p.email as email FROM (Review r, Heritage h, Player p)  WHERE r.heritage=h.code AND r.player=p.email AND r.heritage = ?', [ch_code], function(err,result){
+  			con.query('SELECT h.name as chName, h.code as chCode, r.review, r.likes, r.dislikes, r.player as email FROM (Review r, Heritage h)  WHERE r.heritage=h.code AND r.heritage = ?', [ch_code], function(err,result){
   				con.release();
   				res.send(result);
   			});

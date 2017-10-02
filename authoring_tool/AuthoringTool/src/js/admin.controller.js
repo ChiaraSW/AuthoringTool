@@ -13,37 +13,10 @@
         $rootScope.username = UserService.getUser().email;		//Keeps visible the logged user's username
         $rootScope.notifications = 0;
         
-        $http({
-   			method : "GET",
-   		    url : "/getAllNotEnabledCulturalOrganizations"
-   		}).then(function successCallback(response) {
-   			if(response.data[0].count <= 0){
-   				$rootScope.notifications = 0;
-   				$rootScope.notification = "btn-success";
-   			}
-   			else{
-   				$rootScope.notifications = response.data[0].count;
-   				$rootScope.notification = "btn-danger";
-   			}	
-   		}, function errorCallback(response) {
-   			//ErrorHandling("Error on the query: getAllNotEnabledCulturalOrganizations SELECT");
-   		});
+        getNotifications();
+        
         $interval(function () {		//loop per controllare ogni minuto il numero di organizzazioni culturali non ancora abilitate
-        	$http({
-       			method : "GET",
-       		    url : "/getAllNotEnabledCulturalOrganizations"
-       		}).then(function successCallback(response) {
-       			if(response.data[0].count <= 0){
-       				$rootScope.notifications = 0;
-       				$rootScope.notification = "btn-success";
-       			}
-       			else{
-       				$rootScope.notifications = response.data[0].count;
-       				$rootScope.notification = "btn-danger";
-       			}	
-       		}, function errorCallback(response) {
-       			//ErrorHandling("Error on the query: getAllNotEnabledCulturalOrganizations SELECT");
-       		});
+        	getNotifications();
         }, 60000);
         
         $rootScope.enable = function(){
@@ -64,7 +37,7 @@
     	var mission = null;
 
     	vm.getMedals = function(){ 
-    		document.getElementById('mainFrame').src = "src/html/Admin/Medals_Template.html";	
+    		document.getElementById('mainFrame').src = "src/html/Admin/Medals.html";	
     	}
 
     	vm.addMedal = function(){		 	
@@ -76,7 +49,7 @@
     	}
 
     	vm.getCards = function(){ 
-    		document.getElementById('mainFrame').src = "src/html/Admin/Cards_Template.html";	
+    		document.getElementById('mainFrame').src = "src/html/Admin/Cards.html";	
     	}
 
     	vm.addCard = function(){		 	
@@ -88,19 +61,11 @@
     	}
 
     	vm.getMissions = function(){ 
-    		document.getElementById('mainFrame').src = "src/html/Admin/Missions_Template.html";	
+    		document.getElementById('mainFrame').src = "src/html/Admin/Missions.html";	
     	}
     	
     	vm.addMission = function(){		 	
     		document.getElementById('mainFrame').src = "src/html/Admin/Mission_Add.html";	
-    	}
-
-    	$window.setMissionCode = function (missionCode){
-    		mission=missionCode;
-    	}
-    	
-    	$window.getMissionCode = function (){
-    		return mission;
     	}
 
     	vm.getLeaderboard = function(){ 
@@ -108,12 +73,45 @@
     	}
     	
     	vm.getGamesStatistics = function(){ 
-    		document.getElementById('mainFrame').src = "src/html/Admin/GameStatistics_Template.html";	
+    		document.getElementById('mainFrame').src = "src/html/Admin/GameStatistics.html";	
     	}
     	
     	vm.getPlayersStatistics = function(){ 
-    		document.getElementById('mainFrame').src = "src/html/Admin/PlayersStatistics_Template.html";	
+    		document.getElementById('mainFrame').src = "src/html/Admin/PlayersStatistics.html";	
     	}
-       	
+    	
+    	$window.setMissionCode = function (missionCode){
+    		mission=missionCode;
+    	}
+    	
+    	$window.getMissionCode = function (){
+    		return mission;
+    	}
+    	
+    	$window.getUserCode = function (){
+    		return UserService.getUser().code;
+    	}
+    	
+    	$window.updNotification = function (){
+			getNotifications();
+		}
+
+		function getNotifications(){
+			$http({
+       			method : "GET",
+       		    url : "/getAllNotEnabledCulturalOrganizationsCount"
+       		}).then(function successCallback(response) {
+       			if(response.data[0].count <= 0){
+       				$rootScope.notifications = 0;
+       				$rootScope.notification = "btn-success";
+       			}
+       			else{
+       				$rootScope.notifications = response.data[0].count;
+       				$rootScope.notification = "btn-danger";
+       			}	
+       		}, function errorCallback(response) {
+       			//ErrorHandling("Error on the query: getAllNotEnabledCulturalOrganizationsCount SELECT");
+       		});
+		}
     }
 })();

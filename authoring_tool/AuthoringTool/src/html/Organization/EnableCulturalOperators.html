@@ -1,10 +1,187 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCrHxpT62yPIguYjilGuX_pGkOqQYvS-NQ&sensor=false"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-beta1/jquery.min.js" type="text/javascript"></script>
+	
+	<link data-require="bootstrap-css@3.1.1" data-semver="3.1.1" rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
+    <script>document.write('<base href="' + document.location + '" />');</script>
+    <script data-require="jquery@*" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script data-require="angular.js@1.2.x" src="https://code.angularjs.org/1.2.22/angular.js" data-semver="1.2.22"></script>
+    <script data-require="angular-route@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-route.js"></script>
+    <script data-require="angular-resource@*" data-semver="1.2.14" src="http://code.angularjs.org/1.2.14/angular-resource.js"></script>
+    <script data-require="angular-bootstrap@0.11.0" data-semver="0.11.0" src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.11.0.js"></script>
+    <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+    
+	<script src="https://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.debug.js"></script>
+    <script type="text/javascript" src="ng-map/ng-map.min.js"></script> 
+  
+  
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<style>
+		md-switch .md-bar 				{	background-color: #ff8080;	}
+		
+		md-switch.md-checked .md-bar 	{	background-color: #4dff4d;	}
+		
+		md-switch[disabled] .md-bar 	{	background-color: #bfbfbf;	}
+
+		md-switch .md-thumb 			{	background-color: #e60000;	}
+		
+		md-switch.md-checked .md-thumb 	{	background-color: #00cc00;	}
+		
+		md-switch[disabled] .md-thumb 	{	background-color: #808080;	}
+	</style>
 </head>
-<body>
-<p>Fare la parte riguardante l'abilitazione degli operatori culturali!!</p>
+<body ng-app="GoPoleis" >
+
+	<div class="col-sm-10" ng-controller="enableCOpController">
+		
+		
+		<div class="form-group">
+		
+			<h3 style="margin:20px; margin-top:50px"><b><u>Cultural Operators</u></b></h3>
+		
+			<h4 style="margin-left:50px; margin-top:50px; display:inline-block;">
+				<b>Waiting to be enabled: <h5 style="margin-left:20px; display:inline-block;"> (click on <span class="glyphicon glyphicon-ok"></span> to confirm your choice)</h5></b>
+			</h4>
+			<fieldset style="margin-left:70px; width:300px;"> 	
+				<ul style="list-style-type:none; margin-left:20px; padding-left:0px;">
+					<li ng-repeat="userTBE in usersToBeEnabled" ng-model="getNotEnabledCOrg.selection">				
+		 				<div id="switchContainer" ng-cloak>	
+		 					<md-switch ng-model="userTBE.enabled" style="display:inline-block; height:10px;"></md-switch>	
+							<span class="glyphicon glyphicon-user" style="margin-left:20px; margin-top:20px;display: inline-block; vertical-align: top;"></span> 
+							<h5 style="margin-top:20px; display: inline-block; vertical-align: top;"><b>{{ userTBE.email }}</b></h5> 	
+							<span class="glyphicon glyphicon-ok" style="margin-left:30px; margin-top:20px; display: inline-block; vertical-align: top;" ng-click="saveChoice(userTBE.code,userTBE.enabled)"></span> 
+						</div>
+					</li>	
+				</ul>				  
+			</fieldset>
+			
+			<h4 style="margin-left:50px; margin-top:50px; display:inline-block;">
+				<b>Approved: <h5 style="margin-left:20px; display:inline-block;"> (click on <span class="glyphicon glyphicon-ok"></span> to update your choice)</h5></b>
+			</h4>
+			<fieldset style="margin-left:70px; width:300px;"> 	
+				<ul style="list-style-type:none; margin-left:20px; padding-left:0px;">
+					<li ng-repeat="userA in usersApproved" ng-model="getApprovedCOrg.selection">				
+		 				<div id="switchContainer" ng-cloak>	
+		 					<md-switch ng-model="userA.enabled" style="display:inline-block; height:10px;"></md-switch>		
+							<span class="glyphicon glyphicon-user" style="margin-left:20px; margin-top:20px;display: inline-block; vertical-align: top;"></span> 
+							<h5 style="margin-top:20px; display: inline-block; vertical-align: top;"><b>{{ userA.email }}</b></h5> 	
+							<span class="glyphicon glyphicon-ok" style="margin-left:30px; margin-top:20px; display: inline-block; vertical-align: top;" ng-click="saveChoice(userA.code,userA.enabled)"></span> 
+						</div>
+					</li>	
+				</ul>				  
+			</fieldset>
+			
+			<h4 style="margin-left:50px; margin-top:50px; display:inline-block;">
+				<b>Rejected: <h5 style="margin-left:20px; display:inline-block;"> (click on <span class="glyphicon glyphicon-ok"></span> to update your choice)</h5></b>
+			</h4>
+			<fieldset style="margin-left:70px; width:300px;"> 	
+				<ul style="list-style-type:none; margin-left:20px; padding-left:0px;">
+					<li ng-repeat="userR in usersRejected" ng-model="getRejectedCOrg.selection">			
+		 				<div id="switchContainer" ng-cloak>	
+							<md-switch ng-model="userR.enabled" style="display:inline-block; height:10px;"></md-switch>	
+							<span class="glyphicon glyphicon-user" style="margin-left:20px; margin-top:20px;display: inline-block; vertical-align: top;"></span> 
+							<h5 style="margin-top:20px; display: inline-block; vertical-align: top;"><b>{{ userR.email }}</b></h5> 	
+							<span class="glyphicon glyphicon-ok" style="margin-left:30px; margin-top:20px; display: inline-block; vertical-align: top;" ng-click="saveChoice(userR.code,userR.enabled)"></span> 
+						</div>
+					</li>	
+				</ul>				  
+			</fieldset>
+
+		</div>
+			
+	</div>
+	
 </body>
 </html>
+<script>
+
+	var app = angular.module("GoPoleis", ['ui.bootstrap','ngMap','ngMaterial']);
+	app.controller('enableCOpController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
+
+		$http({
+			method : "GET",
+			url : "/getAllNotEnabledCulturalOperators/"+parent.window.getUsername()
+		}).then(function mySucces(response) {
+			var usersToBeEnabled  = response.data;				
+		    $scope.usersToBeEnabled = [];
+			if (usersToBeEnabled.length > 0){
+				$timeout(function() {
+					$scope.usersToBeEnabled  = usersToBeEnabled;
+					for(var i=0; i < $scope.usersToBeEnabled.length; i++){
+						$scope.usersToBeEnabled[i].enabled=null;
+					}
+			    }, 10);
+			}
+		}, function myError(response) {
+			alert("Error on the query: getAllNotEnabledCulturalOperators SELECT");
+		});
+		
+		$http({
+			method : "GET",
+			url : "/getAllApprovedCulturalOperators/"+parent.window.getUsername()
+		}).then(function mySucces(response) {
+			var usersApproved  = response.data;				
+		    $scope.usersApproved = [];
+			if (usersApproved.length > 0){
+				$timeout(function() {
+					$scope.usersApproved  = usersApproved;	
+					for(var i=0; i < $scope.usersApproved.length; i++){
+						$scope.usersApproved[i].enabled=true;
+					}
+			    }, 10);
+			}
+		}, function myError(response) {
+			alert("Error on the query: getAllApprovedCulturalOperators SELECT");
+		});
+	
+		$http({
+			method : "GET",
+			url : "/getAllRejectedCulturalOperators/"+parent.window.getUsername()
+		}).then(function mySucces(response) {
+			var usersRejected  = response.data;				
+		    $scope.usersRejected = [];
+			if (usersRejected.length > 0){
+				$timeout(function() {
+					$scope.usersRejected  = usersRejected;	
+					for(var i=0; i < $scope.usersRejected.length; i++){
+						$scope.usersRejected[i].enabled=false;
+					}
+			    }, 10);
+			}
+		}, function myError(response) {
+			alert("Error on the query: getAllRejectedCulturalOperators SELECT");
+		});
+
+		$scope.saveChoice = function(userCode, isApproved){			
+			$http({
+				method : "GET",
+				url : "/updUser/"+transformInBoolean(isApproved)+"/"+userCode
+			}).then(function mySucces(response) {	
+				parent.window.updNotification();				
+				window.open("EnableCulturalOperators.html", "_self"); 			
+			}, function myError(response) {
+				alert("Error on the query: updUser UPDATE");
+			});
+		}
+		
+		function transformInBoolean (enabled){
+			if(enabled==false || enabled==null){
+				return 0;
+			}
+			return 1;
+		}
+
+	});
+	
+</script>

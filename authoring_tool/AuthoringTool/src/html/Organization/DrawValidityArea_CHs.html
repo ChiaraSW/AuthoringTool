@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+
+<body ng-app="GoPoleis" >
+
+ 	<div class="col-sm-10" ng-controller="getDrawVAsController">
+		
+		<h3 style="margin:20px; margin-top:50px"><b>Select a Cultural Heritage to add/update its validity area:</b></h3>
+		
+		<fieldset style="margin-top:50px; margin-left:20px;"> 	
+           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
+	        	<span class="glyphicon glyphicon-search"></span>
+	        	Search: 
+	        </label>
+      		<input type="text" ng-model="searchBoxCH.name" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
+        </fieldset>
+        
+		<ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
+       		<li ng-repeat="ch in chs | filter:searchBoxCH" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+       			ng-model="getVAsCHs.selection" ng-value="ch.name" id="{{ch.name}}" ng-click="getDrawVA(ch.code)">	        	
+        		<h4 ch.name="selection">
+        			<img ng-src="{{ch.path}}{{ch.filename}}" style="height: 80px; width: 80px;"/>
+        			{{ ch.name }}
+        		</h4>	
+       		</li>
+        </ul>
+        
+	</div> 
+
+</body>
+</html>
+<script>
+var app = angular.module("GoPoleis", []);
+app.controller('getDrawVAsController', function($scope, $http, $window) {
+
+	$http({
+		method : "GET",
+		url : "/getOperatorCHs/user3"				//MODIFICARE --> devi fare la get dello user loggato e metterla al posto di user3!!!
+	}).then(function mySucces(response) {
+		$scope.chs  = response.data;
+	}, function myError(response) {
+		alert("Error on the query: getOperatorCHs SELECT");
+	});
+	
+	$scope.getDrawVA = function(chCode){ 
+		parent.window.setCode(chCode);
+		window.open("DrawValidityArea_VAs.html", "_self"); 
+	}
+	
+});
+</script>

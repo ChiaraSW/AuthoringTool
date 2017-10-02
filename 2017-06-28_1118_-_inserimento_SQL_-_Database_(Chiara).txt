@@ -1028,23 +1028,3 @@ insert into HPMedalMission values('14', '25');
 
 insert into ToSMedalMission values('15', '23');
 
-
-insert into PlayerHeritage values('player1', '1');
-insert into PlayerHeritage values('player2', '1');
-insert into PlayerHeritage values('player3', '1');
-insert into PlayerHeritage values('player4', '1');
-insert into PlayerHeritage values('player1', '2');
-insert into PlayerHeritage values('player2', '2');
-insert into PlayerHeritage values('player3', '2');
-insert into PlayerHeritage values('player1', '3');
-insert into PlayerHeritage values('player1', '4');
-insert into PlayerHeritage values('player1', '5');
-
-
-insert into HeritageMedal values(1, 7);
-insert into HeritageMedal values(2, 7);
-insert into HeritageMedal values(3, 7);
-insert into HeritageMedal values(4, 7);
-insert into HeritageMedal values(5, 7);
-insert into HeritageMedal values(6, 7);
-insert into HeritageMedal values(4, 23);

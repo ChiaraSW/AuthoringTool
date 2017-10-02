@@ -77,7 +77,7 @@
 			<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
 	            <button type="submit" name="btnAddCard" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddCard()">Create</button>
 	            <img ng-if="vm.dataLoading"/>
-	            <a href="Cards_Template.html" target="_self">Cancel</a>
+	            <a href="Cards.html" target="_self">Cancel</a>
 	        </div>		
  
 	    </form>
@@ -149,7 +149,7 @@
 							method: 'GET',
 							url: '/addCard/0/'+$scope.addCard.name+'/'+imgCodeDB+'/'+$scope.addCard.description+'/'+$scope.addCard.cardValue+'/'+$scope.addCard.destructionValue+'/'+$scope.addCard.cost+'/'+$scope.addCard.rarity.code
 						}).then(function successCallback(response) {	
-							window.open("Cards_Template.html", "_self");   
+							window.open("Cards.html", "_self");   
 						}, function errorCallback(response) {
 							alert("Error on the query: addCard INSERT");
 						});

@@ -138,7 +138,7 @@
 	 		<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
 	            <button type="submit" name="btnAddMission" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddMission()">Create</button>
 	            <img ng-if="vm.dataLoading"/>
-	            <a href="Missions_Template.html" target="_self">Cancel</a>
+	            <a href="Missions.html" target="_self">Cancel</a>
 	        </div>
 	
 		</form>
@@ -412,13 +412,13 @@ app.controller('addMissionController', function($scope, $http, $window, $timeout
 					method: 'GET',
 					url: '/'+missionType+'/'+missionCodeDB+'/'+codeType
 				}).then(function successCallback(response) {	
-					window.open("Missions_Template.html", "_self");   
+					window.open("Missions.html", "_self");   
 				}, function errorCallback(response) {
 					alert("Error on the query: "+missionType+" INSERT");
 				});
 			}
 			else{
-				window.open("Missions_Template.html", "_self");   
+				window.open("Missions.html", "_self");   
 			}
 		}, function errorCallback(response) {
 			alert("Error on the query: addMission INSERT");

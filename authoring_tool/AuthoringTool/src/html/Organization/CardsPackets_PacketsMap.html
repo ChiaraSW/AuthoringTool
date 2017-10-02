@@ -22,7 +22,7 @@
 </head>
 <body ng-app="GoPoleis">
 
-	<div class="col-sm-10" ng-controller="StagesMapController">
+	<div class="col-sm-10" ng-controller="CPsMapController">
 	    <div id="map" style="width: 850px; height: 350px"></div> 
 	</div>
     
@@ -30,86 +30,76 @@
 </html>
 <script>
 var app = angular.module('GoPoleis', ['ui.bootstrap','ngMap']);
-app.controller('StagesMapController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
+app.controller('CPsMapController', function($scope, $http, $window, $timeout, $modal, $rootScope) {
 
-	var chCode = parent.window.getCode();	
-	var pathCode = parent.window.getPathCode();	
-	var stageCode = parent.window.getStageLocation();
+	var cpCode = parent.window.getCPLocation();
+	var chCode = parent.window.getCode();
 	var map = new google.maps.Map(document.getElementById("map"));
-	var path=[];
+	var cpackets=null;
+	var ch=null;
 	
-	$http({	
+
+	$http({
 		method : "GET",
-		url : "/getPathStages/"+pathCode
+		url : "/getCHTreasureChests/"+chCode
 	}).then(function mySucces(response) {
-		var stages  = response.data;
-		if(stages.length > 0){
-			setMarkers(map, stages);
+		cpackets  = response.data;
+		if(cpackets.length > 0){
+			setMarkers(map, cpackets);
 		}
 		else{
 			$http({
 				method : "GET",
 				url : "/getCH/"+chCode
 			}).then(function mySucces(response) {
-				var ch  = response.data;
+				ch  = response.data;
 
 				var coordinates = new google.maps.LatLng(ch[0].latitude,ch[0].longitude);		
 				map = new google.maps.Map(document.getElementById("map"),{
-				    zoom: 16,
+				    zoom: ch[0].zoom,
 				    center: coordinates, 
 				    mapTypeId: google.maps.MapTypeId.ROADMAP
 				});
-				map.addListener('rightclick', function(event) {    //quendo si preme il tasto destro richiama la funzione addStage dalla finestra genitore [rigthclick, dblclick, click]     	
-					parent.window.addStage(map.getCenter().lat(), map.getCenter().lng(), map.getZoom());
+				map.addListener('rightclick', function(event) {    //quendo si preme il tasto destro richiama la funzione addCP dalla finestra genitore [rigthclick, dblclick, click]     	
+					parent.window.addCP(map.getCenter().lat(), map.getCenter().lng(), map.getZoom());
 				});
 
 			}, function myError(response) {
 				alert("Error on the query: getCH SELECT");
 			});	
 		}
-		
 	}, function myError(response) {
-		alert("Error on the query: getPathStages SELECT");
+		alert("Error on the query: getCHTreasureChests SELECT");
 	});	
-	
-	function setMarkers(map, markers) {								
+
+	function setMarkers(map, markers) {
 		var bounds = new google.maps.LatLngBounds();
 		for (var i = 0; i < markers.length; i++) {
-			var stage = markers[i];
-		    var stagePosition = new google.maps.LatLng(stage.latitude, stage.longitude);
-		    path.push(stagePosition);
+			var chest = markers[i];
+		    var chestPosition = new google.maps.LatLng(chest.latitude, chest.longitude);
 		    var marker;
-		   	if(stage.code == stageCode){
+		   	if(chest.code == cpCode){
 		    	marker = new google.maps.Marker({
-			    	position: stagePosition,
+			    	position: chestPosition,
 			    	map: map,
-					icon: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_green'+(i+1)+'.png'
+					icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
 			    });
 		    }
 		    else{
 		    	 marker = new google.maps.Marker({
-			    	position: stagePosition,
+			    	position: chestPosition,
 			    	map: map,
-					icon: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_red'+(i+1)+'.png'
+					icon: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
 			    }); 
 		    }
-		    bounds.extend(stagePosition);
+		    bounds.extend(chestPosition);
 		}
-		map.fitBounds(bounds);	  
-		
-		var chPath = new google.maps.Polyline({
-			path: path,
-			geodesic: true,
-			strokeColor: '#FF0000',
-			strokeOpacity: 1.0,
-			strokeWeight: 3
-		});
-		chPath.setMap(map);
+		map.fitBounds(bounds);	    
 	}
-	
-	map.addListener('rightclick', function(event) {    //quendo si preme il tasto destro richiama la funzione addStage dalla finestra genitore [rigthclick, dblclick, click]     	
-		parent.window.addStage(map.getCenter().lat(), map.getCenter().lng(), map.getZoom());
-	});
+
+	map.addListener('rightclick', function(event) {    //quendo si preme il tasto destro richiama la funzione addCP dalla finestra genitore [rigthclick, dblclick, click]     	
+		parent.window.addCP(map.getCenter().lat(), map.getCenter().lng(), map.getZoom());
+	}); 
 
 });   
 </script>

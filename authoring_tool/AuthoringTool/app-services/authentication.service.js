@@ -15,8 +15,8 @@
 
         return service;
         
-        function SaveCurrentUserLocally(email, password, role) {
-        	UserService.setUser(email, password, role);
+        function SaveCurrentUserLocally(email, password, role, code) {
+        	UserService.setUser(email, password, role, code);
         }
 
         function SetCredentials(username, password) {

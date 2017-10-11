@@ -1,6 +1,6 @@
 <div class="double-column" align="left">
 	
-	<div class="row" style="margin: 0px; heigth: 876px;">
+	<div class="row" style="margin: 0px;">
 	
 		<div class="col-sm-8">
    			
@@ -10,9 +10,7 @@
 		    	
 		    		<div class="col-sm-3">
 
-
-				    	<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Medals" 
-				    		ng-click="vm.Medals_subButtons=true; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getMedals();">
+						<button type="button" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=true; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getMedals();">
 							Medals
 						</button>	
 						<div class='sub_container' align="center" ng-show="vm.Medals_subButtons">
@@ -21,8 +19,7 @@
 						</div>
 						
 						
-						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Cards"
-							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=true; vm.Missions_subButtons=false; vm.getCards();">
+						<button type="button" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=true; vm.Missions_subButtons=false; vm.getCards();">
 							Cards
 						</button>
 						<div class='sub_container' align="center" ng-show="vm.Cards_subButtons">
@@ -31,8 +28,7 @@
 						</div>
 						
 						
-						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Missions"
-							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=true; vm.getMissions();">
+						<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=true; vm.getMissions();">
 							Missions
 						</button>
 						<div class='sub_container' align="center" ng-show="vm.Missions_subButtons">
@@ -40,29 +36,25 @@
 						</div>
 
 
-						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.Leaderboard"
-							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getLeaderboard();">
+						<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getLeaderboard();">
 							Leaderboard
 						</button>
+						<div class='sub_container' align="center"></div>
 						
 						
-						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.GamesStatistics"
-							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getGamesStatistics();">
+						<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getGamesStatistics();">
 							Game's Statistics
 						</button>
+						<div class='sub_container' align="center"></div>
 						
-						
-						<button type="button" class="btn btn-primary btn-lg btn-block" style="height: 80px" ng-show="vm.PlayersStatistics"
-							ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getPlayersStatistics();">
+						<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getPlayersStatistics();">
 							Players' Statistics
-						</button>	
-						
-			        </div>  
-			        <div class="col-sm-9">
-			        
-				        <iframe id="mainFrame"  src="src/html/Admin/WhitePage.html" style="height: 876px; width: 1584px; border: none;">
-				        </iframe>
+						</button>
+						<div class='sub_container' align="center"></div>
 
+			        </div>    
+			        <div class="col-sm-9">
+				        <iframe id="mainFrame"  src="src/html/Admin/WhitePage.html" style="border: none;"></iframe>
 			        </div>
 			        
 				</div>

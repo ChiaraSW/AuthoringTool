@@ -1,4 +1,76 @@
+/* Remove the navbar's default margin-bottom and rounded borders */ 
+.navbar {
+	margin-bottom: 0;
+	border-radius: 0;
+	background-color: #003d66;
+}
+    
+/* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+.row.content {
+	margin-top: 51px;
+	height: auto;	/*height: 876px;*/
+}
+    
+/* Set white background color and 100% height */
+.sidenav {
+	background-color: #ffffff;
+	height: 100%;
+}
+    
+/* Set black background color, white text and some padding */
+footer {
+	background-color: #003d66;
+	color: white;
+	height: 20px;
+}
+    
+/* On small screens, set height to 'auto' for sidenav and grid */
+@media screen and (max-width: 767px) {
+	.sidenav {
+		height: auto;
+		padding: 15px;
+	}
+	.row.content {
+		height:auto;
+	} 
+}
+
+table, th , td  {
+	border: 3px solid #004d80;
+	border-collapse: collapse;
+	margin-left: 20px;
+	padding: 10px;
+	text-align: center;
+}
+table tr:nth-child(odd) {
+	background-color: #c3daee;
+}
+table tr:nth-child(even) {
+	background-color: #ffffff;
+}
+
+.btn-primary {
+	text-align: center;
+	align: center;
+    margin-top:20px;
+    padding: 10px;
+}
+.sub-btn {
+	text-align: center;
+	align: center;
+	margin-top: 15px;	
+    width: 80%;
+    padding: 10px;
+}
+
 body {
+    overflow-x:hidden; 
+}
+
+
+
+/* SERVONO???? */
+/*body {
     height: 100%;
     width: 100%;
 }
@@ -7,53 +79,7 @@ body {
 	height: 100%;
 }
 
-/* Remove the navbar's default margin-bottom and rounded borders */ 
-.navbar {
-	margin-top: 0;
-	margin-bottom: 0;
-	border-radius: 0;
-	background-color: #003d66;
-}
-   
-/* Set height of the grid so .sidenav can be 100% (adjust as needed) */
-.row.content {
-	height: 876px;
-}
-   
-.sidenav {
-	height: 100%;
-	padding: 0px;
-	background-color: #ffffff;
-}
-   
-/* Set black background color, white text and some padding */
-footer {
-	height: 20px;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	background-color: #003d66;
-	text-align: center;
-	color: white;
-	display: block;
-}
-
 a {
     cursor: pointer;
-}
+}*/
 
-.btn-primary {
-    margin-bottom:20px;
-    margin-top:20px;
-    padding:15px;
-   	border-radius:10px;
-}
-
-.sub-btn {
-	text-align: center;
-	margin-bottom:5px;
-    margin-top:5px;
-	align: center;
-    width: 80%;
-   	border-radius:10px;
-}

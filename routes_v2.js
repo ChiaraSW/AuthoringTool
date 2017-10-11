@@ -542,6 +542,10 @@ module.exports = {
 				todo.getRegionMedalMission(req.params.mission_code,res);
 			});
 			
+			app.get('/getRegionMedalMissionByMedalCode/:medal_code',function(req,res){
+				todo.getRegionMedalMissionByMedalCode(req.params.medal_code,res);
+			});
+			
 			app.get('/addRegionMedalMission/:mission_code/:regionmedal_code', function(req,res){
 				todo.addRegionMedalMission(req.params.mission_code,req.params.regionmedal_code,res);
 			});
@@ -558,6 +562,10 @@ module.exports = {
 				todo.getHPMedalMission(req.params.mission_code,res);
 			});
 			
+			app.get('/getHPMedalMissionByMedalCode/:medal_code',function(req,res){
+				todo.getHPMedalMissionByMedalCode(req.params.medal_code,res);
+			});
+			
 			app.get('/addHPMedalMission/:mission_code/:hpmedal_code', function(req,res){
 				todo.addHPMedalMission(req.params.mission_code,req.params.hpmedal_code,res);
 			});
@@ -572,6 +580,10 @@ module.exports = {
 			
 			app.get('/getToSMedalMission/:mission_code',function(req,res){
 				todo.getToSMedalMission(req.params.mission_code,res);
+			});
+			
+			app.get('/getToSMedalMissionByMedalCode/:medal_code',function(req,res){
+				todo.getToSMedalMissionByMedalCode(req.params.medal_code,res);
 			});
 			
 			app.get('/addToSMedalMission/:mission_code/:tosmedal_code', function(req,res){
@@ -628,7 +640,66 @@ module.exports = {
 				todo.getAllMedalsCount(res);
 			});
 			
-			/*MANCANO LE STATISTICHE DI GIOCO DELLE MISSIONS*/
+			/*STATISTICHE GIOCO*/
+			app.get('/getAllMissionsCountGames/',function(req,res){
+				todo.getAllMissionsCountGames(res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCountGranularities/:name/:mission_type',function(req,res){
+				todo.getAllLocalizedMissionsCountGranularities(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCountRegional/:name/:mission_type',function(req,res){
+				todo.getAllLocalizedMissionsCountRegional(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCountProvincialRegion/:name/:mission_type',function(req,res){
+				todo.getAllLocalizedMissionsCountProvincialRegion(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCountProvincialProvince/:name/:mission_type/:region_code',function(req,res){
+				todo.getAllLocalizedMissionsCountProvincialProvince(req.params.name,req.params.mission_type,req.params.region_code,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCountCHRegion/:name/:mission_type',function(req,res){
+				todo.getAllLocalizedMissionsCountCHRegion(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCountCHProvince/:name/:mission_type/:region_code',function(req,res){
+				todo.getAllLocalizedMissionsCountCHProvince(req.params.name,req.params.mission_type,req.params.region_code,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCountCHCH/:name/:mission_type/:province_code',function(req,res){
+				todo.getAllLocalizedMissionsCountCHCH(req.params.name,req.params.mission_type,req.params.province_code,res);
+			});
+			
+			app.get('/getAllCollectCardMissionsCountRarities/:name/:mission_type',function(req,res){
+				todo.getAllCollectCardMissionsCountRarities(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllCollectMedalMissionsCountGranularities/:name/:mission_type',function(req,res){
+				todo.getAllCollectMedalMissionsCountGranularities(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllCollectMedalMissionsCountCategories/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCountCategories(req.params.name,res);
+			});
+			
+			app.get('/getAllCollectMedalMissionsCountMedalCategories/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCountMedalCategories(req.params.name,res);
+			});
+			
+			app.get('/getAllCollectMedalMissionsCountMedalRegion/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCountMedalRegion(req.params.name,res);
+			});
+			
+			app.get('/getAllCollectMedalMissionsCountMedalHP/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCountMedalHP(req.params.name,res);
+			});
+			
+			app.get('/getAllCollectMedalMissionsCountMedalToS/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCountMedalToS(req.params.name,res);
+			});
 					
 			app.get('/getAllCHsVisitedRegions/',function(req,res){
 				todo.getAllCHsVisitedRegions(res);
@@ -686,19 +757,106 @@ module.exports = {
 				todo.getAllMedalsWonMedals(res);
 			});
 			
-			/*MANCANO LE STATISTICHE USERS DELLE MISSIONS*/
+			/*STATISTICHE GIOCATORI*/
 			
+			app.get('/getAllMissionsCompletedGames/',function(req,res){
+				todo.getAllMissionsCompletedGames(res);
+			});
 			
+			app.get('/getAllCollectCardMissionsCollectedRarities/:name/:mission_type',function(req,res){
+				todo.getAllCollectCardMissionsCollectedRarities(req.params.name,req.params.mission_type,res);
+			});
 			
+			app.get('/getAllCollectCardMissionsCollectedAll/:name/:mission_type',function(req,res){
+				todo.getAllCollectCardMissionsCollectedAll(req.params.name,req.params.mission_type,res);
+			});
 			
+			app.get('/getAllCollectCardMissionsCollectedCommon/:name',function(req,res){
+				todo.getAllCollectCardMissionsCollectedCommon(req.params.name,res);
+			});
 			
+			app.get('/getAllCollectCardMissionsCollectedUncommon/:name',function(req,res){
+				todo.getAllCollectCardMissionsCollectedUncommon(req.params.name,res);
+			});
 			
+			app.get('/getAllCollectCardMissionsCollectedEpic/:name',function(req,res){
+				todo.getAllCollectCardMissionsCollectedEpic(req.params.name,res);
+			});
 			
+			app.get('/getAllCollectMedalMissionsCollectedCategories/:name/:mission_type',function(req,res){
+				todo.getAllCollectMedalMissionsCollectedCategories(req.params.name,req.params.mission_type,res);
+			});
 			
+			app.get('/getAllCollectMedalMissionsCollectedAll/:name/:mission_type',function(req,res){
+				todo.getAllCollectMedalMissionsCollectedAll(req.params.name,req.params.mission_type,res);
+			});
 			
+			app.get('/getAllCollectMedalMissionsCollectedCategory/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCollectedCategory(req.params.name,res);
+			});
 			
+			app.get('/getAllCollectMedalMissionsCollectedSpecificCategory/:name/:category',function(req,res){
+				todo.getAllCollectMedalMissionsCollectedSpecificCategory(req.params.name,req.params.category,res);
+			});
 			
+			app.get('/getAllCollectMedalMissionsCollectedSpecificMedal/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCollectedSpecificMedal(req.params.name,res);
+			});
+
+			app.get('/getAllCollectMedalMissionsCollectedSpecificMedalRegion/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCollectedSpecificMedalRegion(req.params.name,res);
+			});
+			app.get('/getAllCollectMedalMissionsCollectedSpecificMedalHP/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCollectedSpecificMedalHP(req.params.name,res);
+			});
+			app.get('/getAllCollectMedalMissionsCollectedSpecificMedalToS/:name',function(req,res){
+				todo.getAllCollectMedalMissionsCollectedSpecificMedalToS(req.params.name,res);
+			});
 			
+			app.get('/getAllLocalizedMissionsCompletedGranularities/:name/:mission_type',function(req,res){
+				todo.getAllLocalizedMissionsCompletedGranularities(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCompletedAllMissions/:name/:mission_type',function(req,res){
+				todo.getAllLocalizedMissionsCompletedAllMissions(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCompletedRegionalRegion/:name/:mission_type',function(req,res){
+				todo.getAllLocalizedMissionsCompletedRegionalRegion(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCompletedRegionalMission/:name/:mission_type/:region_code',function(req,res){
+				todo.getAllLocalizedMissionsCompletedRegionalMission(req.params.name,req.params.mission_type,req.params.region_code,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCompletedProvincialRegion/:name/:mission_type',function(req,res){
+				todo.getAllLocalizedMissionsCompletedProvincialRegion(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCompletedProvincialProvince/:name/:mission_type/:region_code',function(req,res){
+				todo.getAllLocalizedMissionsCompletedProvincialProvince(req.params.name,req.params.mission_type,req.params.region_code,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCompletedProvincialMission/:name/:mission_type/:province_code',function(req,res){
+				todo.getAllLocalizedMissionsCompletedProvincialMission(req.params.name,req.params.mission_type,req.params.province_code,res);
+			});
+
+			app.get('/getAllLocalizedMissionsCompletedCHRegion/:name/:mission_type',function(req,res){
+				todo.getAllLocalizedMissionsCompletedCHRegion(req.params.name,req.params.mission_type,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCompletedCHProvince/:name/:mission_type/:region_code',function(req,res){
+				todo.getAllLocalizedMissionsCompletedCHProvince(req.params.name,req.params.mission_type,req.params.region_code,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCompletedCHCH/:name/:mission_type/:province_code',function(req,res){
+				todo.getAllLocalizedMissionsCompletedCHCH(req.params.name,req.params.mission_type,req.params.province_code,res);
+			});
+			
+			app.get('/getAllLocalizedMissionsCompletedCHMission/:name/:mission_type/:ch_code',function(req,res){
+				todo.getAllLocalizedMissionsCompletedCHMission(req.params.name,req.params.mission_type,req.params.ch_code,res);
+			});
+
 			app.get('/getUser/:user_email',function(req,res){
 				todo.getUser(req.params.user_email,res);
 			});

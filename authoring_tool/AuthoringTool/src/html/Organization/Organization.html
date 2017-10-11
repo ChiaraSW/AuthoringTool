@@ -1,6 +1,6 @@
 <div class="double-column" align="left">
 	
-	<div class="row" style="margin: 0px; heigth: 876px;">
+	<div class="row" style="margin: 0px;">
 	
 		<div class="col-sm-8">
    			
@@ -9,33 +9,39 @@
 		    	<div class="row">
 		    	
 		    		<div class="col-sm-3">
+		    		
 				    	<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.CulturalHeritages" ng-click="vm.CulturalHeritages_subButtons=true; vm.getCulturalHeritages();">
 							Cultural Heritages
 						</button>	
 						<div class='sub_container' align="center" ng-show="vm.CulturalHeritages_subButtons">
-							<button id="addCH" type="button" class="btn sub-btn btn-success" ng-click="vm.addCulturalHeritage();">Add a Cultural Heritage</button>
-							<button id="delCH" type="button" class="btn sub-btn btn-danger" ng-click="vm.delCulturalHeritage();">Delete a Cultural Heritage</button>
+							<button id="addCH" type="button" class="btn sub-btn btn-success" ng-click="vm.addCulturalHeritage();">Add a C. Heritage</button>
+							<button id="delCH" type="button" class="btn sub-btn btn-danger" ng-click="vm.delCulturalHeritage();">Delete a C. Heritage</button>
 						</div>
 						
    						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.CardsPackets" ng-click="vm.CulturalHeritages_subButtons=false; vm.getCardsPackets();">
 							Cards' Packets
 						</button>
+						<div class='sub_container' align="center"></div>
 
 						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.DrawVA" ng-click="vm.CulturalHeritages_subButtons=false; vm.getDrawVA();">
 							Draw Validity Areas
 						</button>
+						<div class='sub_container' align="center"></div>
 
 						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Paths" ng-click="vm.CulturalHeritages_subButtons=false; vm.getPaths();">
 							Paths
 						</button>
+						<div class='sub_container' align="center"></div>
 
 						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Reviews" ng-click="vm.CulturalHeritages_subButtons=false; vm.getReviews();">
 							Reviews
 						</button>
+						<div class='sub_container' align="center"></div>
+						
 			        </div>					
 
 			        <div class="col-sm-9">		        
-				        <iframe id="mainFrame"  src="src/html/Organization/WhitePage.html" style="height: 876px; width: 1584px; border: none;"></iframe>
+				        <iframe id="mainFrame"  src="src/html/Organization/WhitePage.html" style="border: none;"></iframe>
 			        </div>
 			        
 				</div>

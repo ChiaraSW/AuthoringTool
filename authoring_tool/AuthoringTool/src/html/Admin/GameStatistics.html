@@ -11,24 +11,26 @@
 </head>
 <body ng-app="GoPoleis" >
 
-	<div class="col-sm-10" ng-controller="getGameStatisticsController">
+	<div class="col-sm-11" ng-controller="getGameStatisticsController">
 			
 		<h1 style="margin:20px;"><u>Statistics</u></h1>
 		
-		<form name="form" role="form" enctype="multipart/form-data" method="post"  style="margin-top:50px; margin-left:20px;">															
+		<form name="form" role="form" enctype="multipart/form-data" method="post"  style="margin-top:50px; margin-left:20px; width:750px;">															
 			<fieldset> 		
- 				<label for="game" style="margin-right:30px;">
+ 				<label for="game" style="display: inline-block; vertical-align:center; width:750px;">
 		     		Select the game for which you want to view its statistics:  
-				</label>
+				</label>			
+			</fieldset>
+			<fieldset style="margin-top:15px; margin-left:50px; width:750px;"> 	
 				<input type="radio" ng-model="selectGame" value="Cultural Heritages" style="margin-right:5px;" ng-change="updateGameStatistics()"><b>Cultural Heritages</b>
-				<input type="radio" ng-model="selectGame" value="Cards' Packets" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Cards' Packets</b>
-				<input type="radio" ng-model="selectGame" value="Paths" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Paths</b>	
-				<input type="radio" ng-model="selectGame" value="Medals" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Medals</b>
-				<input type="radio" ng-model="selectGame" value="Missions" style="margin-right:5px; margin-left:30px;" ng-change="updateGameStatistics()"><b>Missions</b>			
+				<input type="radio" ng-model="selectGame" value="Cards' Packets" style="margin-right:5px; margin-left:40px;" ng-change="updateGameStatistics()"><b>Cards' Packets</b>
+				<input type="radio" ng-model="selectGame" value="Paths" style="margin-right:5px; margin-left:40px;" ng-change="updateGameStatistics()"><b>Paths</b>	
+				<input type="radio" ng-model="selectGame" value="Medals" style="margin-right:5px; margin-left:40px;" ng-change="updateGameStatistics()"><b>Medals</b>
+				<input type="radio" ng-model="selectGame" value="Missions" style="margin-right:5px; margin-left:40px;" ng-change="updateGameStatistics()"><b>Missions</b>	
 			</fieldset>
 		</form>
 
-		<div id="container" style="min-width: 310px; height: 600px; margin-left:20px; margin-top:50px; "></div>
+		<div id="container" style="min-width: 310px; margin-left:20px; margin-top:50px; height:{{frameHeight}}"></div>
 		
 	</div>
 
@@ -38,9 +40,17 @@
 var app = angular.module("GoPoleis", []);
 app.controller('getGameStatisticsController', function($scope, $http, $window, $timeout) {
 	
+	$scope.frameHeight = ($window.innerHeight - 250) + "px";     
+	angular.element($window).bind('resize', function(){    
+		$scope.frameHeight = ($window.innerHeight - 250) + "px";
+		$scope.$digest();
+	});
+	
 	$scope.selectGame = null;
 	
 	$scope.updateGameStatistics = function(){
+		
+		var drilldownMission=[];
 		
 		if($scope.selectGame == 'Cultural Heritages'){
 			$http({
@@ -60,7 +70,7 @@ app.controller('getGameStatisticsController', function($scope, $http, $window, $
 					     name: 'Regions',
 					     colorByPoint: false,
 					     data: regionsData
-					 }];
+					}];
 					var drilldown=[];
 
 					if(provincesData.length > 0){
@@ -118,7 +128,7 @@ app.controller('getGameStatisticsController', function($scope, $http, $window, $
 				     name: 'Categories',
 				     colorByPoint: false,
 				     data: response.data
-				 }];
+				}];
 				var drilldown = [];
 				createChart(title, subtitle, yAxis, series, drilldown);
 			}, function myError(response) {
@@ -126,50 +136,224 @@ app.controller('getGameStatisticsController', function($scope, $http, $window, $
 			});
 		}
 		
+		if($scope.selectGame == 'Missions'){
+			var serie;
 		
-		
-		
-		
-		
-		
-		
-		
-		if($scope.selectGame == 'Missions'){													//Missions------------------------------------------------------
-			alert("Missions non ancora implementato!!");
+			$http({
+				method : "GET",
+				url : "/getAllMissionsCountGames"
+			}).then(function mySucces(response) {
+				var gamesData = response.data;
+			
+				var title = $scope.selectGame;
+				var subtitle = "Click on the histogram for a more detailed view, if available.";
+				var yAxis = 'Total Missions';			
+				var series = [{
+				     name: 'Missions',
+				     colorByPoint: false,
+				     data: gamesData
+				}];
+				
+				localizedMission("Open Cards\' Packet", "1");
+				collectCard("Collect Card", "2");
+				localizedMission("Visit Cultural Heritage", "3");
+				collectMedal("Collect Medal", "4");
+				localizedMission("Complete Path", "5");
+				localizedMission("Write Review", "6");
 
-			/*series: [{
-			     name: 'Regions',
-			     colorByPoint: true,
-			     data: [{
-			         name: 'Chiara',
-			         y: 56.33,
-			         drilldown: 'Chiara'
-			     }]
-			 }],
-			 drilldown: {
-			     series: [{
-			         name: 'Chiara',
-			         id: 'Chiara',
-			         data: [{name:'v11.0',y:24.13},{name:'v8.0',y:17.2, drilldown:'Seri'}],
-			     },{
-			         name: 'Seri',
-			         id: 'Seri',
-			         data: [{name:'chiara',y:21},{name:'seri',y:1}],
-			     }]
-			 }*/
+				createChart(title, subtitle, yAxis, series, drilldownMission);
+
+			}, function myError(response) {
+				alert("Error on the query: getAllMissionsCountGames SELECT");
+			});
 
 		}
 		
+		function localizedMission(missionTypeName, missionTypeCode){
+			$http({
+				method : "GET",
+				url : "/getAllLocalizedMissionsCountGranularities/"+missionTypeName+"/"+missionTypeCode
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName, id: missionTypeName, data: response.data};
+				drilldownMission.push(serie);
+				localizedMissionRegional(missionTypeName, missionTypeCode);
+				localizedMissionProvincialRegion(missionTypeName, missionTypeCode);
+				localizedMissionCHRegion(missionTypeName, missionTypeCode);				
+			}, function myError(response) {
+				alert("Error on the query: getAllLocalizedMissionsCountGranularities SELECT");
+			});
+		}
 		
+		function localizedMissionRegional(missionTypeName, missionTypeCode){			
+			$http({
+				method : "GET",
+				url : "/getAllLocalizedMissionsCountRegional/"+missionTypeName+"/"+missionTypeCode
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName+" - Regional", id: missionTypeName+" - Regional", data: response.data};
+				drilldownMission.push(serie);
+			}, function myError(response) {
+				alert("Error on the query: getAllLocalizedMissionsCountRegional SELECT");
+			});
+		}
 		
+		function localizedMissionProvincialRegion(missionTypeName, missionTypeCode){			
+			$http({
+				method : "GET",
+				url : "/getAllLocalizedMissionsCountProvincialRegion/"+missionTypeName+"/"+missionTypeCode
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName+" - Provincial", id: missionTypeName+" - Provincial", data: response.data};
+				drilldownMission.push(serie);
+				for(var i=0; i < response.data.length; i++){
+					localizedMissionProvincialProvince(missionTypeName, missionTypeCode, response.data[i].drilldown, response.data[i].region);
+				}
+			}, function myError(response) {
+				alert("Error on the query: getAllLocalizedMissionsCountProvincialRegion SELECT");
+			});
+		}
 		
+		function localizedMissionProvincialProvince(missionTypeName, missionTypeCode, idSerie, regionCode){	
+			$http({
+				method : "GET",
+				url : "/getAllLocalizedMissionsCountProvincialProvince/"+missionTypeName+"/"+missionTypeCode+"/"+regionCode
+			}).then(function mySucces(response) {
+				serie = {name: idSerie, id: idSerie, data: response.data};
+				drilldownMission.push(serie);
+			}, function myError(response) {
+				alert("Error on the query: getAllLocalizedMissionsCountProvincialProvince SELECT");
+			});
+		}
 		
+		function localizedMissionCHRegion(missionTypeName, missionTypeCode){			
+			$http({
+				method : "GET",
+				url : "/getAllLocalizedMissionsCountCHRegion/"+missionTypeName+"/"+missionTypeCode
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName+" - Heritage", id: missionTypeName+" - Heritage", data: response.data};
+				drilldownMission.push(serie);
+				for(var i=0; i < response.data.length; i++){
+					localizedMissionCHProvince(missionTypeName, missionTypeCode, response.data[i].drilldown, response.data[i].region);
+				}
+			}, function myError(response) {
+				alert("Error on the query: getAllLocalizedMissionsCountCHRegion SELECT");
+			});
+		}
 		
+		function localizedMissionCHProvince(missionTypeName, missionTypeCode, idSerie, regionCode){	
+			$http({
+				method : "GET",
+				url : "/getAllLocalizedMissionsCountCHProvince/"+missionTypeName+"/"+missionTypeCode+"/"+regionCode
+			}).then(function mySucces(response) {
+				serie = {name: idSerie, id: idSerie, data: response.data};
+				drilldownMission.push(serie);
+				for(var i=0; i < response.data.length; i++){
+					localizedMissionCHCH(missionTypeName, missionTypeCode, response.data[i].drilldown, response.data[i].province);
+				}
+			}, function myError(response) {
+				alert("Error on the query: getAllLocalizedMissionsCountCHProvince SELECT");
+			});
+		}
 		
+		function localizedMissionCHCH(missionTypeName, missionTypeCode, idSerie, provinceCode){	
+			$http({
+				method : "GET",
+				url : "/getAllLocalizedMissionsCountCHCH/"+missionTypeName+"/"+missionTypeCode+"/"+provinceCode
+			}).then(function mySucces(response) {
+				serie = {name: idSerie, id: idSerie, data: response.data};
+				drilldownMission.push(serie);
+			}, function myError(response) {
+				alert("Error on the query: getAllLocalizedMissionsCountCHCH SELECT");
+			});
+		}
 		
+		function collectCard(missionTypeName, missionTypeCode){
+			$http({
+				method : "GET",
+				url : "/getAllCollectCardMissionsCountRarities/"+missionTypeName+"/"+missionTypeCode
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName, id: missionTypeName, data: response.data};
+				drilldownMission.push(serie);
+			}, function myError(response) {
+				alert("Error on the query: getAllCollectCardMissionsCountRarities SELECT");
+			});
+		}
 		
+		function collectMedal(missionTypeName, missionTypeCode){
+			$http({
+				method : "GET",
+				url : "/getAllCollectMedalMissionsCountGranularities/"+missionTypeName+"/"+missionTypeCode
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName, id: missionTypeName, data: response.data};
+				drilldownMission.push(serie);
+				collectCategoryMedal(missionTypeName, missionTypeCode);
+				collectSpecificMedalCategory(missionTypeName, missionTypeCode);
+			}, function myError(response) {
+				alert("Error on the query: getAllCollectMedalMissionsCountGranularities SELECT");
+			});
+		}
 		
+		function collectCategoryMedal(missionTypeName){
+			$http({
+				method : "GET",
+				url : "/getAllCollectMedalMissionsCountCategories/"+missionTypeName
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName+" - Specific Category", id: missionTypeName+" - Specific Category", data: response.data};
+				drilldownMission.push(serie);
+			}, function myError(response) {
+				alert("Error on the query: getAllCollectMedalMissionsCountCategories SELECT");
+			});
+		}
 		
+		function collectSpecificMedalCategory(missionTypeName){
+			$http({
+				method : "GET",
+				url : "/getAllCollectMedalMissionsCountMedalCategories/"+missionTypeName
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName+" - Specific Medal", id: missionTypeName+" - Specific Medal", data: response.data};
+				drilldownMission.push(serie);
+				collectSpecificMedalRegion(missionTypeName);
+				collectSpecificMedalHP(missionTypeName);
+				collectSpecificMedalToS(missionTypeName);
+			}, function myError(response) {
+				alert("Error on the query: getAllCollectMedalMissionsCountMedalCategories SELECT");
+			});
+		}
+		
+		function collectSpecificMedalRegion(missionTypeName){
+			$http({
+				method : "GET",
+				url : "/getAllCollectMedalMissionsCountMedalRegion/"+missionTypeName
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName+" - Specific Medal - RegionalCategory", id: missionTypeName+" - Specific Medal - RegionalCategory", data: response.data};
+				drilldownMission.push(serie);
+			}, function myError(response) {
+				alert("Error on the query: getAllCollectMedalMissionsCountMedalRegion SELECT");
+			});
+		}
+		
+		function collectSpecificMedalHP(missionTypeName){
+			$http({
+				method : "GET",
+				url : "/getAllCollectMedalMissionsCountMedalHP/"+missionTypeName
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName+" - Specific Medal - HPCategory", id: missionTypeName+" - Specific Medal - HPCategory", data: response.data};
+				drilldownMission.push(serie);
+			}, function myError(response) {
+				alert("Error on the query: getAllCollectMedalMissionsCountMedalHP SELECT");
+			});
+		}
+		
+		function collectSpecificMedalToS(missionTypeName){
+			$http({
+				method : "GET",
+				url : "/getAllCollectMedalMissionsCountMedalToS/"+missionTypeName
+			}).then(function mySucces(response) {
+				serie = {name: missionTypeName+" - Specific Medal - ToSCategory", id: missionTypeName+" - Specific Medal - ToSCategory", data: response.data};
+				drilldownMission.push(serie);
+			}, function myError(response) {
+				alert("Error on the query: getAllCollectMedalMissionsCountMedalToS SELECT");
+			});
+		}
+
 		
 		function localizedChart (regions, provinces, chs, asseY){
 			$http({
@@ -194,7 +378,7 @@ app.controller('getGameStatisticsController', function($scope, $http, $window, $
 						     name: 'Regions',
 						     colorByPoint: false,
 						     data: regionsData
-						 }];
+						}];
 						var drilldown=[];
 						var serie = {};
 				
@@ -309,6 +493,7 @@ app.controller('getGameStatisticsController', function($scope, $http, $window, $
 			     series: drilldown
 			 }
 		});
+
 	}
 
 });

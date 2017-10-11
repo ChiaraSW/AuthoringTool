@@ -52,7 +52,7 @@
 	   }
 	    
 	   function register() { 
-	   
+
 		   if (vm.user.password == vm.user.repassword){ //check if the inserted passwords match
 			   
 			   $http({
@@ -63,7 +63,8 @@
 	 					ErrorHandling("E-mail already registered.");
 	 	    		}	
 	 				else{
-	 					vm.dataLoading = true;
+	 					
+ 						vm.dataLoading = true;
 	 					$http({
     	    				method : "GET",
     	    			    url : "/addUser/0/"+vm.user.email+"/"+vm.user.password+"/"+vm.user.role.code				//Memorizzare il token e non la password in chiaro!!!!
@@ -106,7 +107,7 @@
     	    			}, function errorCallback(response) {   
     	    				ErrorHandling("USER NOT INSERTED.");
     	    			});
-
+	 					
 	 				}
 	 				
  				}, function errorCallback(response) {

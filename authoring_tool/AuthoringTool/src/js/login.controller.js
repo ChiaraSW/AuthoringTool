@@ -43,26 +43,26 @@
 						
 							if((user[0].email == vm.email) && (user[0].password == vm.password)  && (user[0].role == vm.role.code) ){		//la password va trasformata in token e confrontata con quello nel db!!!
 								
-								AuthenticationService.SetCredentials(vm.email, vm.password);
+								AuthenticationService.SetCredentials(vm.email, vm.password, vm.role.name);
 								
 								if (vm.role.name == "Admin"){
 					    			$rootScope.loggedIn = true;
 					    			$rootScope.username = vm.email;
-					    			AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, vm.role.name, user[0].code);
+					    			AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, "admin", user[0].code);
 					    			$location.path('/admin');			
 					    		}
 								
 								if (vm.role.name == "Cultural Organization"){
 									$rootScope.loggedIn = true;
 									$rootScope.username = vm.email;
-									AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, vm.role.name, user[0].code);
+									AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, "organization", user[0].code);
 					    			$location.path('/organization');
 					    		}
 	
 								if (vm.role.name == "Cultural Operator"){
 									$rootScope.loggedIn = true;
 									$rootScope.username = vm.email;
-									AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, vm.role.name, user[0].code);
+									AuthenticationService.SaveCurrentUserLocally(vm.email, vm.password, "operator", user[0].code);
 					    			$location.path('/operator');
 					    		}
 							}

@@ -10,139 +10,143 @@
 
  	<div class="col-sm-10" ng-controller="updMissionController">
 	
-  	<h1 style="margin-left:20px;"><u>Update Mission</u>: [{{updMission.title}}]</h1><br><br>   
+  		<h1 style="margin:20px;"><u>Update Mission</u>: [{{updMission.title}}]</h1>   
+  		
 		<form name="form" role="form" id="uploadMissionForm" enctype="multipart/form-data" method="post">
 		
-			<div class="form-group" ng-class="{ 'has-error': form.title.$dirty && form.title.$error.required }" >
-		     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
-			     	<label for="title" style="display: inline-block; vertical-align: bottom;">
+			<div class="form-group" ng-class="{ 'has-error': 	form.title.$dirty && form.title.$error.required &&
+																form.mission.$dirty && form.mission.$error.required	}" >
+		     	
+		     	<fieldset style="margin-top:50px; margin-left:20px; width:750px;"> 	
+			     	<label for="title" style="display: inline-block; vertical-align:center; width:90px;">
 			     		Title: 
 					</label>
-					<input type="text" class="form-control" ng-model="updMission.title" style="width:1209px; display: inline-block;" maxlength="100" required>
+					<input type="text" class="form-control" ng-model="updMission.title" style="width:650px; display: inline-block;" maxlength="100" required>
 				</fieldset>
-			</div>
-			
-			<div class="form-group" ng-class="{ 'has-error': form.mission.$dirty && form.mission.$error.required}" >
 																	
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-	  				<label for="mission" style="display: inline-block;">
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 		
+	  				<label for="mission" style="display: inline-block; vertical-align:center; width:90px;">
 			     		Mission:  
 					</label>
-					<select ng-model="updMission.mission" class="form-control" ng-change="showParameters()" style="width:300px; display: inline-block;" required>
+					<select ng-model="updMission.mission" class="form-control" ng-change="showParameters()" style="width:250px; display: inline-block;" required>
 						<option ng-repeat="mission in missions">{{mission.name}}</option>
-					</select>
-					
+					</select>				
 				</fieldset>
-			</div>
-			
-			<div class="form-group" ng-class="{ 'has-error':form.region.$dirty && form.region.$error.required &&
+				
+		    </div> 	
+		     	
+		    <div class="form-group" ng-class="{ 'has-error':form.region.$dirty && form.region.$error.required &&
 															form.province.$dirty && form.province.$error.required &&
 															form.ch.$dirty && form.ch.$error.required &&
 															form.rarity.$dirty && form.rarity.$error.required && 
-	 														form.category.$dirty && form.category.$error.required}" >
-			
-				<label for="localizedDescription" style="display: inline-block; margin-top:30px; margin-left:20px;" ng-show="localizedMissionSelected">
+	 														form.category.$dirty && form.category.$error.required}" > 	
+		     	
+		     	<label for="localizedDescription" style="display: inline-block; margin-top:30px; margin-left:20px; width:750px;" ng-show="localizedMissionSelected">
 			     		Choose the granularity level of the mission. No region selected means the whole Italy.  
 				</label>	
 			
-				<label for="rarityDescription" style="display: inline-block; margin-top:30px; margin-left:20px;" ng-show="cardMissionSelected">
+				<label for="rarityDescription" style="display: inline-block; margin-top:30px; margin-left:20px; width:750px;" ng-show="cardMissionSelected">
 			     		Choose the card rarity. No rarity selected means all the rarities.  
 				</label>
 			
-				<label for="categoryDescription" style="display: inline-block; margin-top:30px; margin-left:20px;" ng-show="medalMissionSelected">
+				<label for="categoryDescription" style="display: inline-block; margin-top:30px; margin-left:20px; width:750px;" ng-show="medalMissionSelected">
 			     		Choose the medal category. No category selected means all the categories.  
-				</label>	
-			
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-					<label for="region" style="display: inline-block;" ng-show="localizedMissionSelected">
+				</label>
+		     	
+		     	<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	
+		     		<label for="region" style="display: inline-block; width:90px;" ng-show="localizedMissionSelected">
 			     		Region:  
 					</label>
-					<select ng-model="updMission.region" class="form-control" style="width:200px; display: inline-block;" ng-change="showProvince()" ng-show="localizedMissionSelected">
+					<select ng-model="updMission.region" class="form-control" style="width:250px; display: inline-block;" ng-change="showProvince()" ng-show="localizedMissionSelected">
 						<option ng-repeat="region in regions">{{region.name}}</option>
 					</select>
-			
-					<label for="province" style="display: inline-block; margin-left:30px;" ng-show="regionSelected">
+		     	
+		     		<label for="province" style="display: inline-block; width:90px; margin-left:50px;" ng-show="regionSelected">
 			     		Province:  
 					</label>
-					<select ng-model="updMission.province" class="form-control" style="width:200px; display: inline-block;" ng-change="showCH()" ng-show="regionSelected">
+					<select ng-model="updMission.province" class="form-control" style="width:250px; display: inline-block;" ng-change="showCH()" ng-show="regionSelected">
 						<option ng-repeat="province in provinces">{{province.name}}</option>
 					</select>
-			
-					<label for="ch" style="display: inline-block; margin-left:30px;" ng-show="provinceSelected">
-			     		Cultural Heritage:  
-					</label>
-					<input name="ch" id="ch" type="text" placeholder="" ng-model="updMission.ch" style="width:523px; display: inline-block;" maxlength="100"
-									typeahead="option as option.name for option in chs | filter:$viewValue | limitTo:8" class="form-control" ng-show="provinceSelected">	
-
-	 				<label for="rarity" style="display: inline-block;" ng-show="cardMissionSelected">
+		     	
+		     		<label for="rarity" style="display: inline-block; width:90px;" ng-show="cardMissionSelected">
 			     		Rarity:  
 					</label>
-					<select ng-model="updMission.rarity" class="form-control" style="width:200px; display: inline-block;" ng-show="cardMissionSelected">
+					<select ng-model="updMission.rarity" class="form-control" style="width:250px; display: inline-block;" ng-show="cardMissionSelected">
 						<option ng-repeat="rarity in rarities">{{rarity.name}}</option>
 					</select>									
 	
-					<label for="category" style="display: inline-block;" ng-show="medalMissionSelected">
+					<label for="category" style="display: inline-block; width:90px;" ng-show="medalMissionSelected">
 			     		Category:  
 					</label>
-					<select ng-model="updMission.category" class="form-control" style="width:200px; display: inline-block;" ng-show="medalMissionSelected" ng-change="showSubCategory(updMission.category.code)">
+					<select ng-model="updMission.category" class="form-control" style="width:250px; display: inline-block;" ng-show="medalMissionSelected" ng-change="showSubCategory(updMission.category.code)">
 						<option ng-repeat="category in categories">{{category.name}}</option>
 					</select>		
-					
-					<label for="regionalCategory" style="display: inline-block; margin-left:30px;" ng-show="rcMissionSelected">
+		     	</fieldset>
+				
+
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 
+		     		<label for="ch" style="display: inline-block; width:140px;" ng-show="provinceSelected">
+			     		Cultural Heritage:  
+					</label>
+					<input name="ch" id="ch" type="text" placeholder="" ng-model="updMission.ch" style="width:600px; display: inline-block;" maxlength="100"
+									typeahead="option as option.name for option in chs | filter:$viewValue | limitTo:8" class="form-control" ng-show="provinceSelected">
+		     	
+		     		<label for="regionalCategory" style="display: inline-block; width:140px;" ng-show="rcMissionSelected">
 			     		Region Medal:  
 					</label>
-					<select ng-model="updMission.regionalCategory" class="form-control" style="width:500px; display: inline-block;" ng-show="rcMissionSelected">
+					<select ng-model="updMission.regionalCategory" class="form-control" style="width:600px; display: inline-block;" ng-show="rcMissionSelected">
 						<option ng-repeat="regionalCategory in regionalCategories">{{regionalCategory.name}}</option>
 					</select>
 			
-					<label for="hpCategory" style="display: inline-block; margin-left:30px;" ng-show="hpMissionSelected">
+					<label for="hpCategory" style="display: inline-block; width:190px;" ng-show="hpMissionSelected">
 			     		Historical Period Medal:  
 					</label>		
-					<input name="hp" id="hp" type="text" placeholder="" ng-model="updMission.hp" style="width:771px; display: inline-block;" maxlength="60"
+					<input name="hp" id="hp" type="text" placeholder="" ng-model="updMission.hp" style="width:550px; display: inline-block;" maxlength="60"
 									typeahead="option as option.name for option in hps | filter:$viewValue | limitTo:8" class="form-control" ng-show="hpMissionSelected">		
 			
-					<label for="tosCategory" style="display: inline-block; margin-left:30px;" ng-show="tosMissionSelected">
+					<label for="tosCategory" style="display: inline-block; width:190px;" ng-show="tosMissionSelected">
 			     		Type of Structure Medal:  
 					</label>	
-					<input name="tos" id="tos" type="text" placeholder="" ng-model="updMission.tos" style="width:767px; display: inline-block;" maxlength="60"
+					<input name="tos" id="tos" type="text" placeholder="" ng-model="updMission.tos" style="width:550px; display: inline-block;" maxlength="60"
 									typeahead="option as option.name for option in toss | filter:$viewValue | limitTo:8" class="form-control" ng-show="tosMissionSelected">			
-					
 				</fieldset>
 			</div>
-
-	 		<div class="form-group" ng-class="{ 'has-error': form.num.$dirty && form.num.$error.required}" >																
-				<fieldset style="margin-top:40px; margin-left:20px;"> 
 				
-					<label for="openCP" style="display: inline-block;" ng-show="openCPSelected">
+			<div class="form-group" ng-class="{ 'has-error': form.num.$dirty && form.num.$error.required}" >	
+		    	
+		    	<fieldset style="margin-top:40px; margin-left:20px; width:750px;"> 
+				
+					<label for="openCP" style="display: inline-block; width:550px;" ng-show="openCPSelected">
 			     		Number of cards' packets to open to consider completed this mission:  
-					</label>
-					
-					<label for="collectCard" style="display: inline-block;" ng-show="collectCardSelected">
+					</label> 	
+
+					<label for="collectCard" style="display: inline-block; width:550px;" ng-show="collectCardSelected">
 			     		Number of cards to collect to consider completed this mission:  
 					</label>
 					
-					<label for="visitCH" style="display: inline-block;" ng-show="visitCHSelected">
+					<label for="visitCH" style="display: inline-block; width:550px;" ng-show="visitCHSelected">
 			     		Number of cultural heritages to visit to consider completed this mission:  
 					</label>
 					
-					<label for="collectMedal" style="display: inline-block;" ng-show="collectMedalSelected">
+					<label for="collectMedal" style="display: inline-block; width:550px;" ng-show="collectMedalSelected">
 			     		Number of medals to collect to consider completed this mission:  
 					</label>
 					
-					<label for="completePath" style="display: inline-block;" ng-show="completePathSelected">
+					<label for="completePath" style="display: inline-block; width:550px;" ng-show="completePathSelected">
 			     		Number of paths to complete to consider completed this mission:  
 					</label>
 					
-					<label for="writeReview" style="display: inline-block;" ng-show="writeReviewSelected">
+					<label for="writeReview" style="display: inline-block; width:550px;" ng-show="writeReviewSelected">
 			     		Number of reviews to write to consider completed this mission:  
 					</label>
 					
-					<input type="number" min="1" class="form-control" ng-model="updMission.num" style="width:200px; display: inline-block;" ng-show="showNum" required>
+					<input type="number" min="1" class="form-control" ng-model="updMission.num" style="width:190px; display: inline-block;" ng-show="showNum" required>
 						
 				</fieldset>
+
 			</div>
 
-	 		<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
+	 		<div class="form-actions" style="margin-top:70px; margin-bottom:30px; margin-left:20px;">
 	            <button type="submit" name="btnUpdMission" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeUpdMission()">Update</button>
 	            <img ng-if="vm.dataLoading"/>
 	            <a href="Missions.html" target="_self">Cancel</a>

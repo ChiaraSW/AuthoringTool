@@ -5,86 +5,82 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script>
-	
 </head>
 
 <body ng-app="GoPoleis" >
 
-	<div class="col-sm-10" ng-controller="addMedalController">
-		
-		<h1 style="margin:20px;"><u>Create a Medal</u>:</h1><br><br>
-		
+	<div class="col-sm-6" ng-controller="addMedalController">
+	
+		<h1 style="margin:20px;"><u>Create a Medal</u>:</h1>
+	
 		<form name="form" role="form" id="uploadMedalForm" enctype="multipart/form-data" action="/upload" method="post">
-    	
-    	
-    		<div class="form-group" ng-class="{ 'has-error': form.name.$dirty && form.name.$error.required }" >
-		     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
-			     	<label for="name" style="display: inline-block; vertical-align: bottom;">
-			     		Name: 
-					</label>
-					<input type="text" class="form-control" ng-model="addMedal.name" style="width:1200px; display: inline-block;" maxlength="100" required>
-				</fieldset>
-			</div>
-		
-			<div class="form-group" ng-class="{ 'has-error': form.image.$dirty && form.image.$error.required }" >
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-					<p id="imgCode" ng-show="false" ng-model="imgCode"></p> 
-			     	<label for="image" style="display:inline-block;">
-			     		Image:  
-					</label>
-					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
-							style="display:inline-block; margin-left:20px;" ngf-max-size="2MB" required/>
-					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
-				</fieldset>
-			</div>
-			
-			<div class="form-group" ng-class="{ 'has-error': 	form.category.$dirty && form.category.$error.required && 
+	
+			<div class="form-group" ng-class="{ 'has-error': 	form.name.$dirty && form.name.$error.required &&
+    															form.image.$dirty && form.image.$error.required &&
+    															form.category.$dirty && form.category.$error.required && 
 																form.region.$dirty && form.region.$error.required && 
 																form.historicalPeriod.$dirty && form.historicalPeriod.$error.required && 
-																form.structureType.$dirty && form.structureType.$error.required}" >
-																
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-			     	<label for="category" style="display: inline-block;">
+																form.structureType.$dirty && form.structureType.$error.required	&&
+																form.numOfPlaces.$dirty && form.numOfPlaces.$error.required }" >
+
+				<fieldset style="margin-top:50px; margin-left:20px; width:750px;"> 	
+			     	<label for="name" style="display: inline-block; vertical-align:top; width:90px;">
+			     		Name: 
+					</label>
+					<textarea class="form-control" ng-model="addMedal.name" style="resize:none; display:inline-block; width:650px; height: 60px;" maxlength="100" required></textarea>
+				</fieldset>
+		
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	 
+			     	<label for="image" style="display:inline-block; vertical-align:center; width:90px;">
+			     		Image:  
+					</label>
+					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
+					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
+							style="display:inline-block; margin-left:50px;" ngf-max-size="2MB" required/>
+				</fieldset>
+
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	
+					<label for="category" style="display: inline-block; vertical-align:center; width:90px;">
 			     		Category:  
 					</label>
-					<select class="form-control" ng-model="addMedal.category" ng-change="showCategory()" name="category" ng-options="option as option.name for option in category" style="width:300px; display: inline-block;" required></select>	
-
-			     	<label for="region" style="display: inline-block; margin-left:70px;" ng-show="regionSelected">
+					<select class="form-control" ng-model="addMedal.category" ng-change="showCategory()" name="category" ng-options="option as option.name for option in category" style="width:370px; display: inline-block;" required></select>	
+    			</fieldset>
+    	
+    			<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	
+    				<label for="region" style="display:inline-block; vertical-align:center; width:90px;" ng-show="regionSelected">
 			     		Region:  
 					</label>
-					<select class="form-control" ng-model="addMedal.region" name="region" ng-options="option as option.name for option in regions" style="width:300px; display: inline-block;" ng-show="regionSelected" 
-							ng-required="regionSelected"></select>	
-					
- 			     	<label for="historicalPeriod" style="display: inline-block; margin-left:70px;" ng-show="hpSelected">
+    				<select class="form-control" ng-model="addMedal.region" name="region" ng-options="option as option.name for option in regions" style="width:370px; display: inline-block;" ng-show="regionSelected" 
+							ng-required="regionSelected"></select>
+    			
+					<label for="historicalPeriod" style="display: inline-block; vertical-align:center; width:140px;" ng-show="hpSelected">
 			     		Historical period:  
 					</label>
-					<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="addMedal.historicalPeriod" style="width:678px; display: inline-block;" maxlength="60"
+					<input name="historicalPeriod" id="historicalPeriod" type="text" placeholder="" ng-model="addMedal.historicalPeriod" style="width:600px; display: inline-block;" maxlength="60"
 								typeahead="option as option.name for option in historicalPeriods | filter:$viewValue | limitTo:8" class="form-control" ng-show="hpSelected" ng-required="hpSelected">	
-								
-											
-					<label for="structureType" style="display: inline-block; margin-left:70px;" ng-show="stSelected">
+					
+					<label for="structureType" style="display: inline-block; vertical-align:center; width:140px;" ng-show="stSelected">
 			     		Type of structure:  
 					</label>
-					<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="addMedal.typeOfStructure" style="width:675px; display: inline-block;" maxlength="60"
-								typeahead="option as option.name for option in typeOfStructures | filter:$viewValue | limitTo:8" class="form-control" ng-show="stSelected" ng-required="stSelected">	
-				</fieldset>
-			</div>
-			
-			<div class="form-group" ng-class="{ 'has-error': form.numOfPlaces.$dirty && form.numOfPlaces.$error.required }" >
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-			     	<label for="numOfPlaces" style="display: inline-block; vertical-align: bottom;">
+					<input name="typeOfStructure" id="typeOfStructure" type="text" placeholder="" ng-model="addMedal.typeOfStructure" style="width:600px; display: inline-block;" maxlength="60"
+								typeahead="option as option.name for option in typeOfStructures | filter:$viewValue | limitTo:8" class="form-control" ng-show="stSelected" ng-required="stSelected">	    				
+    			</fieldset>
+    		
+		     	<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	
+			     	<label for="numOfPlaces" style="display:inline-block; vertical-align:center; width:350px;">
 			     		Number of places to visit to obtain this medal: 
 					</label>
-					<input type="number" min="1" class="form-control" ng-model="addMedal.numOfPlaces" style="width:200px; display: inline-block;" required>
+					<input type="number" min="1" class="form-control" ng-model="addMedal.numOfPlaces" style="width:110px; display: inline-block;" required>
 				</fieldset> 
-			</div>
-
-			<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
+				
+			</div>	
+				
+			<div class="form-actions" style="margin-top:75px; margin-bottom:30px; margin-left:20px;" align="left">
 	            <button type="submit" name="btnAddMedal" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddMedal()">Create</button>
-	            <img ng-if="vm.dataLoading"/>
+	            <img ng-if="vm.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
 	            <a href="Medals.html" target="_self">Cancel</a>
-	        </div>
-	        
+	        </div>	
+
 	    </form>
 
 	</div>

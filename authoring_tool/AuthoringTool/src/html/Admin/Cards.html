@@ -7,125 +7,49 @@
 </head>
 
 <body ng-app="GoPoleis" >
-	<div class="col-sm-10" ng-controller="getCardsController">
-		<div ng-show="getCardsPage">
+	<div class="col-sm-9" ng-controller="getCardsController">
 		
-			<h1 style="margin:20px;"><u>Cards</u></h1>
-			<fieldset style="margin-top:50px; margin-left:20px;"> 	
-	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
-		        	<span class="glyphicon glyphicon-search"></span>
-		        	Search: 
-		        </label>
-	      		<input type="text" ng-model="searchBoxCards.name" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
-	      				
-	      		<label style="display: inline-block; margin-left: 120px;">
-		     		Filter by card's rarity:  
-				</label>
-				
-				<h5 style="display: inline-block;">	
-					<span class="glyphicon glyphicon-check" ng-click="commonCard()" style="margin-left: 20px;" ng-show="commonFilter" value='common'></span>
-	     			<span class="glyphicon glyphicon-unchecked" ng-click="commonCard()" style="margin-left: 20px;" ng-hide="commonFilter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Common</h5>
-		     		   		
-		     		<span class="glyphicon glyphicon-check" ng-click="uncommonCard()" style="margin-left: 50px;" ng-show="uncommonFilter" value='uncommon'></span>
-	     			<span class="glyphicon glyphicon-unchecked" ng-click="uncommonCard()" style="margin-left: 50px;" ng-hide="uncommonFilter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Uncommon</h5>
-		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="epicCard()" style="margin-left: 50px;" ng-show="epicFilter" value='epic'></span>
-	     			<span class="glyphicon glyphicon-unchecked" ng-click="epicCard()" style="margin-left: 50px;" ng-hide="epicFilter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Epic</h5>
-				</h5>	
-	        </fieldset>
-	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
-	       		<li data-ng-repeat="card in cards | filter:searchBoxCards | rarity:filterRarity" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
-	       			ng-model="getAllCards.selection" ng-value="card.name" id="{{card.name}}" ng-click="updCard(card.code)">	        	
-	        		<h4 medal.name="selection">
-	        			<img ng-src="{{card.path}}{{card.filename}}" style="height: 80px; width: 80px;"/>
-	        			{{ card.name }}
-	        		</h4>	
-	       		</li>
-	        </ul>
-		</div>
-
-		<div ng-show="updCardPage">
-			        
-			<h1 style="margin:20px;"><u>Update Card</u>: [{{updCard.name}}]</h1><br><br>        
-	        
-	        <form name="form" role="form" id="uploadCardForm" enctype="multipart/form-data" action="/upload" method="post">
-	        
-	        	<div class="form-group" ng-class="{ 'has-error': form.name.$dirty && form.name.$error.required }" >
-			     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
-				     	<label for="name" style="display: inline-block; vertical-align: bottom;">
-				     		Name: 
-						</label>
-						<input type="text" class="form-control" ng-model="updCard.name" style="width:1200px; display: inline-block;" maxlength="100" required>
-					</fieldset>
-				</div>	
-
-				<div class="form-group" ng-class="{ 'has-error': form.image.$dirty && form.image.$error.required }" >
-					<fieldset style="margin-top:30px; margin-left:20px;"> 	
-						<p id="imgCode" ng-show="false" ng-model="imgCode"></p> 
-				     	<label for="image" style="display:inline-block;">
-				     		Image:  
-						</label>
-						<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
-						<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
-								style="display:inline-block; margin-left:20px;" ngf-max-size="2MB" />
-					</fieldset>
-				</div>
-				
-				<div class="form-group" ng-class="{ 'has-error': form.description.$dirty && form.description.$error.required }" >
-			     	<fieldset style="margin-top:30px; margin-left:20px;"> 	
-				     	<label for="description" style="display: inline-block; vertical-align: top;">
-				     		Short description:  
-						</label>
-						<textarea class="form-control" ng-model="updCard.description" style="resize:none; display:inline-block; width:1117px;" maxlength="999" required></textarea>
-					</fieldset>
-				</div>
-
-				<div class="form-group" ng-class="{ 'has-error': form.cost.$dirty && form.cost.$error.required && 
-																form.cardValue.$dirty && form.cardValue.$error.required && 
-																form.destructionValue.$dirty && form.destructionValue.$error.required }" >
-																
-					<fieldset style="margin-top:30px; margin-left:20px;"> 	
-						<label for="cost" style="display: inline-block; vertical-align: bottom;">
-				     		Card's cost in coins: 
-						</label>
-						<input type="number" min="1"class="form-control" ng-model="updCard.cost" style="width:140px; display: inline-block;" required>
-						
-				     	<label for="cardValue" style="display: inline-block; vertical-align: bottom; margin-left:75px;">
-				     		Card's value in coins: 
-						</label>
-						<input type="number" min="1"class="form-control" ng-model="updCard.cardValue" style="width:140px; display: inline-block;" required>
-						
-						<label for="destructionValue" style="display: inline-block; vertical-align: bottom; margin-left:75px;">
-				     		Coins obtained in case of destruction of a dual card: 
-						</label>
-						<input type="number" min="1"class="form-control" ng-model="updCard.destructionValue" style="width:140px; display: inline-block;" required>
-					</fieldset>
-				</div>	
-		 			
-				<div class="form-group" ng-class="{ 'has-error': form.rarity.$dirty && form.rarity.$error.required }" >
-					<fieldset style="margin-top:30px; margin-left:20px;"> 	
-				     	<label for="rarity" style="display: inline-block;">
-				     		Rarity:  
-						</label>
- 						<select ng-model="updCard.rarity" class="form-control" style="width:300px; display: inline-block;">
-							<option ng-repeat="x in rarity">{{x.name}}</option>
-						</select>
-					</fieldset>
-				</div>
-
-				<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
-		            <button type="submit" name="btnUpdCard" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeUpdCard()">Update</button>
-		            <img ng-if="vm.dataLoading"/>
-		            <a href="Cards.html" target="_self">Cancel</a>
-		        </div>
-
-	        </form>
-	        
-		</div>
+		<h1 style="margin:20px;"><u>Cards</u></h1>
+		
+		<fieldset style="margin-top:50px; margin-left:20px;"> 	
+           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
+	        	<span class="glyphicon glyphicon-search"></span>
+	        	Search: 
+	        </label>
+      		<input type="text" ng-model="searchBoxCards.name" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
+      	</fieldset>	
+      	
+		<fieldset style="margin-top:20px; margin-left:20px;"> 			
+      		<label style="display: inline-block;">
+	     		Filter by card's rarity:  
+			</label>
+			
+			<h5 style="display: inline-block;">	
+				<span class="glyphicon glyphicon-check" ng-click="commonCard()" style="margin-left: 20px;" ng-show="commonFilter" value='common'></span>
+     			<span class="glyphicon glyphicon-unchecked" ng-click="commonCard()" style="margin-left: 20px;" ng-hide="commonFilter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Common</h5>
+	     		   		
+	     		<span class="glyphicon glyphicon-check" ng-click="uncommonCard()" style="margin-left: 50px;" ng-show="uncommonFilter" value='uncommon'></span>
+     			<span class="glyphicon glyphicon-unchecked" ng-click="uncommonCard()" style="margin-left: 50px;" ng-hide="uncommonFilter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Uncommon</h5>
+	     		
+	     		<span class="glyphicon glyphicon-check" ng-click="epicCard()" style="margin-left: 50px;" ng-show="epicFilter" value='epic'></span>
+     			<span class="glyphicon glyphicon-unchecked" ng-click="epicCard()" style="margin-left: 50px;" ng-hide="epicFilter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Epic</h5>
+			</h5>	
+        </fieldset>
         
+        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: {{frameWidth}}">
+       		<li data-ng-repeat="card in cards | filter:searchBoxCards | rarity:filterRarity" class="thumbnail col-sm-3" style=" margin:20px; padding: 10px; width:400px; cursor: pointer;" 
+       			ng-model="getAllCards.selection" ng-value="card.name" id="{{card.name}}" ng-click="updCard(card.code)">	        	
+        		<h5 card.name="selection"><b>
+        			<img ng-src="{{card.path}}{{card.filename}}" style="height: 80px; width: 80px; margin-right:10px; float:left;"/>
+        			<textarea class="form-control" ng-model="card.name" style="resize:none; display:inline-block; width:285px; height: 80px; background-color: white; cursor: pointer;" ng-readonly="true" >{{ card.name }}
+        			</textarea></b>     			
+        		</h5>	
+       		</li>
+        </ul>
+
 	</div>
 
 </body>
@@ -133,9 +57,13 @@
 <script>
 	var app = angular.module("GoPoleis", []);
 	app.controller('getCardsController', function($scope, $http, $window, $timeout) {
-		$scope.getCardsPage=true;
-		$scope.updCardPage=false;			
 
+		$scope.frameWidth = ($window.innerWidth - 35) + "px";     
+		angular.element($window).bind('resize', function(){    
+			$scope.frameWidth = ($window.innerWidth - 35) + "px";
+			$scope.$digest();
+		});
+		
 		$scope.commonFilter=false;
 		$scope.uncommonFilter=false;
 		$scope.epicFilter=false;
@@ -200,126 +128,12 @@
 		    		$scope.filterRarity.push(rarity3);
 				}
 			}
-		}   
-
-		$scope.updCard = function(cardCode){ 
-			$scope.getCardsPage=false;
-			$scope.updCardPage=true;
-			$scope.updCard={};
-			
-			var newImg = false;
-			var oldImgCode;
-			var type;
-			
-			$http({
-				method: 'GET',
-				url: '/getAllRarities/'
-			}).then(function successCallback(response) {	
-				$scope.rarity = response.data;		
-			}, function errorCallback(response) {
-				alert("Error on the query: getAllRarities SELECT");
-			});
-
-			$http({
-				method : "GET",
-				url : "/getCard/"+cardCode
-			}).then(function mySucces(response) {
-				var results  = response.data;	
-				if (results.length > 0){
-					$scope.updCard.name=results[0].name;
-					oldImgCode=results[0].image;
-					$scope.thumbnail = { dataUrl: results[0].path+results[0].filename };			
-					$scope.updCard.description = results[0].description;
-					$scope.updCard.cardValue = results[0].cardvalue;		
-					$scope.updCard.destructionValue = results[0].destructionvalue;	
-					$scope.updCard.cost = results[0].cost;	
-					$scope.updCard.rarity = results[0].rName;	
-				}
-			}, function myError(response) {
-				alert("Error on the query: getCard SELECT");
-			});	
-			
-			$scope.fileReaderSupported = window.FileReader != null;
-		    $scope.imgChanged = function(files){
-		        if (files != null) {
-		            var file = files[0];
-			        if ($scope.fileReaderSupported && file.type.indexOf('image') > -1) {
-			            $timeout(function() {
-			                var fileReader = new FileReader();
-			                fileReader.readAsDataURL(file);
-			                fileReader.onload = function(e) {
-			                    $timeout(function(){
-			 							$scope.thumbnail.dataUrl = e.target.result;
-			                    });
-			                }
-			            });
-			        }	        
-		    	}
-		        type = file.name.split('.')[file.name.split('.').length -1];
-		        newImg=true;
-		    };
-			
-			
-			$scope.executeUpdCard = function(){	
-			
-		    	$scope.imgCode="cards-" + Date.now();
-		    	
-		    	if(newImg==true){
-			    	//Upload image on server
-					$http({
-						method: 'POST',
-						url: '/upload'
-					}).then(function successCallback(response) {	
-					}, function errorCallback(response) {  //return an error because the upload is performed by the server
-						
-						//Query: UPDATE Image on DB
-						$http({
-							method: 'GET',
-							url: '/updImage/..%2F..%2F..%2F..%2Fimages%2Fcards%2F/' + $scope.imgCode + '.' + type +'/'+ oldImgCode
-						}).then(function successCallback(response) {								
-							updateCard();							
-						}, function errorCallback(response) {			
-							alert("Error on the query: updImage UPDATE");
-						});						
-					});
-			    	
-		    	}
-		    	else{  
-		    		//Fake POST
-		    		$http({
-						method: 'POST',
-						url: '/'
-					}).then(function successCallback(response) {	
-					}, function errorCallback(response) {  //return an error because the upload is performed by the server	    							
-						updateCard();				
-					});
-		    	}
-				
-			}
-
-			function updateCard() {
-				//Query: UPDATE Card on DB
-				$http({
-					method: 'GET',
-					url: '/updCard/'+$scope.updCard.name+'/'+oldImgCode+'/'+$scope.updCard.description+'/'+$scope.updCard.cardValue+'/'+$scope.updCard.destructionValue+'/'+$scope.updCard.cost+'/'+getRarityCode()+'/'+cardCode		
-				}).then(function successCallback(response) {	
-					window.open("Cards.html", "_self");   
-				}, function errorCallback(response) {
-					alert("Error on the query: updCard UPDATE");
-				});
-			}
-		
-			function getRarityCode(){
-				var rarityCode;
-				for (var i=0; i<$scope.rarity.length; i++) {
-					if($scope.rarity[i].name == $scope.updCard.rarity){
-						rarityCode = $scope.rarity[i].code;
-					}
-				}
-				return rarityCode;
-			}
-			
-		}
+		}  
+	    
+	    $scope.updCard = function(cardCode) { 
+   			parent.window.setCardCode(cardCode);
+			window.open("Card_Upd.html", "_self"); 
+   		};
 		
 	});
 	

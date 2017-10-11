@@ -1,5 +1,6 @@
 var express = require ('express');
 var bodyparser = require ('body-parser');
+var nodemailer = require("nodemailer");
 
 //var connection = require('/root/connection'); //NON CANCELLARE (server)
 //var routes = require ('/root/routes');		//NON CANCELLARE (server)
@@ -9,11 +10,12 @@ var bodyparser = require ('body-parser');
 //var routes = require ('/root/routes');		//NON CANCELLARE (server)
 var connection = require('C:\\Users\\Chiara\\Documents\\WinSCP\\Server-AuthoringTool\\connection_v2');
 var routes = require ('C:\\Users\\Chiara\\Documents\\WinSCP\\Server-AuthoringTool\\routes_v2');
-var http = require('http'); 				//aggiunto da Chiara!
-var multer = require('multer'); 			//aggiunto da Chiara!
+var email = require ('C:\\Users\\Chiara\\Documents\\WinSCP\\Server-AuthoringTool\\email');
+var http = require('http'); 
+var multer = require('multer'); 
 
 var app = express ();
-app.use(express.static(__dirname + '/authoring_tool')); 		//aggiunto da Chiara!
+app.use(express.static(__dirname + '/authoring_tool')); 
 app.use(bodyparser.urlencoded({extended: true}));
 app.use(bodyparser.json());
 
@@ -40,7 +42,32 @@ app.post('/upload', function(req, res) {
     });
 });
 
+//E-mail
+var smtpTransport = email.init();
+/*app.get('/',function(req,res){
+	res.sendfile('index.html');
+});*/
+app.get('/send',function(req,res){
+	var mailOptions={
+		to : req.query.to,
+		subject : req.query.subject,
+		text : req.query.text
+	}
+	console.log(mailOptions);
+	smtpTransport.sendMail(mailOptions, function(error, response){
+		if(error){
+			console.log(error);
+			res.end("error");
+		}else{
+			console.log("Message sent: " + response.message);
+			res.end("sent");
+		}
+	});
+});
 
+
+
+//Server
 var server = app.listen(8000, function() {
 	console.log('Server listening on port '+server.address().port);
 });

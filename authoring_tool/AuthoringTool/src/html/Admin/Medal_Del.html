@@ -4,20 +4,27 @@
 	<meta charset="ISO-8859-1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.13.4/ui-bootstrap-tpls.min.js"></script> <!-- Per ui.bootstrap -->
 </head>
 
 <body ng-app="GoPoleis" >
 
-	 <div class="col-sm-10" ng-controller="delMedalController">
+	<div class="col-sm-9" ng-controller="delMedalController">
+	
 		<div>
 			<h1 style="margin:20px;"><u>Medals</u></h1>
+			
 			<fieldset style="margin-top:50px; margin-left:20px;"> 	
 	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
 		        	<span class="glyphicon glyphicon-search"></span>
 		        	Search: 
 		        </label>
 	      		<input type="text" ng-model="searchBoxMedals.name" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
-	      		<label style="display: inline-block; margin-left: 120px;">
+	      	</fieldset>	
+	      	
+			<fieldset style="margin-top:20px; margin-left:20px;"> 	
+	      		<label style="display: inline-block;">
 		     		Filter by medal's category:  
 				</label>
 				
@@ -26,25 +33,27 @@
 	     			<span class="glyphicon glyphicon-unchecked" ng-click="regionCategory()" style="margin-left: 20px;" ng-hide="regionFilter"></span>  
 		     		<h5 style="display: inline-block;  margin-left: 5px;">Region</h5>
 		     		   		
-		     		<span class="glyphicon glyphicon-check" ng-click="hpCategory()" style="margin-left: 50px;" ng-show="hpFilter" value='historicalPeriod'></span>
-	     			<span class="glyphicon glyphicon-unchecked" ng-click="hpCategory()" style="margin-left: 50px;" ng-hide="hpFilter"></span>	     		
+		     		<span class="glyphicon glyphicon-check" ng-click="hpCategory()" style="margin-left: 30px;" ng-show="hpFilter" value='historicalPeriod'></span>
+	     			<span class="glyphicon glyphicon-unchecked" ng-click="hpCategory()" style="margin-left: 30px;" ng-hide="hpFilter"></span>	     		
 		     		<h5 style="display: inline-block;  margin-left: 5px;">Historical period</h5>
 		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="tosCategory()" style="margin-left: 50px;" ng-show="tosFilter" value='typeOfStructure'></span>
-	     			<span class="glyphicon glyphicon-unchecked" ng-click="tosCategory()" style="margin-left: 50px;" ng-hide="tosFilter"></span>
+		     		<span class="glyphicon glyphicon-check" ng-click="tosCategory()" style="margin-left: 30px;" ng-show="tosFilter" value='typeOfStructure'></span>
+	     			<span class="glyphicon glyphicon-unchecked" ng-click="tosCategory()" style="margin-left: 30px;" ng-hide="tosFilter"></span>
 		     		<h5 style="display: inline-block;  margin-left: 5px;">Type of structure</h5>
 				</h5>
 	        </fieldset>
-	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
-	       		<li ng-repeat="medal in medals | filter:searchBoxMedals | category:filterCategory" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+	        
+	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: {{frameWidth}}">
+	       		<li data-ng-repeat="medal in medals | filter:searchBoxMedals | category:filterCategory" class="thumbnail col-sm-3" style=" margin:20px; padding: 10px; width:400px; cursor: pointer;" 
 	       			ng-model="getAllMedals.selection" ng-value="medal.name" id="{{medal.name}}">	
-	       			<span class="glyphicon glyphicon-trash" style="float:right;" ng-click="delMedal(medal.code, medal.image)"></span>        	
-	        		<h4 medal.name="selection">
-	        			<img ng-src="{{medal.path}}{{medal.filename}}" style="height: 80px; width: 80px;"/>
-	        			{{ medal.name }}
-	        		</h4>	
+	       			<span class="glyphicon glyphicon-trash" style="float:right;" ng-click="delMedal(medal.code, medal.image, medal.cCode)"></span>        	
+	        		<h5 medal.name="selection" style="margin-top:25px"><b>
+	        			<img ng-src="{{medal.path}}{{medal.filename}}" style="height: 80px; width: 80px; margin-right:10px; float:left;"/>
+	        			<textarea class="form-control" ng-model="medal.name" style="resize:none; display:inline-block; width:285px; height: 80px; background-color:white; cursor:pointer;" ng-readonly="true" >{{ medal.name }}</textarea></b>
+	        		</h5>	
 	       		</li>
 	        </ul>
+
         </div>
 
 	</div> 
@@ -55,6 +64,12 @@
 	var app = angular.module("GoPoleis", []);
 	app.controller('delMedalController', function($scope, $http, $window, $timeout) {
 
+		$scope.frameWidth = ($window.innerWidth - 35) + "px";     
+		angular.element($window).bind('resize', function(){    
+			$scope.frameWidth = ($window.innerWidth - 35) + "px";
+			$scope.$digest();
+		});		
+		
 		$http({
 			method : "GET",
 			url : "/getAllMedals"
@@ -119,30 +134,62 @@
 			}
 		}   
 		
-		$scope.delMedal = function (medalCode, imgCode) {
-			if ($window.confirm("Are you sure you want to delete this medal?")) {
-               	
-               	$http({
-  					method : "GET",
-  					url : "/delImage/"+imgCode
-  				}).then(function mySucces(response) {
-  					
-	   				$http({
-	   					method : "GET",
-	   					url : "/delMedal/"+medalCode
-	   				}).then(function mySucces(response) {
-	   					alert("Successful delete");
-	   					window.open("Medals.html", "_self"); 
-	   				}, function myError(response) {
-	   					alert("Error on the query: delMedal DELETE");
-	   				});
-	   				
-  				}, function myError(response) {
-  					alert("Error on the query: delImage DELETE");
-  				});
-			} 
-		}	
-			
+		$scope.delMedal = function (medalCode, imgCode, categoryCode) {			
+			if ($window.confirm("Are you sure you want to delete this medal?")) {	
+				if(categoryCode == 1){
+					getMissionCode("getRegionMedalMissionByMedalCode", medalCode, imgCode);
+				}
+				if(categoryCode == 2){
+					getMissionCode("getHPMedalMissionByMedalCode", medalCode, imgCode);
+  					}
+				if(categoryCode == 3){
+					getMissionCode("getToSMedalMissionByMedalCode", medalCode, imgCode);
+				}				
+			}
+		}
+		
+		function getMissionCode(query, medalCode, imgCode){			
+			$http({
+				method : "GET",
+				url : "/"+query+"/"+medalCode
+			}).then(function mySucces(response) {				
+				if(response.data == ""){
+					delImageAndMedal(medalCode, imgCode);					
+				}
+				else{
+					$http({
+						method : "GET",
+						url : "/delMission/"+response.data[0].mission
+					}).then(function mySucces(response) {
+						delImageAndMedal(medalCode, imgCode);
+					}, function myError(response) {
+						alert("Error on the query: delMission DELETE");
+					});
+				}
+ 			}, function myError(response) {
+				alert("Error on the query: "+query+" SELECT");
+			});
+		}
+		
+		function delImageAndMedal(medalCode, imgCode){
+			$http({
+				method : "GET",
+				url : "/delImage/"+imgCode
+			}).then(function mySucces(response) {	
+				$http({
+					method : "GET",
+					url : "/delMedal/"+medalCode
+				}).then(function mySucces(response) {				
+					alert("Successful delete");
+					window.open("Medals.html", "_self"); 
+				}, function myError(response) {
+					alert("Error on the query: delMedal DELETE");
+				});
+			}, function myError(response) {
+				alert("Error on the query: delImage DELETE");
+			});
+		}
+		
 	});
 	
 	app.filter('category', function(){		 

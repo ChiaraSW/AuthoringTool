@@ -8,7 +8,7 @@ function Connection() {
 			connectionLimit: 10,
 			host: '127.0.0.1',
 			user: 'root',
-			password: 'Seri802244@DIAG',
+			password: '',
 			database: 'neptis' // chiamare neptis(prima si chiamava provadb)
 		});
 	};

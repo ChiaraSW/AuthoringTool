@@ -17,7 +17,6 @@
     <script data-require="bootstrap@*" data-semver="3.1.1" src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     
 	<script src="https://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.debug.js"></script>
-    <script type="text/javascript" src="ng-map/ng-map.min.js"></script> 
   
   
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
@@ -43,6 +42,56 @@
 </head>
 <body ng-app="GoPoleis" >
 
+			<script type="text/ng-template" id="approveAccount.html">
+        		<div class="modal-content">		
+					<div class="modal-body">
+
+						<form name="form" role="form">
+
+							<div class="form-group" ng-class="{ 'has-error': 	form.to.$dirty && form.to.$error.required &&
+																				form.subject.$dirty && form.subject.$error.required &&
+																				form.message.$dirty && form.message.$error.required }" >
+
+								<fieldset> 	
+		     						<h2 for="title" style="display: inline-block;">
+		     							Send a response e-mail.  
+									</h2>
+									<hr>
+								</fieldset>
+
+								<fieldset style="margin-top:15px;"> 	
+		     						<label for="to" style="display: inline-block; vertical-align: bottom; width:80px;">
+		     							To: 
+									</label>
+									<input type="text" class="form-control" ng-model="to" style="width:460px; display: inline-block;" maxlength="50" ng-readonly="true" required>
+								</fieldset>
+
+								<fieldset style="margin-top:10px;"> 	
+		     						<label for="subject" style="display: inline-block; vertical-align: bottom; width:80px;">
+		     							Subject: 
+									</label>
+									<input type="text" class="form-control" ng-model="subject" style="width:460px; display: inline-block;" maxlength="50" required>
+								</fieldset>
+
+								<fieldset style="margin-top:10px;"> 	
+			     					<label for="message" style="display: inline-block; vertical-align: top; width:80px;">
+			     						Message:  
+									</label>
+									<textarea class="form-control" ng-model="message" style="resize:none; display:inline-block; width:460px; height: 150px;" maxlength="200" required></textarea>
+								</fieldset>
+
+								<fieldset style="margin: 30px 0px 0px 0px;"> 		     
+									<button type="submit" class="btn btn-primary pull-right" ng-disabled="form.$invalid" ng-click="sendEmail(to, subject, message)" style="width:100px;  margin-right:10px;">Send</button>								
+								</fieldset>
+
+							</div>
+
+						</form>
+
+					</div>
+				</div> 
+			</script>
+
 	<div class="col-sm-10" ng-controller="enableCOpController">
 		
 		
@@ -53,14 +102,14 @@
 			<h4 style="margin-left:50px; margin-top:50px; display:inline-block;">
 				<b>Waiting to be enabled: <h5 style="margin-left:20px; display:inline-block;"> (click on <span class="glyphicon glyphicon-ok"></span> to confirm your choice)</h5></b>
 			</h4>
-			<fieldset style="margin-left:70px; width:300px;"> 	
+			<fieldset style="margin-left:70px; width:600px;"> 	
 				<ul style="list-style-type:none; margin-left:20px; padding-left:0px;">
 					<li ng-repeat="userTBE in usersToBeEnabled" ng-model="getNotEnabledCOrg.selection">				
 		 				<div id="switchContainer" ng-cloak>	
 		 					<md-switch ng-model="userTBE.enabled" style="display:inline-block; height:10px;"></md-switch>	
 							<span class="glyphicon glyphicon-user" style="margin-left:20px; margin-top:20px;display: inline-block; vertical-align: top;"></span> 
 							<h5 style="margin-top:20px; display: inline-block; vertical-align: top;"><b>{{ userTBE.email }}</b></h5> 	
-							<span class="glyphicon glyphicon-ok" style="margin-left:30px; margin-top:20px; display: inline-block; vertical-align: top;" ng-click="saveChoice(userTBE.code,userTBE.enabled)"></span> 
+							<span class="glyphicon glyphicon-ok" style="margin-left:30px; margin-top:20px; display: inline-block; vertical-align: top;" ng-click="saveChoice(userTBE.code,userTBE.enabled,userTBE.email)"></span> 
 						</div>
 					</li>	
 				</ul>				  
@@ -69,14 +118,14 @@
 			<h4 style="margin-left:50px; margin-top:50px; display:inline-block;">
 				<b>Approved: <h5 style="margin-left:20px; display:inline-block;"> (click on <span class="glyphicon glyphicon-ok"></span> to update your choice)</h5></b>
 			</h4>
-			<fieldset style="margin-left:70px; width:300px;"> 	
+			<fieldset style="margin-left:70px; width:600px;"> 	
 				<ul style="list-style-type:none; margin-left:20px; padding-left:0px;">
 					<li ng-repeat="userA in usersApproved" ng-model="getApprovedCOrg.selection">				
 		 				<div id="switchContainer" ng-cloak>	
 		 					<md-switch ng-model="userA.enabled" style="display:inline-block; height:10px;"></md-switch>		
 							<span class="glyphicon glyphicon-user" style="margin-left:20px; margin-top:20px;display: inline-block; vertical-align: top;"></span> 
 							<h5 style="margin-top:20px; display: inline-block; vertical-align: top;"><b>{{ userA.email }}</b></h5> 	
-							<span class="glyphicon glyphicon-ok" style="margin-left:30px; margin-top:20px; display: inline-block; vertical-align: top;" ng-click="saveChoice(userA.code,userA.enabled)"></span> 
+							<span class="glyphicon glyphicon-ok" style="margin-left:30px; margin-top:20px; display: inline-block; vertical-align: top;" ng-click="saveChoice(userA.code,userA.enabled,userA.email)"></span> 
 						</div>
 					</li>	
 				</ul>				  
@@ -85,14 +134,14 @@
 			<h4 style="margin-left:50px; margin-top:50px; display:inline-block;">
 				<b>Rejected: <h5 style="margin-left:20px; display:inline-block;"> (click on <span class="glyphicon glyphicon-ok"></span> to update your choice)</h5></b>
 			</h4>
-			<fieldset style="margin-left:70px; width:300px;"> 	
+			<fieldset style="margin-left:70px; width:600px;"> 	
 				<ul style="list-style-type:none; margin-left:20px; padding-left:0px;">
 					<li ng-repeat="userR in usersRejected" ng-model="getRejectedCOrg.selection">			
 		 				<div id="switchContainer" ng-cloak>	
 							<md-switch ng-model="userR.enabled" style="display:inline-block; height:10px;"></md-switch>	
 							<span class="glyphicon glyphicon-user" style="margin-left:20px; margin-top:20px;display: inline-block; vertical-align: top;"></span> 
 							<h5 style="margin-top:20px; display: inline-block; vertical-align: top;"><b>{{ userR.email }}</b></h5> 	
-							<span class="glyphicon glyphicon-ok" style="margin-left:30px; margin-top:20px; display: inline-block; vertical-align: top;" ng-click="saveChoice(userR.code,userR.enabled)"></span> 
+							<span class="glyphicon glyphicon-ok" style="margin-left:30px; margin-top:20px; display: inline-block; vertical-align: top;" ng-click="saveChoice(userR.code,userR.enabled,userR.email)"></span> 
 						</div>
 					</li>	
 				</ul>				  
@@ -163,18 +212,65 @@
 			alert("Error on the query: getAllRejectedCulturalOperators SELECT");
 		});
 
-		$scope.saveChoice = function(userCode, isApproved){			
-			$http({
-				method : "GET",
-				url : "/updUser/"+transformInBoolean(isApproved)+"/"+userCode
-			}).then(function mySucces(response) {	
-				parent.window.updNotification();				
-				window.open("EnableCulturalOperators.html", "_self"); 			
-			}, function myError(response) {
-				alert("Error on the query: updUser UPDATE");
-			});
+		$scope.saveChoice = function(userCode, isApproved, userEmail){		
+			var modalInstance = $modal.open({
+	    		templateUrl : 'approveAccount.html',
+	    		controller : 'approveAccountCtrl',
+	    		resolve: {
+					to: function () {
+	    	          return userEmail;
+	    	        },
+					isApproved: function () {
+		  	        	return isApproved;
+		  	        },
+					userCode: function () {
+		  	        	return userCode;
+		  	        }
+				}
+	    	});
+	    	modalInstance.result.then(function() {
+	    	}, function() {
+	    	});    	
+		};		
+		
+	});
+	
+	
+	app.controller("approveAccountCtrl", function($scope, $log, $modalInstance, $rootScope, $http, to, isApproved, userCode) {
+		$scope.to = to;		
+		if(isApproved){
+			$scope.subject = "Account abilitato.";
+			$scope.message = "Ciao "+to+"\n\nIl tuo account e' stato abilitato con successo.\n\nTeam NeptisGO.";
+		}
+		else{
+			$scope.subject = "Account non abilitato.";
+			$scope.message = "Ciao "+to+"\n\nIl tuo account non e' stato abilitato in quanto non disponi dei requisiti necessari.\n\nTeam NeptisGO.";
 		}
 		
+		
+		$scope.sendEmail = function(to, subject, message){	
+			$(document).ready(function(){
+				
+				$.get("/send",{to:to,subject:subject,text:message},function(data){
+					if(data!="sent"){
+						alert("There was a problem with this abilitation, please retry.");
+						window.open("EnableCulturalOperators.html", "_self"); 		
+					}
+					else{
+						$http({
+							method : "GET",
+							url : "/updUser/"+transformInBoolean(isApproved)+"/"+userCode
+						}).then(function mySucces(response) {				
+							//parent.window.updNotification();
+							window.open("EnableCulturalOperators.html", "_self"); 		
+						}, function myError(response) {
+							alert("Error on the query: updUser UPDATE");
+						});
+					}
+				});
+			});	
+		};
+
 		function transformInBoolean (enabled){
 			if(enabled==false || enabled==null){
 				return 0;
@@ -183,5 +279,4 @@
 		}
 
 	});
-	
 </script>

@@ -4,23 +4,7 @@
 	<meta charset="ISO-8859-1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-	
-	<style>
-	table, th , td  {
-	  border: 3px solid #004d80;
-	  border-collapse: collapse;
-	  margin-left: 20px;
-	  padding: 15px;
-	  text-align: center;
-	}
-	table tr:nth-child(odd) {
-	  background-color: #c3daee;
-	}
-	table tr:nth-child(even) {
-	  background-color: #ffffff;
-	}
-	</style>
-
+	<link href="../../css/index.css" rel="stylesheet" type="text/css"/>
 </head>
 <body ng-app="GoPoleis" >
 
@@ -28,7 +12,7 @@
 				        
 		<h1 style="margin:20px;"><u>Leaderboard</u>:</h1><br><br>   
 		
-		<table style="margin-top:50px; margin-left:20px;">
+		<table style="margin-top:50px; margin-left:20px; width:{{frameWidth}}">
 			<tr style="background-color: #337AB7; color: white;">
 		    	<th>Position</th>
 		    	<th>Coins</th>
@@ -59,7 +43,8 @@
 <script>
 
 var app = angular.module('GoPoleis', []);
-app.controller('leaderboardController', function($scope, $http) {	
+app.controller('leaderboardController', function($scope, $http, $window) {	
+
 	$http({
 		method : "GET",
 		url : "/getTop10"
@@ -67,6 +52,12 @@ app.controller('leaderboardController', function($scope, $http) {
 		$scope.players  = response.data;
 	}, function myError(response) {
 		alert("Error on the query: getTop10 SELECT");
+	});
+	
+	$scope.frameWidth = ($window.innerWidth - 150) + "px";     
+	angular.element($window).bind('resize', function(){    
+		$scope.frameWidth = ($window.innerWidth - 150) + "px";
+		$scope.$digest();
 	});
 });
 

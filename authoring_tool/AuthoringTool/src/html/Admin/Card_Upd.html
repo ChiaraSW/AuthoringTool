@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+</head>
+
+<body ng-app="GoPoleis" >
+	<div class="col-sm-6" ng-controller="updCardsController">
+		
+			        
+		<h1 style="margin:20px;"><u>Update Card</u>: [{{updCard.name}}]</h1>        
+        
+        <form name="form" role="form" id="uploadCardForm" enctype="multipart/form-data" action="/upload" method="post">
+        
+        	<div class="form-group" ng-class="{ 'has-error': 	form.name.$dirty && form.name.$error.required &&
+        														form.image.$dirty && form.image.$error.required &&
+        														form.description.$dirty && form.description.$error.required &&
+        														form.cost.$dirty && form.cost.$error.required && 
+																form.cardValue.$dirty && form.cardValue.$error.required && 
+																form.destructionValue.$dirty && form.destructionValue.$error.required &&
+																form.rarity.$dirty && form.rarity.$error.required }" >
+        
+        		<fieldset style="margin-top:50px; margin-left:20px; width:750px;"> 
+        			<label for="name" style="display: inline-block; vertical-align: top; width:150px;">
+			     		Name: 
+					</label>
+        			<textarea class="form-control" ng-model="updCard.name" style="resize:none; display:inline-block; width:590px; height: 60px;" maxlength="100" required></textarea>
+				</fieldset>
+        
+        		<fieldset style="margin-top:30px; margin-left:20px; width:750px;">	 	
+			     	<label for="image" style="display:inline-block; vertical-align:center; width:150px;">
+			     		Image:  
+					</label>
+					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
+					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
+							style="display:inline-block; margin-left:50px;" ngf-max-size="2MB" />
+				</fieldset>
+        	
+		     	<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	
+			     	<label for="description" style="display: inline-block; vertical-align: top; width:150px;">
+			     		Short description:  
+					</label>
+					<textarea class="form-control" ng-model="updCard.description" style="resize:none; display:inline-block; width:590px; height: 150px;" maxlength="999" required></textarea>
+				</fieldset>		
+			     	
+				<fieldset style="margin-top:30px; margin-left:20px;width:750px;"> 		
+					<label for="cost" style="display: inline-block; vertical-align: bottom; width:150px;">
+			     		Card's cost in coins: 
+					</label>
+					<input type="number" min="1"class="form-control" ng-model="updCard.cost" style="width:160px; display: inline-block;" required>
+
+		     		<label for="cardValue" style="display: inline-block; vertical-align: bottom; width:160px; margin-left:100px;">
+			     		Card's value in coins: 
+					</label>
+					<input type="number" min="1"class="form-control" ng-model="updCard.cardValue" style="width:160px; display: inline-block;" required>	
+				</fieldset>
+
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 												
+					<label for="destructionValue" style="display: inline-block; vertical-align: bottom; width:400px;">
+			     		Coins obtained in case of destruction of a dual card: 
+					</label>
+					<input type="number" min="1"class="form-control" ng-model="updCard.destructionValue" style="width:340px; display: inline-block;" required>
+				</fieldset>	
+				
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;">   	
+			     	<label for="rarity" style="display: inline-block; vertical-align: bottom; width:150px;">
+			     		Rarity:  
+					</label>
+					<select ng-model="updCard.rarity" class="form-control" style="width:250px; display: inline-block;" required>
+						<option ng-repeat="x in rarity">{{x.name}}</option>
+					</select>
+				</fieldset>
+				
+			</div>	
+			
+			<div class="form-actions" style="margin-top:75px; margin-bottom:30px; margin-left:20px;" align="left">
+	            <button type="submit" name="btnUpdCard" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeUpdCard()">Update</button>
+	            <img ng-if="vm.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+	            <a href="Cards.html" target="_self">Cancel</a>
+	        </div>
+	        
+        </form>
+
+	</div>
+
+</body>
+</html>
+<script>
+	var app = angular.module("GoPoleis", []);
+	app.controller('updCardsController', function($scope, $http, $window, $timeout) {
+				
+		var cardCode = parent.window.getCardCode();
+
+		$scope.updCard={};
+		
+		var newImg = false;
+		var oldImgCode;
+		var type;
+		
+		$http({
+			method: 'GET',
+			url: '/getAllRarities/'
+		}).then(function successCallback(response) {	
+			$scope.rarity = response.data;		
+		}, function errorCallback(response) {
+			alert("Error on the query: getAllRarities SELECT");
+		});
+
+		$http({
+			method : "GET",
+			url : "/getCard/"+cardCode
+		}).then(function mySucces(response) {
+			var results  = response.data;	
+			if (results.length > 0){
+				$scope.updCard.name=results[0].name;
+				oldImgCode=results[0].image;
+				$scope.thumbnail = { dataUrl: results[0].path+results[0].filename };			
+				$scope.updCard.description = results[0].description;
+				$scope.updCard.cardValue = results[0].cardvalue;		
+				$scope.updCard.destructionValue = results[0].destructionvalue;	
+				$scope.updCard.cost = results[0].cost;	
+				$scope.updCard.rarity = results[0].rName;	
+			}
+		}, function myError(response) {
+			alert("Error on the query: getCard SELECT");
+		});	
+		
+		$scope.fileReaderSupported = window.FileReader != null;
+	    $scope.imgChanged = function(files){
+	        if (files != null) {
+	            var file = files[0];
+		        if ($scope.fileReaderSupported && file.type.indexOf('image') > -1) {
+		            $timeout(function() {
+		                var fileReader = new FileReader();
+		                fileReader.readAsDataURL(file);
+		                fileReader.onload = function(e) {
+		                    $timeout(function(){
+		 							$scope.thumbnail.dataUrl = e.target.result;
+		                    });
+		                }
+		            });
+		        }	        
+	    	}
+	        type = file.name.split('.')[file.name.split('.').length -1];
+	        newImg=true;
+	    };
+		
+		
+		$scope.executeUpdCard = function(){	
+		
+	    	$scope.imgCode="cards-" + Date.now();
+	    	
+	    	if(newImg==true){
+		    	//Upload image on server
+				$http({
+					method: 'POST',
+					url: '/upload'
+				}).then(function successCallback(response) {	
+				}, function errorCallback(response) {  //return an error because the upload is performed by the server
+					
+					//Query: UPDATE Image on DB
+					$http({
+						method: 'GET',
+						url: '/updImage/..%2F..%2F..%2F..%2Fimages%2Fcards%2F/' + $scope.imgCode + '.' + type +'/'+ oldImgCode
+					}).then(function successCallback(response) {								
+						updateCard();							
+					}, function errorCallback(response) {			
+						alert("Error on the query: updImage UPDATE");
+					});						
+				});
+		    	
+	    	}
+	    	else{  
+	    		//Fake POST
+	    		$http({
+					method: 'POST',
+					url: '/'
+				}).then(function successCallback(response) {	
+				}, function errorCallback(response) {  //return an error because the upload is performed by the server	    							
+					updateCard();				
+				});
+	    	}
+			
+		}
+
+		function updateCard() {
+			//Query: UPDATE Card on DB
+			$http({
+				method: 'GET',
+				url: '/updCard/'+$scope.updCard.name+'/'+oldImgCode+'/'+$scope.updCard.description+'/'+$scope.updCard.cardValue+'/'+$scope.updCard.destructionValue+'/'+$scope.updCard.cost+'/'+getRarityCode()+'/'+cardCode		
+			}).then(function successCallback(response) {	
+				window.open("Cards.html", "_self");   
+			}, function errorCallback(response) {
+				alert("Error on the query: updCard UPDATE");
+			});
+		}
+	
+		function getRarityCode(){
+			var rarityCode;
+			for (var i=0; i<$scope.rarity.length; i++) {
+				if($scope.rarity[i].name == $scope.updCard.rarity){
+					rarityCode = $scope.rarity[i].code;
+				}
+			}
+			return rarityCode;
+		}
+		
+	});
+
+</script>

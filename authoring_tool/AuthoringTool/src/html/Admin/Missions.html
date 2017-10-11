@@ -9,53 +9,54 @@
 <body ng-app="GoPoleis" >
 
 	<div class="col-sm-10" ng-controller="getMissionsController">
-		<div ng-show="getMissionPage">		
-			<h1 style="margin:20px;"><u>Missions</u></h1>
-			<fieldset style="margin-top:50px; margin-left:20px;"> 	
-	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
-		        	<span class="glyphicon glyphicon-search"></span>
-		        	Search: 
-		        </label>
-	      		<input type="text" ng-model="searchBoxMissions.title" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
-			</fieldset>	
-						
-			<fieldset style="margin-top:30px; margin-left:20px;"> 						
-				<label style="display: inline-block;">
-		     		Filter by mission type:  
-				</label>
+	
+		<h1 style="margin:20px;"><u>Missions</u></h1>
+	
+		<fieldset style="margin-top:50px; margin-left:20px;"> 	
+           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
+	        	<span class="glyphicon glyphicon-search"></span>
+	        	Search: 
+	        </label>
+      		<input type="text" ng-model="searchBoxMissions.title" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
+		</fieldset>	
 
-				<h5 style="display: inline-block; ">				
-					<span class="glyphicon glyphicon-check" ng-click="mt1()" style="margin-left: 20px;" ng-show="mt1Filter" value='mt1'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="mt1()" style="margin-left: 20px;" ng-hide="mt1Filter"></span>	    
-	     			<h5 style="display: inline-block;  margin-left: 5px;">Open Cards' Packets</h5>
-	     		
-   					<span class="glyphicon glyphicon-check" ng-click="mt2()" style="margin-left: 30px;" ng-show="mt2Filter" value='mt2'></span>
-    				<span class="glyphicon glyphicon-unchecked" ng-click="mt2()" style="margin-left: 30px;" ng-hide="mt2Filter"></span>   	
-    				<h5 style="display: inline-block;  margin-left: 5px;">Collect Card</h5>
-    					
-					<span class="glyphicon glyphicon-check" ng-click="mt3()" style="margin-left: 30px;" ng-show="mt3Filter" value='mt3'></span>
-	     			<span class="glyphicon glyphicon-unchecked" ng-click="mt3()" style="margin-left: 30px;" ng-hide="mt3Filter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Visit Cultural Heritage</h5>
-    				
-    				<span class="glyphicon glyphicon-check" ng-click="mt4()" style="margin-left: 30px;" ng-show="mt4Filter" value='mt4'></span>
-	     			<span class="glyphicon glyphicon-unchecked" ng-click="mt4()" style="margin-left: 30px;" ng-hide="mt4Filter"></span>
-	     			<h5 style="display: inline-block;  margin-left: 5px;">Collect Medal</h5>
-	     			
-	     			<span class="glyphicon glyphicon-check" ng-click="mt5()" style="margin-left: 30px;" ng-show="mt5Filter" value='mt5'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="mt5()" style="margin-left: 30px;" ng-hide="mt5Filter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Complete Path</h5>
+		<fieldset style="margin-top:30px; margin-left:20px;"> 						
+			<label style="display: inline-block;">
+	     		Filter by mission type:  
+			</label>
 
-		     		<span class="glyphicon glyphicon-check" ng-click="mt6()" style="margin-left: 30px;" ng-show="mt6Filter" value='mt6'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="mt6()" style="margin-left: 30px;" ng-hide="mt6Filter"></span>
-	     			<h5 style="display: inline-block;  margin-left: 5px;">Write Review</h5>
-        		</h5>	
-			</fieldset>
-			
-			<fieldset style="margin-top:10px; margin-left:20px;"> 		
+			<h5 style="display: inline-block; ">
+				<span class="glyphicon glyphicon-check" ng-click="mt1()" style="margin-left: 20px;" ng-show="mt1Filter" value='mt1'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="mt1()" style="margin-left: 20px;" ng-hide="mt1Filter"></span>	    
+     			<h5 style="display: inline-block;  margin-left: 5px;">Open Cards' Packets</h5>
+
+				<span class="glyphicon glyphicon-check" ng-click="mt2()" style="margin-left: 30px;" ng-show="mt2Filter" value='mt2'></span>
+   				<span class="glyphicon glyphicon-unchecked" ng-click="mt2()" style="margin-left: 30px;" ng-hide="mt2Filter"></span>   	
+   				<h5 style="display: inline-block;  margin-left: 5px;">Collect Card</h5>
+   					
+				<span class="glyphicon glyphicon-check" ng-click="mt3()" style="margin-left: 30px;" ng-show="mt3Filter" value='mt3'></span>
+     			<span class="glyphicon glyphicon-unchecked" ng-click="mt3()" style="margin-left: 30px;" ng-hide="mt3Filter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Visit Cultural Heritage</h5>
+   				
+   				<span class="glyphicon glyphicon-check" ng-click="mt4()" style="margin-left: 30px;" ng-show="mt4Filter" value='mt4'></span>
+     			<span class="glyphicon glyphicon-unchecked" ng-click="mt4()" style="margin-left: 30px;" ng-hide="mt4Filter"></span>
+     			<h5 style="display: inline-block;  margin-left: 5px;">Collect Medal</h5>
+     			
+     			<span class="glyphicon glyphicon-check" ng-click="mt5()" style="margin-left: 30px;" ng-show="mt5Filter" value='mt5'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="mt5()" style="margin-left: 30px;" ng-hide="mt5Filter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Complete Path</h5>
+
+	     		<span class="glyphicon glyphicon-check" ng-click="mt6()" style="margin-left: 30px;" ng-show="mt6Filter" value='mt6'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="mt6()" style="margin-left: 30px;" ng-hide="mt6Filter"></span>
+     			<h5 style="display: inline-block;  margin-left: 5px;">Write Review</h5>
+       		</h5>	
+		</fieldset>
+		
+		<fieldset style="margin-top:10px; margin-left:20px;"> 		
 				<label style="display: inline-block;">
 		     		Filter by granularity level:  
 				</label>
-			
+				
 				<h5 style="display: inline-block;">	
 					<span class="glyphicon glyphicon-check" ng-click="gl1()" style="margin-left: 20px;" ng-show="gl1Filter" value='gl1'></span>
 		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl1()" style="margin-left: 20px;" ng-hide="gl1Filter"></span>	  
@@ -97,7 +98,7 @@
 	       		</li>
 	        </ul>
 	        
-        </div>
+
 	</div>
 
 </body>
@@ -105,8 +106,6 @@
 <script>
 	var app = angular.module("GoPoleis", []);
 	app.controller('getMissionsController', function($scope, $http, $window) {
-		
-		$scope.getMissionPage=true;
 		
 		$scope.mt1Filter=false;
 		$scope.mt2Filter=false;

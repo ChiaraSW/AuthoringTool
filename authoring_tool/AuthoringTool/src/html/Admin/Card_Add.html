@@ -5,78 +5,78 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 </head>
+
 <body ng-app="GoPoleis" >
 
-	<div class="col-sm-10" ng-controller="addCardController">
+	<div class="col-sm-6" ng-controller="addCardController">
 				        
-		<h1 style="margin:20px;"><u>Create a Card</u>:</h1><br><br>   
+		<h1 style="margin:20px;"><u>Create a Card</u>:</h1>   
 		
 		<form name="form" role="form" id="uploadCardForm" enctype="multipart/form-data" action="/upload" method="post">     
        
-       		<div class="form-group" ng-class="{ 'has-error': form.name.$dirty && form.name.$error.required }" >
-		     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
-			     	<label for="name" style="display: inline-block; vertical-align: bottom;">
+       		<div class="form-group" ng-class="{ 'has-error': 	form.name.$dirty && form.name.$error.required &&
+       															form.image.$dirty && form.image.$error.required &&
+       															form.description.$dirty && form.description.$error.required &&
+       															form.cost.$dirty && form.cost.$error.required && 
+																form.cardValue.$dirty && form.cardValue.$error.required && 
+																form.destructionValue.$dirty && form.destructionValue.$error.required &&
+																form.rarity.$dirty && form.rarity.$error.required }" >
+       															
+		     	<fieldset style="margin-top:50px; margin-left:20px; width:750px;"> 	
+			     	<label for="name" style="display: inline-block; vertical-align: top; width:150px;">
 			     		Name: 
 					</label>
-					<input type="text" class="form-control" ng-model="addCard.name" style="width:1200px; display: inline-block;" maxlength="100" required>
+					<textarea class="form-control" ng-model="addCard.name" style="resize:none; display:inline-block; width:590px; height: 60px;" maxlength="100" required></textarea>
 				</fieldset>
-			</div>	
-				
-			<div class="form-group" ng-class="{ 'has-error': form.image.$dirty && form.image.$error.required }" >
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-					<p id="imgCode" ng-show="false" ng-model="imgCode"></p> 
-			     	<label for="image" style="display:inline-block;">
+		
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;">	
+			     	<label for="image" style="display:inline-block; vertical-align:center; width:150px;">
 			     		Image:  
 					</label>
-					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
-							style="display:inline-block; margin-left:20px;" ngf-max-size="2MB" required/>
 					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
+					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
+							style="display:inline-block; margin-left:50px;" ngf-max-size="2MB" required/>
+					
 				</fieldset>
-			</div>	
 				
-	     	<div class="form-group" ng-class="{ 'has-error': form.description.$dirty && form.description.$error.required }" >
-		     	<fieldset style="margin-top:30px; margin-left:20px;"> 	
-			     	<label for="description" style="display: inline-block; vertical-align: top;">
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	
+			     	<label for="description" style="display: inline-block; vertical-align: top; width:150px;">
 			     		Short description:  
 					</label>
-					<textarea class="form-control" ng-model="addCard.description" style="resize:none; display:inline-block; width:1117px;" maxlength="999" required></textarea>
+					<textarea class="form-control" ng-model="addCard.description" style="resize:none; display:inline-block; width:590px; height: 150px;" maxlength="999" required></textarea>
 				</fieldset>
-			</div>
-		
-			<div class="form-group" ng-class="{ 'has-error': 	form.cost.$dirty && form.cost.$error.required && 
-																form.cardValue.$dirty && form.cardValue.$error.required && 
-																form.destructionValue.$dirty && form.destructionValue.$error.required}" >
-																
-				<fieldset style="margin-top:30px; margin-left:20px;"> 				
-					<label for="cost" style="display: inline-block; vertical-align: bottom;">
+				
+				<fieldset style="margin-top:30px; margin-left:20px;width:750px;"> 	
+					<label for="cost" style="display: inline-block; vertical-align: bottom; width:150px;">
 			     		Card's cost in coins: 
 					</label>
-					<input type="number" min="1"class="form-control" ng-model="addCard.cost" style="width:140px; display: inline-block;" required>
-					
-			     	<label for="cardValue" style="display: inline-block; vertical-align: bottom; margin-left:75px;">
+					<input type="number" min="1" class="form-control" ng-model="addCard.cost" style="width:160px; display: inline-block;" required>
+				
+					<label for="cardValue" style="display: inline-block; vertical-align: bottom; width:160px; margin-left:100px;">
 			     		Card's value in coins: 
 					</label>
-					<input type="number" min="1"class="form-control" ng-model="addCard.cardValue" style="width:140px; display: inline-block;" required>
-	
-			     	<label for="destructionValue" style="display: inline-block; vertical-align: bottom; margin-left:75px;">
+					<input type="number" min="1"class="form-control" ng-model="addCard.cardValue" style="width:160px; display: inline-block;" required>				
+				</fieldset>
+				
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	
+					<label for="destructionValue" style="display: inline-block; vertical-align: bottom; width:400px;">
 			     		Coins obtained in case of destruction of a dual card: 
 					</label>
-					<input type="number" min="1"class="form-control" ng-model="addCard.destructionValue" style="width:140px; display: inline-block;" required>
+					<input type="number" min="1"class="form-control" ng-model="addCard.destructionValue" style="width:340px; display: inline-block;" required>
 				</fieldset>
-			</div>	
-		
-			<div class="form-group" ng-class="{ 'has-error': form.rarity.$dirty && form.rarity.$error.required}" >
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-			     	<label for="rarity" style="display: inline-block;">
+
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;">  	
+			     	<label for="rarity" style="display: inline-block; vertical-align: bottom; width:150px;">
 			     		Rarity:  
 					</label>
-					<select class="form-control" ng-model="addCard.rarity" name="rarity" ng-options="option as option.name for option in rarity" style="width:300px; display: inline-block;" required></select>	
+					<select class="form-control" ng-model="addCard.rarity" name="rarity" ng-options="option as option.name for option in rarity" style="width:250px; display: inline-block;" required></select>	
 				</fieldset>
+				
 			</div>	
 
-			<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
+			<div class="form-actions" style="margin-top:75px; margin-bottom:30px; margin-left:20px;" align="left">
 	            <button type="submit" name="btnAddCard" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddCard()">Create</button>
-	            <img ng-if="vm.dataLoading"/>
+	            <img ng-if="vm.dataLoading" src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
 	            <a href="Cards.html" target="_self">Cancel</a>
 	        </div>		
  

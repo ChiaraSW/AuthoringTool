@@ -10,132 +10,132 @@
 
  	<div class="col-sm-10" ng-controller="addMissionController">
 	
-		<h1 style="margin:20px;"><u>Create a Mission</u>:</h1><br><br>
+		<h1 style="margin:20px;"><u>Create a Mission</u>:</h1>
 			
 		<form name="form" role="form" id="uploadMissionForm" enctype="multipart/form-data" method="post">
 		
-			<div class="form-group" ng-class="{ 'has-error': form.title.$dirty && form.title.$error.required }" >
-		     	<fieldset style="margin-top:50px; margin-left:20px;"> 	
-			     	<label for="title" style="display: inline-block; vertical-align: bottom;">
+			<div class="form-group" ng-class="{ 'has-error':	form.title.$dirty && form.title.$error.required &&
+																form.mission.$dirty && form.mission.$error.required }" >
+		     	
+		     	<fieldset style="margin-top:50px; margin-left:20px; width:750px;"> 	
+			     	<label for="title" style="display: inline-block; vertical-align:center; width:90px;">
 			     		Title: 
 					</label>
-					<input type="text" class="form-control" ng-model="addMission.title" style="width:1209px; display: inline-block;" maxlength="100" required>
+					<input type="text" class="form-control" ng-model="addMission.title" style="width:650px; display: inline-block;" maxlength="100" required>
 				</fieldset>
-			</div>
-			
-			<div class="form-group" ng-class="{ 'has-error': form.mission.$dirty && form.mission.$error.required}" >
-																	
-				<fieldset style="margin-top:30px; margin-left:20px;"> 		
-	 				<label for="mission" style="display: inline-block;">
+		     	
+		     	<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 		
+	 				<label for="mission" style="display: inline-block; vertical-align:center; width:90px;">
 			     		Mission:  
 					</label>
-					<select class="form-control" ng-model="addMission.mission" name="mission" ng-options="option as option.name for option in missions" style="width:300px; display: inline-block;" 
+					<select class="form-control" ng-model="addMission.mission" name="mission" ng-options="option as option.name for option in missions" style="width:250px; display: inline-block;" 
 							ng-change="showParameters(addMission.mission.code)"></select>	
 				</fieldset>
-			</div>
-			
-	 		<div class="form-group" ng-class="{ 'has-error':form.region.$dirty && form.region.$error.required &&
+		     	
+			</div>  	
+		     	
+			<div class="form-group" ng-class="{ 'has-error':form.region.$dirty && form.region.$error.required &&
 															form.province.$dirty && form.province.$error.required &&
 															form.ch.$dirty && form.ch.$error.required &&
 															form.rarity.$dirty && form.rarity.$error.required && 
-	 														form.category.$dirty && form.category.$error.required}" >
-	 														
-	 			<label for="localizedDescription" style="display: inline-block; margin-top:30px; margin-left:20px;" ng-show="localizedMissionSelected">
+	 														form.category.$dirty && form.category.$error.required}" > 	
+		     	
+		     	<label for="localizedDescription" style="display: inline-block; margin-top:30px; margin-left:20px; width:750px;" ng-show="localizedMissionSelected">
 			     		Choose the granularity level of the mission. No region selected means the whole Italy.  
 				</label>	
-				<label for="rarityDescription" style="display: inline-block; margin-top:30px; margin-left:20px;" ng-show="cardMissionSelected">
+				<label for="rarityDescription" style="display: inline-block; margin-top:30px; margin-left:20px; width:750px;" ng-show="cardMissionSelected">
 			     		Choose the card rarity. No rarity selected means all the rarities.  
 				</label>		
-				<label for="categoryDescription" style="display: inline-block; margin-top:30px; margin-left:20px;" ng-show="medalMissionSelected">
+				<label for="categoryDescription" style="display: inline-block; margin-top:30px; margin-left:20px; width:750px;" ng-show="medalMissionSelected">
 			     		Choose the medal category. No category selected means all the categories.  
 				</label>	
-																	
-				<fieldset style="margin-top:30px; margin-left:20px;"> 	
-							
-					<label for="region" style="display: inline-block;" ng-show="localizedMissionSelected">
+		     	
+		     	<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	
+		     		<label for="region" style="display: inline-block;  width:90px;" ng-show="localizedMissionSelected">
 			     		Region:  
 					</label>
-					<select class="form-control" ng-model="addMission.region" ng-change="showProvince(addMission.region.name)" name="region" ng-options="option as option.name for option in regions" 
-						style="width:200px; display: inline-block;" ng-show="localizedMissionSelected"></select>	
-						
-					<label for="province" style="display: inline-block; margin-left:30px;" ng-show="regionSelected">
+		     		<select class="form-control" ng-model="addMission.region" ng-change="showProvince(addMission.region.name)" name="region" ng-options="option as option.name for option in regions" 
+						style="width:250px; display: inline-block;" ng-show="localizedMissionSelected"></select>	
+		     	
+		     		<label for="province" style="display: inline-block; width:90px; margin-left:50px;" ng-show="regionSelected">
 			     		Province:  
 					</label>
-					<select class="form-control" ng-model="addMission.province" ng-change="showCH(addMission.province.code)" name="province" ng-options="option as option.name for option in provinces" 
-						style="width:200px; display: inline-block;" ng-show="regionSelected"></select>	
-			
-					<label for="ch" style="display: inline-block; margin-left:30px;" ng-show="provinceSelected">
-			     		Cultural Heritage:  
-					</label>
-					<input name="ch" id="ch" type="text" placeholder="" ng-model="addMission.ch" style="width:523px; display: inline-block;" maxlength="100"
-									typeahead="option as option.name for option in chs | filter:$viewValue | limitTo:8" class="form-control" ng-show="provinceSelected">	
-									
-			     	<label for="rarity" style="display: inline-block;" ng-show="cardMissionSelected">
+		     		<select class="form-control" ng-model="addMission.province" ng-change="showCH(addMission.province.code)" name="province" ng-options="option as option.name for option in provinces" 
+						style="width:250px; display: inline-block;" ng-show="regionSelected"></select>	
+
+		     		<label for="rarity" style="display: inline-block; width:90px;" ng-show="cardMissionSelected">
 			     		Rarity:  
 					</label>
-					<select class="form-control" ng-model="addMission.rarity" name="rarity" ng-options="option as option.name for option in rarities"	style="width:200px; display: inline-block;" ng-show="cardMissionSelected"></select>									
+					<select class="form-control" ng-model="addMission.rarity" name="rarity" ng-options="option as option.name for option in rarities" style="width:250px; display: inline-block;" ng-show="cardMissionSelected"></select>									
 					
-			     	<label for="category" style="display: inline-block;" ng-show="medalMissionSelected">
+		     		<label for="category" style="display: inline-block; width:90px;" ng-show="medalMissionSelected">
 			     		Category:  
 					</label>
 					<select class="form-control" ng-model="addMission.category" name="category" ng-options="option as option.name for option in categories"	ng-change="showSubCategory(addMission.category.code)"
-							style="width:200px; display: inline-block;" ng-show="medalMissionSelected"></select>									
-	
-					<label for="regionalCategory" style="display: inline-block; margin-left:30px;" ng-show="rcMissionSelected">
+							style="width:250px; display: inline-block;" ng-show="medalMissionSelected"></select>	
+				</fieldset>
+				
+
+				<fieldset style="margin-top:30px; margin-left:20px; width:750px;"> 	
+					<label for="ch" style="display: inline-block; width:140px;" ng-show="provinceSelected">
+			     		Cultural Heritage:  
+					</label>
+					<input name="ch" id="ch" type="text" placeholder="" ng-model="addMission.ch" style="width:600px; display: inline-block;" maxlength="100"
+									typeahead="option as option.name for option in chs | filter:$viewValue | limitTo:8" class="form-control" ng-show="provinceSelected">	
+									
+					<label for="regionalCategory" style="display: inline-block; width:140px;" ng-show="rcMissionSelected">
 			     		Region Medal:  
 					</label>
-					<select class="form-control" ng-model="addMission.regionalCategory" name="regionalCategory" ng-options="option as option.name for option in regionalCategories"	style="width:500px; display: inline-block;" 
-							ng-show="rcMissionSelected"></select>	
-					
-					<label for="hpCategory" style="display: inline-block; margin-left:30px;" ng-show="hpMissionSelected">
+					<select class="form-control" ng-model="addMission.regionalCategory" name="regionalCategory" ng-options="option as option.name for option in regionalCategories"	style="width:600px; display: inline-block;" 
+							ng-show="rcMissionSelected"></select>					
+											
+					<label for="hpCategory" style="display: inline-block; width:190px;" ng-show="hpMissionSelected">
 			     		Historical Period Medal:  
 					</label>	
-					<input name="hp" id="hp" type="text" placeholder="" ng-model="addMission.hp" style="width:771px; display: inline-block;" maxlength="60"
+					<input name="hp" id="hp" type="text" placeholder="" ng-model="addMission.hp" style="width:550px; display: inline-block;" maxlength="60"
 									typeahead="option as option.name for option in hps | filter:$viewValue | limitTo:8" class="form-control" ng-show="hpMissionSelected">		
 									
-					<label for="tosCategory" style="display: inline-block; margin-left:30px;" ng-show="tosMissionSelected">
+					<label for="tosCategory" style="display: inline-block; width:190px;" ng-show="tosMissionSelected">
 			     		Type of Structure Medal:  
 					</label>	
-					<input name="tos" id="tos" type="text" placeholder="" ng-model="addMission.tos" style="width:767px; display: inline-block;" maxlength="60"
+					<input name="tos" id="tos" type="text" placeholder="" ng-model="addMission.tos" style="width:550px; display: inline-block;" maxlength="60"
 									typeahead="option as option.name for option in toss | filter:$viewValue | limitTo:8" class="form-control" ng-show="tosMissionSelected">								
-	
 				</fieldset>
-	
 			</div> 
 	
 	 		<div class="form-group" ng-class="{ 'has-error': form.num.$dirty && form.num.$error.required}" >																
-				<fieldset style="margin-top:40px; margin-left:20px;"> 
+				<fieldset style="margin-top:40px; margin-left:20px; width:750px;"> 
 				
-					<label for="openCP" style="display: inline-block;" ng-show="openCPSelected">
+					<label for="openCP" style="display: inline-block; width:550px;" ng-show="openCPSelected">
 			     		Number of cards' packets to open to consider completed this mission:  
 					</label>
 					
-					<label for="collectCard" style="display: inline-block;" ng-show="collectCardSelected">
+					<label for="collectCard" style="display: inline-block; width:550px;" ng-show="collectCardSelected">
 			     		Number of cards to collect to consider completed this mission:  
 					</label>
 					
-					<label for="visitCH" style="display: inline-block;" ng-show="visitCHSelected">
+					<label for="visitCH" style="display: inline-block; width:550px;" ng-show="visitCHSelected">
 			     		Number of cultural heritages to visit to consider completed this mission:  
 					</label>
 					
-					<label for="collectMedal" style="display: inline-block;" ng-show="collectMedalSelected">
+					<label for="collectMedal" style="display: inline-block; width:550px;" ng-show="collectMedalSelected">
 			     		Number of medals to collect to consider completed this mission:  
 					</label>
 					
-					<label for="completePath" style="display: inline-block;" ng-show="completePathSelected">
+					<label for="completePath" style="display: inline-block; width:550px;" ng-show="completePathSelected">
 			     		Number of paths to complete to consider completed this mission:  
 					</label>
 					
-					<label for="writeReview" style="display: inline-block;" ng-show="writeReviewSelected">
+					<label for="writeReview" style="display: inline-block; width:550px;" ng-show="writeReviewSelected">
 			     		Number of reviews to write to consider completed this mission:  
 					</label>
 					
-					<input type="number" min="1" class="form-control" ng-model="addMission.num" style="width:200px; display: inline-block;" ng-show="showNum" required>
+					<input type="number" min="1" class="form-control" ng-model="addMission.num" style="width:190px; display: inline-block;" ng-show="showNum" required>
 						
 				</fieldset>
 			</div>
 	
-	 		<div class="form-actions" style="margin-top:100px; margin-bottom:50px; margin-left:20px;">
+	 		<div class="form-actions" style="margin-top:75px; margin-bottom:30px; margin-left:20px;">
 	            <button type="submit" name="btnAddMission" ng-disabled="form.$invalid || vm.dataLoading" class="btn btn-info" ng-click="executeAddMission()">Create</button>
 	            <img ng-if="vm.dataLoading"/>
 	            <a href="Missions.html" target="_self">Cancel</a>

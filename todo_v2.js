@@ -1301,6 +1301,15 @@ function Todo(){
   			});
   		});
   	};
+
+  	this.getRegionMedalMissionByMedalCode = function(medal_code,res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT rmm.mission from (Regionmedalmission rmm) WHERE rmm.regionmedal=? ', [medal_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
   	this.addRegionMedalMission = function(mission_code, regionmedal_code, res){
   		connection.acquire(function(err,con){
@@ -1331,7 +1340,16 @@ function Todo(){
   	
 	this.getHPMedalMission = function(mission_code,res){
   		connection.acquire(function(err,con){
-  			con.query('SELECT hpmm.mission, hpm.medal as hpMedal, m.code as medalCode, m.name as medalName from (HPMedalMission hpmm, HistoricalperiodMedal hpm, Medal m) WHERE hpmm.hpmedal=hpm.medal AND hpm.medal=m.code AND hpmm.mission = ?', [mission_code], function(err,result){
+  			con.query('SELECT hpmm.mission, hpm.medal as hpMedal, m.code as medalCode, m.name as medalName from (HPMedalMission hpmm, HistoricalperiodMedal hpm, Medal m) WHERE hpmm.hpmedal=hpm.medal AND hpm.medal=m.code AND hpmm.mission = ?', [medal_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	 	
+  	this.getHPMedalMissionByMedalCode = function(medal_code,res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT hpmm.mission from (hpmedalmission hpmm) WHERE hpmm.hpmedal=? ', [medal_code], function(err,result){
   				con.release();
   				res.send(result);
   			});
@@ -1374,6 +1392,15 @@ function Todo(){
   		});
   	};
   	
+  	this.getToSMedalMissionByMedalCode = function(medal_code,res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT tosmm.mission from (tosmedalmission tosmm) WHERE tosmm.tosmedal=? ', [medal_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
   	this.addToSMedalMission = function(mission_code, tosmedal_code, res){
   		connection.acquire(function(err,con){
   			con.query('INSERT into ToSMedalMission (mission, tosmedal) value (?,?)', [mission_code, tosmedal_code], function(err,result){
@@ -1410,7 +1437,7 @@ function Todo(){
   		});
   	};
 
-  	//statistiche	
+  	//STATISTICHE DI GIOCO	
   	this.getAllCHsCountRegions = function(res){
   		connection.acquire(function(err,con){
   			con.query('SELECT r.name as name, IFNULL(COUNT(h.code), 0) as y, r.name as drilldown FROM Region as r LEFT JOIN Province as p ON r.code=p.region LEFT JOIN Heritage as h ON p.code=h.province GROUP BY r.name ORDER BY r.name', function(err,result){
@@ -1492,7 +1519,155 @@ function Todo(){
   		});
   	};
   	
-  	/*MANCANO LE STATISTICHE DI GIOCO DELLE MISSIONS*/
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	this.getAllMissionsCountGames = function(res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT mt.name, IFNULL(COUNT(mt.code), 0) as y, mt.name as drilldown FROM Mission m LEFT JOIN Missiontype as mt ON m.missiontype=mt.code GROUP BY mt.code ORDER BY mt.code', function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllLocalizedMissionsCountGranularities = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - ", gl.name) as name, IFNULL(COUNT(m.code), 0) as y, CONCAT(?, " - ", gl.name) as drilldown FROM Granularitylevel gl LEFT JOIN Mission m on gl.code=m.granularitylevel AND m.missiontype=? GROUP BY gl.code HAVING gl.code < 5 ORDER BY gl.code', [name, name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllLocalizedMissionsCountRegional = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Regional -", r.name) as name, IFNULL(COUNT(m.code), 0) as y FROM Region r LEFT JOIN Regionalmission rm ON r.code=rm.region LEFT JOIN Mission m ON rm.mission=m.code AND m.missiontype=? GROUP BY r.code ORDER BY r.code', [name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllLocalizedMissionsCountProvincialRegion = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Provincial - ", r.name) as name, IFNULL(COUNT(m.code), 0) as y, CONCAT(?, " - Provincial - ", r.name) as drilldown, r.code as region FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Provincialmission pm ON p.code=pm.province LEFT JOIN Mission m ON pm.mission=m.code AND m.missiontype=? GROUP BY r.code ORDER BY r.code', [name, name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllLocalizedMissionsCountProvincialProvince = function(name, mission_type, region_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Provincial - ", p.name) as name, IFNULL(COUNT(m.code), 0) as y FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Provincialmission pm ON p.code=pm.province LEFT JOIN Mission m ON pm.mission=m.code AND m.missiontype=? WHERE r.code=? GROUP BY p.code ORDER BY r.code', [name, mission_type, region_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllLocalizedMissionsCountCHRegion = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Heritage - ", r.name) as name, IFNULL(COUNT(m.code), 0) as y, CONCAT(?, " - Heritage - ", r.name) as drilldown, r.code as region FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Heritage h ON p.code=h.province LEFT JOIN Heritagemission hm ON h.code=hm.heritage LEFT JOIN Mission m ON hm.mission=m.code AND m.missiontype=? GROUP BY r.code ORDER BY r.code', [name, name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllLocalizedMissionsCountCHProvince = function(name, mission_type, region_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Heritage - ", p.name) as name, IFNULL(COUNT(m.code), 0) as y, CONCAT(?, " - Heritage - ", p.name) as drilldown, p.code as province FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Heritage h ON p.code=h.province LEFT JOIN Heritagemission hm ON h.code=hm.heritage LEFT JOIN Mission m ON hm.mission=m.code AND m.missiontype=? WHERE r.code=? GROUP BY p.code ORDER BY r.code', [name, name, mission_type, region_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllLocalizedMissionsCountCHCH = function(name, mission_type, province_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Heritage - ", h.name) as name, IFNULL(COUNT(m.code), 0) as y FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Heritage h ON p.code=h.province LEFT JOIN Heritagemission hm ON h.code=hm.heritage LEFT JOIN Mission m ON hm.mission=m.code AND m.missiontype=? WHERE p.code=? GROUP BY h.code ORDER BY p.code', [name, mission_type, province_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectCardMissionsCountRarities = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('(SELECT CONCAT(?," - ", gl.name) as name, IFNULL(COUNT(m.code), 0) as y, ? as drilldown FROM Granularitylevel gl LEFT JOIN Mission m ON gl.code=m.granularitylevel AND m.missiontype=? GROUP BY gl.code HAVING gl.code=1 ORDER BY gl.code) UNION (SELECT CONCAT(?," - ", r.name) as name, IFNULL(COUNT(rm.mission), 0) as y, ? as drilldown FROM Rarity r LEFT JOIN Raritymission rm ON r.code=rm.rarity GROUP BY r.code ORDER BY r.code)', [name, name, mission_type, name, name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectMedalMissionsCountGranularities = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('(SELECT CONCAT(?, " - ",gl1.name) as name, IFNULL(COUNT(m1.code), 0) as y, CONCAT(?," - ",gl1.name) as drilldown FROM Granularitylevel gl1 LEFT JOIN Mission m1 ON gl1.code=m1.granularitylevel AND m1.missiontype=? GROUP BY gl1.code HAVING gl1.code=1 ORDER BY gl1.code) UNION (SELECT CONCAT(?," - Specific ", gl2.name) as name, IFNULL(COUNT(m2.code), 0) as y, CONCAT(?," - Specific ", gl2.name) as drilldown FROM Granularitylevel gl2 LEFT JOIN Mission m2 ON gl2.code=m2.granularitylevel AND m2.missiontype=? GROUP BY gl2.code HAVING gl2.code=6 ORDER BY gl2.code) UNION (SELECT CONCAT(?," - Specific Medal") as name, IFNULL(COUNT(m3.code), 0) as y, CONCAT(?," - Specific Medal") as drilldown FROM Granularitylevel gl3 LEFT JOIN Mission m3 ON gl3.code=m3.granularitylevel AND m3.missiontype=? WHERE gl3.code=7 OR gl3.code=8 OR gl3.code=9)', [name, name, mission_type, name, name, mission_type, name, name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+
+  	this.getAllCollectMedalMissionsCountCategories = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Specific Category - ",c.name) as name, IFNULL(COUNT(cm.mission), 0) as y FROM Category c LEFT JOIN Categorymission cm ON c.code=cm.category GROUP BY c.code ORDER BY c.code ', [name, name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+
+  	this.getAllCollectMedalMissionsCountMedalCategories = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Specific Medal - ",gl.name) as name, IFNULL(COUNT(m.code), 0) as y, CONCAT(?," - Specific Medal - ",gl.name) as drilldown FROM Granularitylevel gl LEFT JOIN Mission m ON gl.code=m.granularitylevel GROUP BY gl.code HAVING gl.code=7 OR gl.code=8 OR gl.code=9 ORDER BY gl.code ', [name, name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectMedalMissionsCountMedalRegion = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Specific Medal Region - ",r.name) as name, IFNULL(COUNT(rmm.regionmedal), 0) as y FROM Region r LEFT JOIN Regionmedal rm ON r.code=rm.region LEFT JOIN Regionmedalmission rmm ON rm.medal=rmm.regionmedal GROUP BY r.code ORDER BY r.code ', [name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectMedalMissionsCountMedalHP = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Specific Medal Region - ",hp.name) as name, IFNULL(COUNT(hpmm.hpmedal), 0) as y FROM Historicalperiod hp LEFT JOIN Historicalperiodmedal hpm ON hp.code=hpm.historicalperiod LEFT JOIN hpmedalmission hpmm ON hpm.medal=hpmm.hpmedal GROUP BY hp.code ORDER BY hp.code ', [name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectMedalMissionsCountMedalToS = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - Specific Medal Region - ",s.name) as name, IFNULL(COUNT(tosm.tosmedal), 0) as y FROM Structuretype s LEFT JOIN Structuretypemedal sm ON s.code=sm.structuretype LEFT JOIN tosmedalmission tosm ON sm.medal=tosm.tosmedal GROUP BY s.code ORDER BY s.code ', [name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
 
   	this.getAllCHsVisitedRegions = function(res){
   		connection.acquire(function(err,con){
@@ -1621,38 +1796,241 @@ function Todo(){
   		});
   	};
   	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
+  	
   	/*MANCANO LE STATISTICHE USERS DELLE MISSIONS*/
+  	this.getAllMissionsCompletedGames = function(res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT mt.name as name, IFNULL(COUNT(pm.mission), 0) as y, mt.name as drilldown FROM Missiontype mt LEFT JOIN Mission m ON mt.code=m.missiontype LEFT JOIN playermission pm ON m.code=pm.mission GROUP BY mt.code ORDER BY mt.code', function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectCardMissionsCollectedRarities = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('(SELECT CONCAT(?," - ", gl.name) as name, IFNULL(COUNT(pm.player), 0) as y, CONCAT(?," - ", gl.name) as drilldown FROM Granularitylevel gl LEFT JOIN Mission m ON gl.code=m.granularitylevel AND m.missiontype=? LEFT JOIN Playermission pm ON pm.mission=m.code GROUP BY gl.code HAVING gl.code=1 ORDER BY gl.code) UNION (SELECT CONCAT(?," - ", r.name) as name, IFNULL(COUNT(pl.player), 0) as y, CONCAT(?," - ", r.name) as drilldown FROM Rarity r LEFT JOIN Raritymission rm ON r.code=rm.rarity LEFT JOIN Playermission pl ON rm.mission=pl.mission GROUP BY r.code ORDER BY r.code)', [name, name, mission_type, name, name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectCardMissionsCollectedAll = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?, " - ", gl.name, " - ", m.title) as name, IFNULL(COUNT(pm.player), 0) as y FROM Granularitylevel gl LEFT JOIN Mission m ON gl.code=m.granularitylevel AND gl.code=1 AND m.missiontype=? LEFT JOIN Playermission pm ON pm.mission=m.code GROUP BY m.code HAVING m.code is not null ORDER BY m.code', [name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+
+  	this.getAllCollectCardMissionsCollectedCommon = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Common - ", m.title) as name, IFNULL(COUNT(pl.player), 0) as y FROM Raritymission rm LEFT JOIN Playermission pl ON rm.mission=pl.mission LEFT JOIN Mission m ON pl.mission=m.code AND rm.rarity=1 GROUP BY m.code HAVING m.code is not null ORDER BY m.code', [name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	this.getAllCollectCardMissionsCollectedUncommon = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Uncommon - ", m.title) as name, IFNULL(COUNT(pl.player), 0) as y FROM Raritymission rm LEFT JOIN Playermission pl ON rm.mission=pl.mission LEFT JOIN Mission m ON pl.mission=m.code AND rm.rarity=2 GROUP BY m.code HAVING m.code is not null ORDER BY m.code', [name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	this.getAllCollectCardMissionsCollectedEpic = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Epic - ", m.title) as name, IFNULL(COUNT(pl.player), 0) as y FROM Raritymission rm LEFT JOIN Playermission pl ON rm.mission=pl.mission LEFT JOIN Mission m ON pl.mission=m.code AND rm.rarity=3 GROUP BY m.code HAVING m.code is not null ORDER BY m.code', [name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectMedalMissionsCollectedCategories = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('(SELECT CONCAT(?," - ", gl1.name) as name, IFNULL(COUNT(pl1.player), 0) as y, CONCAT(?," - ", gl1.name) as drilldown FROM Granularitylevel gl1 LEFT JOIN Mission m1 ON gl1.code=m1.granularitylevel AND m1.missiontype=? LEFT JOIN Playermission pl1 ON m1.code=pl1.mission WHERE gl1.code=1) UNION (SELECT CONCAT(?," - ", gl2.name) as name, IFNULL(COUNT(pl2.player), 0) as y, CONCAT(?," - ", gl2.name) as drilldown FROM Granularitylevel gl2 LEFT JOIN Mission m2 ON gl2.code=m2.granularitylevel AND m2.missiontype=? LEFT JOIN Playermission pl2 ON m2.code=pl2.mission WHERE gl2.code=6) UNION (SELECT CONCAT(?," - Specific Medal") as name, IFNULL(COUNT(pl3.player), 0) as y, CONCAT(?," - Specific Medal") as drilldown FROM Granularitylevel gl3 LEFT JOIN Mission m3 ON gl3.code=m3.granularitylevel AND m3.missiontype=? LEFT JOIN Playermission pl3 ON m3.code=pl3.mission WHERE gl3.code=7 OR gl3.code=8 OR gl3.code=9)', [name, name, mission_type,name, name, mission_type,name, name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectMedalMissionsCollectedAll = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - All - ", m.title) as name, IFNULL(COUNT(pm.player), 0) as y FROM mission m LEFT JOIN playermission pm ON m.code=pm.mission WHERE m.missiontype=? AND m.granularitylevel=1 group by m.code order by m.code', [name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectMedalMissionsCollectedCategory = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Category ", c.name) as name, IFNULL(COUNT(pm.player), 0) as y, CONCAT(?," - Category ", c.name) as drilldown from category c left join categorymission cm on c.code=cm.category left join Mission m on cm.mission=m.code left join playermission pm on m.code=pm.mission group by c.code order by c.code', [name, name], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	
+  	this.getAllCollectMedalMissionsCollectedSpecificCategory = function(name, category, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Category Region- ", m.title) as name, IFNULL(COUNT(pm.player), 0) as y from categorymission cm left join Mission m on cm.mission=m.code left join playermission pm on m.code=pm.mission where cm.category=? group by cm.mission order by cm.mission', [name, category], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
   	
+  	this.getAllCollectMedalMissionsCollectedSpecificMedal = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('(SELECT CONCAT(?," - Specific Medal - Region") as name, IFNULL(COUNT(pm1.player), 0) as y, CONCAT(?," - Specific Medal Region") as drilldown FROM regionmedalmission rmm left join mission m1 on rmm.mission=m1.code left join playermission pm1 on m1.code=pm1.mission) UNION (SELECT CONCAT(?," - Specific Medal - HP") as name, IFNULL(COUNT(pm2.player), 0) as y, CONCAT(?," - Specific Medal HP") as drilldown FROM hpmedalmission hpmm left join mission m2 on hpmm.mission=m2.code left join playermission pm2 on m2.code=pm2.mission) UNION (SELECT CONCAT(?," - Specific Medal - ToS") as name, IFNULL(COUNT(pm3.player), 0) as y, CONCAT(?," - Specific Medal ToS") as drilldown FROM tosmedalmission tosmm left join mission m3 on tosmm.mission=m3.code left join playermission pm3 on m3.code=pm3.mission)', [name, name, name, name, name, name], function(err,result){ 
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllCollectMedalMissionsCollectedSpecificMedalRegion = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Specific Medal - Region - ", m.title) as name, IFNULL(COUNT(pm.player), 0) as y FROM regionmedalmission rmm left join mission m on rmm.mission=m.code left join playermission pm on m.code=pm.mission group by rmm.regionmedal order by rmm.regionmedal', [name], function(err,result){  
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	this.getAllCollectMedalMissionsCollectedSpecificMedalHP = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Specific Medal - HP - ", m.title) as name, IFNULL(COUNT(pm.player), 0) as y FROM hpmedalmission hpmm left join mission m on hpmm.mission=m.code left join playermission pm on m.code=pm.mission group by hpmm.hpmedal order by hpmm.hpmedal', [name], function(err,result){  
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
+  	this.getAllCollectMedalMissionsCollectedSpecificMedalToS = function(name, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Specific Medal - ToS - ", m.title) as name, IFNULL(COUNT(pm.player), 0) as y FROM tosmedalmission tosmm left join mission m on tosmm.mission=m.code left join playermission pm on m.code=pm.mission group by tosmm.tosmedal order by tosmm.tosmedal', [name], function(err,result){  
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedGranularities = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - ", gl.name) as name, IFNULL(COUNT(pm.player), 0) as y, CONCAT(?," - ", gl.name) as drilldown FROM Granularitylevel gl LEFT JOIN Mission m on gl.code=m.granularitylevel AND m.missiontype=? LEFT JOIN Playermission pm ON m.code=pm.mission GROUP BY gl.code HAVING gl.code < 5 ORDER BY gl.code', [name, name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedAllMissions = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - All - ", m.title) as name, IFNULL(COUNT(pm.player), 0) as y FROM Mission m LEFT JOIN Playermission pm ON m.code=pm.mission WHERE m.granularitylevel=1 AND m.missiontype=? group by m.code order by m.code', [name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedRegionalRegion = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Regional - ", r.name) as name, IFNULL(COUNT(pm.player), 0) as y, CONCAT(?," - Regional - ", r.name) as drilldown FROM Region r LEFT JOIN Regionalmission rm ON r.code=rm.region LEFT JOIN Mission m ON rm.mission=m.code LEFT JOIN playermission pm ON m.code=pm.mission AND m.missiontype=? AND m.granularitylevel=2 GROUP BY r.code ORDER BY r.code', [name, name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedRegionalMission = function(name, mission_type, region_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Regional - ", r.name, " - ", m.title) as name, IFNULL(COUNT(pm.player), 0) as y FROM Region r LEFT JOIN Regionalmission rm ON r.code=rm.region LEFT JOIN Mission m ON rm.mission=m.code LEFT JOIN playermission pm ON m.code=pm.mission AND m.missiontype=? AND m.granularitylevel=2 GROUP BY r.code HAVING r.code=? ORDER BY r.code', [name, mission_type, region_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedProvincialRegion = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Provincial - ", r.name) as name, IFNULL(COUNT(plm.player), 0) as y, CONCAT(?," - Provincial - ", r.name) as drilldown, r.code as region FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Provincialmission pm ON p.code=pm.province LEFT JOIN Mission m ON pm.mission=m.code LEFT JOIN Playermission plm ON m.code=plm.mission AND m.missiontype=? AND m.granularitylevel=3 GROUP BY r.code ORDER BY r.code', [name, name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedProvincialProvince = function(name, mission_type, region_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Provincial - ", p.name) as name, IFNULL(COUNT(plm.player), 0) as y, CONCAT(?," - Provincial - ", p.name) as drilldown, p.code as province FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Provincialmission pm ON p.code=pm.province LEFT JOIN Mission m ON pm.mission=m.code LEFT JOIN Playermission plm ON m.code=plm.mission AND m.missiontype=? WHERE r.code=? GROUP BY p.code ORDER BY r.code', [name, name, mission_type, region_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedProvincialMission = function(name, mission_type, province_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Provincial - ", m.title) as name, IFNULL(COUNT(plm.player), 0) as y FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Provincialmission pm ON p.code=pm.province LEFT JOIN Mission m ON pm.mission=m.code LEFT JOIN Playermission plm ON m.code=plm.mission WHERE m.missiontype=? AND p.code=? GROUP BY m.code ORDER BY m.code', [name, mission_type, province_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedCHRegion = function(name, mission_type, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Heritage - ", r.name) as name, IFNULL(COUNT(plm.player), 0) as y, CONCAT(?," - Heritage - ", r.name) as drilldown, r.code as region FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Heritage h ON p.code=h.province LEFT JOIN Heritagemission hm ON h.code=hm.heritage LEFT JOIN Mission m ON hm.mission=m.code LEFT JOIN Playermission plm ON m.code=plm.mission AND m.missiontype=? GROUP BY r.code ORDER BY r.code', [name, name, mission_type], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedCHProvince = function(name, mission_type, region_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Heritage - ", p.name) as name, IFNULL(COUNT(plm.mission), 0) as y, CONCAT(?," - Heritage - ", p.name) as drilldown, p.code as province FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Heritage h ON p.code=h.province LEFT JOIN Heritagemission hm ON h.code=hm.heritage LEFT JOIN Mission m ON hm.mission=m.code LEFT JOIN Playermission plm ON m.code=plm.mission AND m.missiontype=? WHERE r.code=? GROUP BY p.code ORDER BY r.code', [name, name, mission_type, region_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
+  	this.getAllLocalizedMissionsCompletedCHCH = function(name, mission_type, province_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Heritage - ", h.name) as name, IFNULL(COUNT(plm.mission), 0) as y, CONCAT(?," - Heritage - ", h.name) as drilldown, h.code as ch FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Heritage h ON p.code=h.province LEFT JOIN Heritagemission hm ON h.code=hm.heritage LEFT JOIN Mission m ON hm.mission=m.code LEFT JOIN Playermission plm ON m.code=plm.mission AND m.missiontype=? WHERE p.code=? GROUP BY h.code ORDER BY p.code', [name, name, mission_type, province_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};
   	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
-  	
+  	this.getAllLocalizedMissionsCompletedCHMission = function(name, mission_type, ch_code, res){
+  		connection.acquire(function(err,con){
+  			con.query('SELECT CONCAT(?," - Heritage - ", m.title) as name, IFNULL(COUNT(plm.mission), 0) as y FROM Region r LEFT JOIN Province p ON r.code=p.region LEFT JOIN Heritage h ON p.code=h.province LEFT JOIN Heritagemission hm ON h.code=hm.heritage LEFT JOIN Mission m ON hm.mission=m.code LEFT JOIN Playermission plm ON m.code=plm.mission WHERE m.missiontype=? AND  h.code=? GROUP BY m.code ORDER BY m.code', [name, mission_type, ch_code], function(err,result){
+  				con.release();
+  				res.send(result);
+  			});
+  		});
+  	};	
+
   	this.getUser = function(user_email,res){
   		connection.acquire(function(err,con){
   			con.query('SELECT * from User WHERE email = ?', [user_email], function(err,result){

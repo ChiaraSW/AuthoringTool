@@ -1,55 +1,52 @@
-<div class="double-column" align="left">
-	
-	<div class="row" style="margin: 0px;">
-	
-		<div class="col-sm-8">
-   			
-		    <form name="form" role="form">
-		    	
-		    	<div class="row">
-		    	
-		    		<div class="col-sm-3">
-		    		
-				    	<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.CulturalHeritages" ng-click="vm.CulturalHeritages_subButtons=true; vm.getCulturalHeritages();">
-							Cultural Heritages
-						</button>	
-						<div class='sub_container' align="center" ng-show="vm.CulturalHeritages_subButtons">
-							<button id="addCH" type="button" class="btn sub-btn btn-success" ng-click="vm.addCulturalHeritage();">Add a C. Heritage</button>
-							<button id="delCH" type="button" class="btn sub-btn btn-danger" ng-click="vm.delCulturalHeritage();">Delete a C. Heritage</button>
-						</div>
+<style>
+body {
+	overflow-y:hidden;
+	overflow-x:auto;
+}
 
-   						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.CardsPackets" ng-click="vm.CulturalHeritages_subButtons=false; vm.getCardsPackets();">
-							Cards' Packets
-						</button>
-						<div class='sub_container' align="center"></div>
+</style>
 
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.DrawVA" ng-click="vm.CulturalHeritages_subButtons=false; vm.getDrawVA();">
-							Draw Validity Areas
-						</button>
-						<div class='sub_container' align="center"></div>
 
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Paths" ng-click="vm.CulturalHeritages_subButtons=false; vm.getPaths();">
-							Paths
-						</button>
-						<div class='sub_container' align="center"></div>
+<div>
+	<div class="row content">
 
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Reviews" ng-click="vm.CulturalHeritages_subButtons=false; vm.getReviews();">
-							Reviews
-						</button>
-						<div class='sub_container' align="center"></div>
-						
-			        </div>
-			        
-			        <div class="col-sm-9">			        
-				        <iframe id="mainFrame"  src="src/html/Operator/WhitePage.html" style="border: none;"></iframe>
-			        </div>
-			        
-				</div>
+		<div class="col-sm-2 text-left" style="width:300px; display: inline; vertical-align:top;">
+			<div class="collapse navbar-collapse" id="myLateralbar" >      		
+					<button type="button" class="btn btn-primary btn-lg btn-block"  ng-show="vm.CulturalHeritages" ng-click="vm.CulturalHeritages_subButtons=true; vm.getCulturalHeritages();">
+						Cultural Heritages
+					</button>	
+					<div class='sub_container' align="center" ng-show="vm.CulturalHeritages_subButtons">
+						<button id="addCH" type="button" class="btn sub-btn btn-success" ng-click="vm.addCulturalHeritage();">Add a Cultural Heritage</button>
+						<button id="delCH" type="button" class="btn sub-btn btn-danger" ng-click="vm.delCulturalHeritage();">Delete a Cultural Heritage</button>
+					</div>
+
+  						<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.CardsPackets" ng-click="vm.CulturalHeritages_subButtons=false; vm.getCardsPackets();">
+						Cards' Packets
+					</button>
+					<div class='sub_container' align="center"></div>
+
+					<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.DrawVA" ng-click="vm.CulturalHeritages_subButtons=false; vm.getDrawVA();">
+						Draw Validity Areas
+					</button>
+					<div class='sub_container' align="center"></div>
+
+					<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Paths" ng-click="vm.CulturalHeritages_subButtons=false; vm.getPaths();">
+						Paths
+					</button>
+					<div class='sub_container' align="center"></div>
+
+					<button type="button" class="btn btn-primary btn-lg btn-block" ng-show="vm.Reviews" ng-click="vm.CulturalHeritages_subButtons=false; vm.getReviews();">
+						Reviews
+					</button>
+					<div class='sub_container' align="center"></div>
+			</div>
+		</div>
 		
-		    </form>
-		    
-	    </div>
-	    
-    </div>
-    
+		<div class="col-sm-6 text-left" style="display: inline; vertical-align:top;"> 
+			<div >
+				<iframe id="mainFrame"  src="src/html/Operator/WhitePage.html" style="border: none;"></iframe>
+			</div>
+		</div>
+		
+	</div>
 </div>

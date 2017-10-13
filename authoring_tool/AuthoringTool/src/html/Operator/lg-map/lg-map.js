@@ -18,15 +18,8 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 	$scope.addCH.historicalPeriod = undefined;
 	$scope.addCH.typeOfStructure = undefined;
 	
-	$http({
-		method : "GET",
-		url : "/getAllRegions"
-	}).then(function mySucces(response) {
-		$scope.regions = response.data;
-	}, function myError(response) {
-		alert("Error on the query: getAllRegions SELECT");
-	});
-	
+	var selectedRegionName=null;
+
 	$http({
 		method : "GET",
 		url : "/getAllHistoricalPeriods"
@@ -164,7 +157,7 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 				associatedMedals++;
 				$http({
 					method: 'GET',
-					url:	'/getRegionMedalByRegionName/'+$scope.addCH.region
+					url:	'/getRegionMedalByRegionName/'+selectedRegionName
 				}).then(function successCallback(response) {	
 					if(response.data.length > 0){
 						$http({
@@ -237,7 +230,7 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 					alert("Error on the query: getToSMedalByToSCode SELECT");
 				});
 			}
-
+			canReload();	
 		}, function errorCallback(response) {
 			alert("Error on the query: addCH INSERT");
 		});
@@ -481,7 +474,8 @@ app.controller('addCHController', function($scope, $http, $window, $modal, $time
 				            current = shapeAr[id];
 
 				            zoom = paths[id].zoom;
-				            $scope.addCH.region = paths[id].name;
+				            //$scope.addCH.region = paths[id].name;
+				            selectedRegionName=paths[id].name;
 				        	$scope.addCH.latitude = null;
 				        	$scope.addCH.longitude = null;
 				        	$scope.provinces = selectedRegion(paths[id].name);				        	
@@ -622,7 +616,7 @@ app.controller("MapCtrl", function($scope, $log, $modalInstance, $rootScope, $ht
     	
     	$http({			 
 			method : "GET",
-			url : "/getOperatorCHs/user3" // NON APPENA FAI LA PARTE DEL LOGIN imposta l'email uguale a quella dell'organizzazione loggata			
+			url : "/getOperatorCHs/"+parent.window.getUsername()			
 			}).then(function mySucces(response) {
 				$scope.results  = response.data;
 				for (var i=0; i<$scope.results.length; i++){				
@@ -680,11 +674,11 @@ app.controller("MapCtrl", function($scope, $log, $modalInstance, $rootScope, $ht
 		
 	$scope.ok = function() {
 		newMarker = false;
-		$modalInstance.close();
+		$modalInstance.dismiss('cancel');
 	};
 	$scope.cancel = function() {
 		newMarker = false;
-		$modalInstance.dismiss('cancel');
+		$modalInstance.close();
 	};
 });
 

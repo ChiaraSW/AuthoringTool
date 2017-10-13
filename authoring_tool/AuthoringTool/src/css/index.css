@@ -7,7 +7,7 @@
     
 /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
 .row.content {
-	margin-top: 51px;
+	margin-top: 30px;
 	height: auto;	/*height: 876px;*/
 }
     
@@ -25,10 +25,10 @@ footer {
 }
     
 /* On small screens, set height to 'auto' for sidenav and grid */
-@media screen and (max-width: 767px) {
+@media screen { /* and max-width: 767px*/
 	.sidenav {
 		height: auto;
-		padding: 15px;
+		padding: 0px; /*padding: 15px;*/
 	}
 	.row.content {
 		height:auto;
@@ -63,23 +63,21 @@ table tr:nth-child(even) {
     padding: 10px;
 }
 
+
+
+
 body {
-    overflow-x:hidden; 
+	/*overflow-y:hidden;*/
+	/*overflow-x:hidden;*/
+	/*min-width:1280px; */
 }
 
 
 
-/* SERVONO???? */
-/*body {
-    height: 100%;
-    width: 100%;
-}
 
-.row > div {
-	height: 100%;
+div[back-img]{
+    width: 100px;
+    height: 100px;
+    color: #fff;
 }
-
-a {
-    cursor: pointer;
-}*/
 

@@ -8,9 +8,9 @@
 
 <body ng-app="GoPoleis" >
 
- 	<div class="col-sm-10" ng-controller="getDrawVAsController">
+ 	<div class="col-sm-9" ng-controller="getDrawVAsController">
 		
-		<h3 style="margin:20px; margin-top:50px"><b>Select a Cultural Heritage to add/update its validity area:</b></h3>
+		<h3 style="margin:20px;"><b>Select a Cultural Heritage to add/update its validity area:</b></h3>
 		
 		<fieldset style="margin-top:50px; margin-left:20px;"> 	
            	<label for="search" style="display: inline-block; vertical-align: bottom;" >
@@ -20,16 +20,18 @@
       		<input type="text" ng-model="searchBoxCH.name" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
         </fieldset>
         
-		<ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
-       		<li ng-repeat="ch in chs | filter:searchBoxCH" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+		<ul style="list-item-style:none; margin-left:0px; margin-top:30px; padding-left:0px; width: {{frameWidth}}">
+       		<li data-ng-repeat="ch in chs | filter:searchBoxCH" class="thumbnail col-sm-3" style=" margin:20px; padding: 10px; width:400px; cursor: pointer; background-color:#b3e0ff; border-color:#003d66" 
        			ng-model="getVAsCHs.selection" ng-value="ch.name" id="{{ch.name}}" ng-click="getDrawVA(ch.code)">	        	
-        		<h4 ch.name="selection">
-        			<img ng-src="{{ch.path}}{{ch.filename}}" style="height: 80px; width: 80px;"/>
-        			{{ ch.name }}
-        		</h4>	
+        		<h5 ch.name="selection"><b>
+        			<img ng-src="{{ch.path}}{{ch.filename}}" style="height: 80px; width: 80px; margin-right:10px; float:left; border: 1px solid #003d66; background-color: white;"/>
+        			<textarea class="form-control" ng-model="ch.name" style="resize:none; display:inline-block; width:285px; height: 80px; background-color: white; cursor: pointer; border-color:#003d66" ng-readonly="true" >
+        				{{ ch.name }}
+        			</textarea></b>
+        		</h5>	
        		</li>
         </ul>
-        
+
 	</div> 
 
 </body>
@@ -38,9 +40,15 @@
 var app = angular.module("GoPoleis", []);
 app.controller('getDrawVAsController', function($scope, $http, $window) {
 
+	$scope.frameWidth = ($window.innerWidth - 35) + "px";     
+	angular.element($window).bind('resize', function(){    
+		$scope.frameWidth = ($window.innerWidth - 35) + "px";
+		$scope.$digest();
+	});
+	
 	$http({
 		method : "GET",
-		url : "/getOperatorCHs/user3"				//MODIFICARE --> devi fare la get dello user loggato e metterla al posto di user3!!!
+		url : "/getOperatorCHs/"+parent.window.getUsername()
 	}).then(function mySucces(response) {
 		$scope.chs  = response.data;
 	}, function myError(response) {
@@ -51,6 +59,6 @@ app.controller('getDrawVAsController', function($scope, $http, $window) {
 		parent.window.setCode(chCode);
 		window.open("DrawValidityArea_VAs.html", "_self"); 
 	}
-	
+
 });
 </script>

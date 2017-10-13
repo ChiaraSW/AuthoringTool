@@ -20,7 +20,7 @@
       		<input type="text" ng-model="searchBoxMissions.title" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
 		</fieldset>	
 
-		<fieldset style="margin-top:30px; margin-left:20px;"> 						
+		<fieldset style="margin-top:30px; margin-left:20px; width:1300px;"> 						
 			<label style="display: inline-block;">
 	     		Filter by mission type:  
 			</label>
@@ -52,52 +52,51 @@
        		</h5>	
 		</fieldset>
 		
-		<fieldset style="margin-top:10px; margin-left:20px;"> 		
-				<label style="display: inline-block;">
-		     		Filter by granularity level:  
-				</label>
-				
-				<h5 style="display: inline-block;">	
-					<span class="glyphicon glyphicon-check" ng-click="gl1()" style="margin-left: 20px;" ng-show="gl1Filter" value='gl1'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl1()" style="margin-left: 20px;" ng-hide="gl1Filter"></span>	  
-		     		<h5 style="display: inline-block;  margin-left: 5px;">National/Whole collection</h5>
-		     		   		
-		     		<span class="glyphicon glyphicon-check" ng-click="gl2()" style="margin-left: 30px;" ng-show="gl2Filter" value='gl2'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl2()" style="margin-left: 30px;" ng-hide="gl2Filter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Regional</h5>
-		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="gl3()" style="margin-left: 30px;" ng-show="gl3Filter" value='gl3'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl3()" style="margin-left: 30px;" ng-hide="gl3Filter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Provincial</h5>
-		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="gl4()" style="margin-left: 30px;" ng-show="gl4Filter" value='gl4'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl4()" style="margin-left: 30px;" ng-hide="gl4Filter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Cultural Heritage</h5>
-		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="gl5()" style="margin-left: 30px;" ng-show="gl5Filter" value='gl5'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl5()" style="margin-left: 30px;" ng-hide="gl5Filter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Specific Rarity</h5>
-		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="gl6()" style="margin-left: 30px;" ng-show="gl6Filter" value='gl6'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl6()" style="margin-left: 30px;" ng-hide="gl6Filter"></span>
-		     		<h5 style="display: inline-block;  margin-left: 5px;">Specific Category</h5>
-		     		
-		     		<span class="glyphicon glyphicon-check" ng-click="gl7()" style="margin-left: 30px;" ng-show="gl7Filter" value='gl7'></span>
-		     		<span class="glyphicon glyphicon-unchecked" ng-click="gl7()" style="margin-left: 30px;" ng-hide="gl7Filter"></span>
-					<h5 style="display: inline-block;  margin-left: 5px;">Specific Medal</h5>
-				</h5>
-			</fieldset>
+		<fieldset style="margin-top:10px; margin-left:20px; width:1300px;"> 		
+			<label style="display: inline-block;">
+	     		Filter by granularity level:  
+			</label>
 			
-			<ul style="list-item-style:circle; margin-top:30px; margin-left:40px; padding-left:0px;">
-	       		<li data-ng-repeat="mission in missions | filter:searchBoxMissions | missiontype:filterMT | granularitylevel:filterGL" ng-model="getAllMissions.selection">	        	
-	        		<h4 mission.name="selection" style="display: inline-block;  margin-left: 10px;">
-	        			<span class="glyphicon glyphicon-pencil" ng-click="updMission(mission.code)"></span> 
-	        			<span class="glyphicon glyphicon-trash" ng-click="delMission(mission.code)"></span>  
-	        			<h4 style="display: inline-block;  margin-left: 30px;"><b> [#Completions: {{ mission.completions }} ] {{ mission.title }}</b></h4>
-	        		</h4>	
-	       		</li>
-	        </ul>
-	        
+			<h5 style="display: inline-block;">	
+				<span class="glyphicon glyphicon-check" ng-click="gl1()" style="margin-left: 20px;" ng-show="gl1Filter" value='gl1'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="gl1()" style="margin-left: 20px;" ng-hide="gl1Filter"></span>	  
+	     		<h5 style="display: inline-block;  margin-left: 5px;">National/Whole collection</h5>
+	     		   		
+	     		<span class="glyphicon glyphicon-check" ng-click="gl2()" style="margin-left: 30px;" ng-show="gl2Filter" value='gl2'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="gl2()" style="margin-left: 30px;" ng-hide="gl2Filter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Regional</h5>
+	     		
+	     		<span class="glyphicon glyphicon-check" ng-click="gl3()" style="margin-left: 30px;" ng-show="gl3Filter" value='gl3'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="gl3()" style="margin-left: 30px;" ng-hide="gl3Filter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Provincial</h5>
+	     		
+	     		<span class="glyphicon glyphicon-check" ng-click="gl4()" style="margin-left: 30px;" ng-show="gl4Filter" value='gl4'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="gl4()" style="margin-left: 30px;" ng-hide="gl4Filter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Cultural Heritage</h5>
+	     		
+	     		<span class="glyphicon glyphicon-check" ng-click="gl5()" style="margin-left: 30px;" ng-show="gl5Filter" value='gl5'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="gl5()" style="margin-left: 30px;" ng-hide="gl5Filter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Specific Rarity</h5>
+	     		
+	     		<span class="glyphicon glyphicon-check" ng-click="gl6()" style="margin-left: 30px;" ng-show="gl6Filter" value='gl6'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="gl6()" style="margin-left: 30px;" ng-hide="gl6Filter"></span>
+	     		<h5 style="display: inline-block;  margin-left: 5px;">Specific Category</h5>
+	     		
+	     		<span class="glyphicon glyphicon-check" ng-click="gl7()" style="margin-left: 30px;" ng-show="gl7Filter" value='gl7'></span>
+	     		<span class="glyphicon glyphicon-unchecked" ng-click="gl7()" style="margin-left: 30px;" ng-hide="gl7Filter"></span>
+				<h5 style="display: inline-block;  margin-left: 5px;">Specific Medal</h5>
+			</h5>
+		</fieldset>
+		
+		<ul style="list-item-style:circle; margin-top:30px; margin-left:40px; padding-left:0px; width:1300px;">
+       		<li data-ng-repeat="mission in missions | filter:searchBoxMissions | missiontype:filterMT | granularitylevel:filterGL" ng-model="getAllMissions.selection">	        	
+        		<h5 mission.name="selection" style="display: inline-block;  margin-left: 10px;">
+        			<span class="glyphicon glyphicon-pencil" ng-click="updMission(mission.code)"></span> 
+        			<span class="glyphicon glyphicon-trash" ng-click="delMission(mission.code)"></span>  
+        			<h5 style="display: inline-block;  margin-left: 30px; "><b> [#Completions: {{ mission.completions }} ] {{ mission.title }}</b></h5>
+        		</h5>	
+       		</li>
+        </ul>
 
 	</div>
 

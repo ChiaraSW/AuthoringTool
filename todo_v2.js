@@ -2033,7 +2033,7 @@ function Todo(){
 
   	this.getUser = function(user_email,res){
   		connection.acquire(function(err,con){
-  			con.query('SELECT * from User WHERE email = ?', [user_email], function(err,result){
+  			con.query('SELECT u.code, u.email, u.password, u.enabled, u.role, utenti.code as codeNellaTabellaDelRuolo FROM (((SELECT code, user FROM Admin) UNION (SELECT code, user FROM Operator) UNION (SELECT code, user FROM Organization)) as utenti, User u) WHERE utenti.user=u.code AND u.email=?', [user_email], function(err,result){
   				con.release();
   				res.send(result);
   			});

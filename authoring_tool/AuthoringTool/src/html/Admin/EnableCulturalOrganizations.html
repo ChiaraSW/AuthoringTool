@@ -41,57 +41,57 @@
 </head>
 <body ng-app="GoPoleis" >
 
-			<script type="text/ng-template" id="approveAccount.html">
-        		<div class="modal-content">		
-					<div class="modal-body">
+	<script type="text/ng-template" id="approveAccount.html">
+		<div class="modal-content">		
+			<div class="modal-body">
 
-						<form name="form" role="form">
+				<form name="form" role="form">
 
-							<div class="form-group" ng-class="{ 'has-error': 	form.to.$dirty && form.to.$error.required &&
-																				form.subject.$dirty && form.subject.$error.required &&
-																				form.message.$dirty && form.message.$error.required }" >
+					<div class="form-group" ng-class="{ 'has-error': 	form.to.$dirty && form.to.$error.required &&
+																		form.subject.$dirty && form.subject.$error.required &&
+																		form.message.$dirty && form.message.$error.required }" >
 
-								<fieldset> 	
-		     						<h2 for="title" style="display: inline-block;">
-		     							Send a response e-mail.  
-									</h2>
-									<hr>
-								</fieldset>
+						<fieldset> 	
+		     				<h2 for="title" style="display: inline-block;">
+		     					Send a response e-mail.  
+							</h2>
+							<hr>
+						</fieldset>
 
-								<fieldset style="margin-top:15px;"> 	
-		     						<label for="to" style="display: inline-block; vertical-align: bottom; width:80px;">
-		     							To: 
-									</label>
-									<input type="text" class="form-control" ng-model="to" style="width:460px; display: inline-block;" maxlength="50" ng-readonly="true" required>
-								</fieldset>
+						<fieldset style="margin-top:15px;"> 	
+		     				<label for="to" style="display: inline-block; vertical-align: bottom; width:80px;">
+		     					To: 
+							</label>
+							<input type="text" class="form-control" ng-model="to" style="width:460px; display: inline-block;" maxlength="50" ng-readonly="true" required>
+						</fieldset>
 
-								<fieldset style="margin-top:10px;"> 	
-		     						<label for="subject" style="display: inline-block; vertical-align: bottom; width:80px;">
-		     							Subject: 
-									</label>
-									<input type="text" class="form-control" ng-model="subject" style="width:460px; display: inline-block;" maxlength="50" required>
-								</fieldset>
+						<fieldset style="margin-top:10px;"> 	
+		     				<label for="subject" style="display: inline-block; vertical-align: bottom; width:80px;">
+		     					Subject: 
+							</label>
+							<input type="text" class="form-control" ng-model="subject" style="width:460px; display: inline-block;" maxlength="50" required>
+						</fieldset>
 
-								<fieldset style="margin-top:10px;"> 	
-			     					<label for="message" style="display: inline-block; vertical-align: top; width:80px;">
-			     						Message:  
-									</label>
-									<textarea class="form-control" ng-model="message" style="resize:none; display:inline-block; width:460px; height: 175px;" maxlength="200" required></textarea>
-								</fieldset>
+						<fieldset style="margin-top:10px;"> 	
+			     			<label for="message" style="display: inline-block; vertical-align: top; width:80px;">
+			     				Message:  
+							</label>
+							<textarea class="form-control" ng-model="message" style="resize:none; display:inline-block; width:460px; height: 175px;" maxlength="200" required></textarea>
+						</fieldset>
 
-								<fieldset style="margin: 30px 0px 0px 0px;"> 		     
-									<button type="submit" class="btn btn-primary pull-right" ng-disabled="form.$invalid" ng-click="sendEmail(to, subject, message)" style="width:100px;  margin-right:10px;">Send</button>			
-								</fieldset>
-
-							</div>
-
-						</form>
+						<fieldset style="margin: 30px 0px 0px 0px;"> 		     
+							<button type="submit" class="btn btn-primary pull-right" ng-disabled="form.$invalid" ng-click="sendEmail(to, subject, message)" style="width:100px;  margin-right:10px;">Send</button>			
+						</fieldset>
 
 					</div>
-				</div> 
-			</script>
 
-	<div class="col-sm-6" ng-controller="enableCOrgController">
+				</form>
+
+			</div>
+		</div> 
+	</script>
+
+	<div class="col-sm-9" ng-controller="enableCOrgController">
 		
 		<div class="form-group">
 			<h1 style="margin:20px;"><u>Cultural Organizations</u></h1>
@@ -251,7 +251,7 @@
 				$.get("/send",{to:to,subject:subject,text:message},function(data){
 					$http({
 						method : "GET",
-						url : "/updCulturalOrganization/"+parent.window.getUserCode()+"/"+userCode
+						url : "/updCulturalOrganization/"+parent.window.getUserCodeNellaTabellaDelRuolo()+"/"+userCode
 					}).then(function mySucces(response) {
 
 						$http({

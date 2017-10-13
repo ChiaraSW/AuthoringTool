@@ -39,12 +39,12 @@
 			</h5>	
         </fieldset>
         
-        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: {{frameWidth}}">
-       		<li data-ng-repeat="card in cards | filter:searchBoxCards | rarity:filterRarity" class="thumbnail col-sm-3" style=" margin:20px; padding: 10px; width:400px; cursor: pointer;" 
+        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width:{{frameWidth}};">
+       		<li data-ng-repeat="card in cards | filter:searchBoxCards | rarity:filterRarity" class="thumbnail col-sm-3" style=" margin:20px; padding: 10px; width:400px; cursor: pointer; background-color:#b3e0ff; border-color:#003d66" 
        			ng-model="getAllCards.selection" ng-value="card.name" id="{{card.name}}" ng-click="updCard(card.code)">	        	
         		<h5 card.name="selection"><b>
-        			<img ng-src="{{card.path}}{{card.filename}}" style="height: 80px; width: 80px; margin-right:10px; float:left;"/>
-        			<textarea class="form-control" ng-model="card.name" style="resize:none; display:inline-block; width:285px; height: 80px; background-color: white; cursor: pointer;" ng-readonly="true" >{{ card.name }}
+        			<img ng-src="{{card.path}}{{card.filename}}" style="height: 80px; width: 80px; margin-right:10px; float:left; border: 1px solid #003d66; background-color: white;"/>
+        			<textarea class="form-control" ng-model="card.name" style="resize:none; display:inline-block; width:285px; height: 80px; background-color: white; cursor: pointer; border-color:#003d66" ng-readonly="true" >{{ card.name }}
         			</textarea></b>     			
         		</h5>	
        		</li>

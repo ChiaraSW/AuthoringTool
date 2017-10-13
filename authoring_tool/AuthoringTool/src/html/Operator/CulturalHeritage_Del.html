@@ -8,58 +8,71 @@
 
 <body ng-app="GoPoleis" >
 
-	 <div class="col-sm-10" ng-controller="delCHController">
-		<div>
-			<h1 style="margin:20px;"><u>Cultural Heritages</u></h1>
-			<fieldset style="margin-top:50px; margin-left:20px;""> 	
-	           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
-		        	<span class="glyphicon glyphicon-search"></span>
-		        	Search: 
-		        </label>
-	      		<input type="text" ng-model="searchBoxCHs.name" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
-	        </fieldset>
-	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
-	       		<li ng-repeat="ch in chs | filter:searchBoxCHs" class="thumbnail col-sm-3" style=" margin:20px; padding: 15px; width:450px; text-align:left;" 
-	       			ng-model="getOperatorCHs.selection" ng-value="ch.name" id="{{ch.name}}">	
-	       			<span class="glyphicon glyphicon-trash" style="float:right;" ng-click="delCH(ch.code)"></span>        	
-	        		<h4 ch.name="selection">
-	        			<img ng-src="{{ch.path}}{{ch.filename}}" style="height: 80px; width: 80px;"/>
-	        			{{ ch.name }}
-	        		</h4>	
-	       		</li>
-	        </ul>
-        </div>
+	 <div class="col-sm-9" ng-controller="delCHController">
+
+		<h1 style="margin:20px;"><u>Cultural Heritages</u></h1>
+		
+		<fieldset style="margin-top:50px; margin-left:20px;"> 	
+           	<label for="search" style="display: inline-block; vertical-align: bottom;" >
+	        	<span class="glyphicon glyphicon-search"></span>
+	        	Search: 
+	        </label>
+      		<input type="text" ng-model="searchBoxCHs.name" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
+        </fieldset>
+        
+        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: {{frameWidth}}">
+       		<li data-ng-repeat="ch in chs | filter:searchBoxCHs" class="thumbnail col-sm-3" style=" margin:20px; padding: 10px; width:400px; cursor: pointer; background-color:#b3e0ff; border-color:#003d66" 
+       			ng-model="getOperatorCHs.selection" ng-value="ch.name" id="{{ch.name}}">	
+       			<span class="glyphicon glyphicon-trash" style="float:right;" ng-click="delCH(ch.code)"></span>    
+       			
+       			    	
+        		<h5 ch.name="selection" style="margin-top:25px"><b>
+        			<img ng-src="{{ch.path}}{{ch.filename}}" style="height: 80px; width: 80px; margin-right:10px; float:left; border: 1px solid #003d66; background-color: white;"/>
+        			<textarea class="form-control" ng-model="ch.name" style="resize:none; display:inline-block; width:285px; height: 80px; background-color:white; cursor:pointer; border-color:#003d66" ng-readonly="true" >
+        				{{ ch.name }}
+        			</textarea></b>
+        		</h5>	
+       			
+       		</li>
+        </ul>
+
 
 	</div> 
 
 </body>
 </html>
 <script>
-	var app = angular.module("GoPoleis", []);
-	app.controller('delCHController', function($scope, $http, $window) {
+var app = angular.module("GoPoleis", []);
+app.controller('delCHController', function($scope, $http, $window) {
 
-		$http({
-			method : "GET",
-			url : "/getOperatorCHs/user3"					//DA MODIFICARE!!!
-		}).then(function mySucces(response) {
-			$scope.chs  = response.data;
-		}, function myError(response) {
-			alert("Error on the query: getOperatorCHs SELECT");
-		});
-			
-		$scope.delCH = function (chCode) {
-        	if ($window.confirm("Are you sure you want to delete this Cultural Heritage?")) {
- 				$http({
- 					method : "GET",
- 					url : "/delCH/"+chCode
-				}).then(function mySucces(response) { 
- 					alert("Successful delete");
- 					window.open("CulturalHeritages.html", "_self"); 
- 				}, function myError(response) {
- 					alert("Error on the query: delCH DELETE");
- 				});
-			} 
-		}	
-			
+	$scope.frameWidth = ($window.innerWidth - 35) + "px";     
+	angular.element($window).bind('resize', function(){    
+		$scope.frameWidth = ($window.innerWidth - 35) + "px";
+		$scope.$digest();
 	});
+	
+	$http({
+		method : "GET",
+		url : "/getOperatorCHs/"+parent.window.getUsername()
+	}).then(function mySucces(response) {
+		$scope.chs  = response.data;
+	}, function myError(response) {
+		alert("Error on the query: getOperatorCHs SELECT");
+	});
+		
+	$scope.delCH = function (chCode) {
+       	if ($window.confirm("Are you sure you want to delete this Cultural Heritage?")) {
+			$http({
+				method : "GET",
+				url : "/delCH/"+chCode
+			}).then(function mySucces(response) { 
+				alert("Successful delete");
+				window.open("CulturalHeritages.html", "_self"); 
+			}, function myError(response) {
+				alert("Error on the query: delCH DELETE");
+			});
+		} 
+	}	
+
+});
 </script>

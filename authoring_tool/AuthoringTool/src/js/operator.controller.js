@@ -10,15 +10,13 @@
     	
     	var loggedInRole=UserService.getUser().role;
     	if(loggedInRole=='operator'){
-    		   	
-    		document.getElementById('mainFrame').width = ($window.innerWidth * 0.9) + "px";
-    		document.getElementById('mainFrame').height = ($window.innerHeight - 70) + "px";
-    		$($window).resize(function(){
-			    $rootScope.$apply(function(){
-			    	document.getElementById('mainFrame').width = ($window.innerWidth * 0.9) + "px";
-		    		document.getElementById('mainFrame').height = ($window.innerHeight - 70) + "px";
+
+    		setWidthAndHeight();				//per settare le dimensioni dell'iFrame in base alla dimensione della finestra
+    		$($window).resize(function(){		//per settare le dimensioni dell'iFrame in base alla ridimensionamento della finestra
+    			$rootScope.$apply(function(){	   			
+    				setWidthAndHeight();
 			    });
-			});
+    		});
     		
 	    	$rootScope.logged = true;
 	    	$rootScope.showNotification = false;
@@ -62,9 +60,20 @@
 				document.getElementById('mainFrame').src = "src/html/Operator/Reviews_CHs.html";	
 			}
 			
+			$window.getUsername = function (){
+	    		return $rootScope.username;
+	    	}
+			
+			$window.getUserCode = function (){
+	    		return UserService.getUser().code;
+	    	}
+			
+			$window.getUserCodeNellaTabellaDelRuolo = function (){
+	    		return UserService.getUser().codeNellaTabellaDelRuolo;
+	    	}
+			
 			$window.setCode = function (chCode){
 				code = chCode;
-				$scope.$apply();
 	    	}
 			$window.getCode = function (){
 				return code;
@@ -82,6 +91,22 @@
     		$location.path('/'+loggedInRole);		
     	}
 			
+    	function setWidthAndHeight(){
+    		if($window.innerWidth > 1024){
+				document.getElementById('mainFrame').height = ($window.innerHeight- 81) + "px";		
+				document.getElementById('mainFrame').width = ($window.innerWidth - 315) + "px";
+			}
+			else{ 
+				if($window.innerWidth >= 768){
+					document.getElementById('mainFrame').height = ($window.innerHeight- 95) + "px";		
+			    	document.getElementById('mainFrame').width = "950px"; 
+				}
+				else{
+					document.getElementById('mainFrame').width = "855px"; 
+					document.getElementById('mainFrame').height = ($window.innerHeight- 115) + "px";		
+				}
+			}
+		}
 			
 		/* NON BUTTARE (prendo il valore di un determinato campo del frame)!!!
 		document.getElementById('mainFrame').src = "src/html/Operator/Game1_SiteInformation.html";		

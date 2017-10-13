@@ -44,12 +44,14 @@
 	        </fieldset>
 	        
 	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: {{frameWidth}}">
-	       		<li data-ng-repeat="medal in medals | filter:searchBoxMedals | category:filterCategory" class="thumbnail col-sm-3" style=" margin:20px; padding: 10px; width:400px; cursor: pointer;" 
+	       		<li data-ng-repeat="medal in medals | filter:searchBoxMedals | category:filterCategory" class="thumbnail col-sm-3" style=" margin:20px; padding: 10px; width:400px; cursor: pointer; background-color:#b3e0ff; border-color:#003d66" 
 	       			ng-model="getAllMedals.selection" ng-value="medal.name" id="{{medal.name}}">	
 	       			<span class="glyphicon glyphicon-trash" style="float:right;" ng-click="delMedal(medal.code, medal.image, medal.cCode)"></span>        	
 	        		<h5 medal.name="selection" style="margin-top:25px"><b>
-	        			<img ng-src="{{medal.path}}{{medal.filename}}" style="height: 80px; width: 80px; margin-right:10px; float:left;"/>
-	        			<textarea class="form-control" ng-model="medal.name" style="resize:none; display:inline-block; width:285px; height: 80px; background-color:white; cursor:pointer;" ng-readonly="true" >{{ medal.name }}</textarea></b>
+	        			<img ng-src="{{medal.path}}{{medal.filename}}" style="height: 80px; width: 80px; margin-right:10px; float:left; border: 1px solid #003d66; background-color: white;"/>
+	        			<textarea class="form-control" ng-model="medal.name" style="resize:none; display:inline-block; width:285px; height: 80px; background-color:white; cursor:pointer; border-color:#003d66" ng-readonly="true" >
+	        				{{ medal.name }}
+	        			</textarea></b>
 	        		</h5>	
 	       		</li>
 	        </ul>

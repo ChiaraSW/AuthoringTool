@@ -860,7 +860,7 @@ module.exports = {
 			app.get('/getUser/:user_email',function(req,res){
 				todo.getUser(req.params.user_email,res);
 			});
-			
+
 			app.get('/addUser/:user_code/:user_email/:user_password/:user_role', function(req,res){
 				todo.addUser(req.params.user_code,req.params.user_email,req.params.user_password,req.params.user_role,res);
 			});

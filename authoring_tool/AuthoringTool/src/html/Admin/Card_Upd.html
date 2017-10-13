@@ -33,7 +33,7 @@
 			     	<label for="image" style="display:inline-block; vertical-align:center; width:150px;">
 			     		Image:  
 					</label>
-					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; heigth:200px; border: 1px solid black;"/>
+					<img ng-src="{{ thumbnail.dataUrl }}" style="width:200px; height:200px; border: 1px solid black;"/>
 					<input type="file" name={{imgCode}} onchange="angular.element(this).scope().imgChanged(this.files)" ngf-pattern="'image/*'" accept="image/*" 
 							style="display:inline-block; margin-left:50px;" ngf-max-size="2MB" />
 				</fieldset>

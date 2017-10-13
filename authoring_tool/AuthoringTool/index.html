@@ -24,13 +24,23 @@
 	<nav class="navbar navbar-inverse navbar-fixed-top" style="background-color:#003d66;">
 		<div class="container-fluid ">
 			<div class="navbar-header">
-				<img class="navbar-brand" src="../images/icons/logo.png" style="width: 50px; height: 50px; padding:5px; ">				
+			
+ 				<button type="button" class="navbar-toggle pull-left" data-toggle="collapse" data-target="#myLateralbar" ng-show="logged">
+		        	<span class="icon-bar"></span>
+		        	<span class="icon-bar"></span> 
+		        	<span class="icon-bar"></span>                        
+	      		</button>
+
+				<img class="navbar-brand" src="../images/icons/logo.png" style="width: 50px; height: 50px; padding:5px; ">	
+							
 	      		<a class="navbar-brand" style="color: white; cursor: default; pointer-events: none;">GoPoleis</a>
-	      		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+	      		
+	      		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar" ng-show="logged">
 		        	<span class="icon-bar"></span>
 		        	<span class="icon-bar"></span>   
 		        	<span class="icon-bar"></span>                        
 	      		</button>
+	      		
 	    	</div>
 	    	<div class="collapse navbar-collapse" id="myNavbar">
 	     		<ul class="nav navbar-nav navbar-right" ng-show="logged">
@@ -46,8 +56,8 @@
 		<div class="row content">
 <!--			<div class="col-sm-1 sidenav">
 			</div> -->
-			<div class="col-sm-12 text-left" > 
-				<div style="width: 100%;" align="center">
+			<div class="col-sm-12 text-left"> 
+				<div>
 				    <div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }" ng-if="flash" ng-bind="flash.message"></div>
 	                <div ng-view></div>
 				</div>

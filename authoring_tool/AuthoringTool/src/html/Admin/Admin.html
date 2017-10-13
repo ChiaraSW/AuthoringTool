@@ -1,68 +1,64 @@
-<div class="double-column" align="left">
-	
-	<div class="row" style="margin: 0px;">
-	
-		<div class="col-sm-8">
-   			
-		    <form name="form" role="form">
-		    	
-		    	<div class="row">
-		    	
-		    		<div class="col-sm-3">
+<style>
+body {
+	overflow-y:hidden;
+	overflow-x:auto;
+}
+</style>
 
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=true; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getMedals();">
-							Medals
-						</button>	
-						<div class='sub_container' align="center" ng-show="vm.Medals_subButtons">
-							<button id="addMedal" type="button" class="btn sub-btn btn-success" ng-click="vm.addMedal();">Add a Medal</button>
-							<button id="delMedal" type="button" class="btn sub-btn btn-danger" ng-click="vm.delMedal();">Delete a Medal</button>
-						</div>
-						
-						
-						<button type="button" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=true; vm.Missions_subButtons=false; vm.getCards();">
-							Cards
-						</button>
-						<div class='sub_container' align="center" ng-show="vm.Cards_subButtons">
-							<button id="addCard" type="button" class="btn sub-btn btn-success" ng-click="vm.addCard();">Add a Card</button>
-							<button id="delCard" type="button" class="btn sub-btn btn-danger" ng-click="vm.delCard();">Delete a Card</button>
-						</div>
-						
-						
-						<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=true; vm.getMissions();">
-							Missions
-						</button>
-						<div class='sub_container' align="center" ng-show="vm.Missions_subButtons">
-							<button id="addMission" type="button" class="btn sub-btn btn-success" ng-click="vm.addMission();">Add a Mission</button>
-						</div>
+<div>
+	<div class="row content">
+
+		<div class="col-sm-2 text-left" style="width:300px; display: inline; vertical-align:top;">
+			<div class="collapse navbar-collapse" id="myLateralbar" >      		
+					<button type="button" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=true; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getMedals();">
+						Medals
+					</button>	
+					<div class='sub_container' align="center" ng-show="vm.Medals_subButtons">
+						<button id="addMedal" type="button" class="btn sub-btn btn-success" ng-click="vm.addMedal();">Add a Medal</button>
+						<button id="delMedal" type="button" class="btn sub-btn btn-danger" ng-click="vm.delMedal();">Delete a Medal</button>
+					</div>
+					
+					
+					<button type="button" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=true; vm.Missions_subButtons=false; vm.getCards();">
+						Cards
+					</button>
+					<div class='sub_container' align="center" ng-show="vm.Cards_subButtons">
+						<button id="addCard" type="button" class="btn sub-btn btn-success" ng-click="vm.addCard();">Add a Card</button>
+						<button id="delCard" type="button" class="btn sub-btn btn-danger" ng-click="vm.delCard();">Delete a Card</button>
+					</div>
+					
+					
+					<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=true; vm.getMissions();">
+						Missions
+					</button>
+					<div class='sub_container' align="center" ng-show="vm.Missions_subButtons">
+						<button id="addMission" type="button" class="btn sub-btn btn-success" ng-click="vm.addMission();">Add a Mission</button>
+					</div>
 
 
-						<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getLeaderboard();">
-							Leaderboard
-						</button>
-						<div class='sub_container' align="center"></div>
-						
-						
-						<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getGamesStatistics();">
-							Game's Statistics
-						</button>
-						<div class='sub_container' align="center"></div>
-						
-						<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getPlayersStatistics();">
-							Players' Statistics
-						</button>
-						<div class='sub_container' align="center"></div>
-
-			        </div>    
-			        <div class="col-sm-9">
-				        <iframe id="mainFrame"  src="src/html/Admin/WhitePage.html" style="border: none;"></iframe>
-			        </div>
-			        
-				</div>
+					<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getLeaderboard();">
+						Leaderboard
+					</button>
+					<div class='sub_container' align="center"></div>
+					
+					
+					<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getGamesStatistics();">
+						Game's Statistics
+					</button>
+					<div class='sub_container' align="center"></div>
+					
+					<button type="button" align="center" class="btn btn-primary btn-lg btn-block" ng-click="vm.Medals_subButtons=false; vm.Cards_subButtons=false; vm.Missions_subButtons=false; vm.getPlayersStatistics();">
+						Players' Statistics
+					</button>
+					<div class='sub_container' align="center"></div>
+			</div>
+		</div>
 		
-		    </form>
-		    
-	    </div>
-	    
-    </div>
-    
-</div> 
+		<div class="col-sm-7 text-left" style="display: inline; vertical-align:top;"> 
+			<div >
+				<iframe id="mainFrame"  src="src/html/Admin/WhitePage.html" style="border: none;" ></iframe>
+			</div>
+		</div>
+		
+	</div>
+</div>

@@ -8,43 +8,68 @@
 <body  ng-app="GoPoleis" >
 	<div class="col-sm-10" ng-controller="getReviewsListController">
 		
-		<h1 style="margin:20px;" ng-module="chName"><u>Reviews for</u>: [ {{chName}} ]</h1>
-		<fieldset style="margin-top:50px; margin-left:20px;""> 	
+		<h1 style="margin:20px;"><u>Reviews for</u>: [ {{chName}} ]</h1>
+		
+		<fieldset style="margin-top:50px; margin-left:20px;"> 	
            	<label for="search" style="display: inline-block; vertical-align: bottom;" >
 	        	<span class="glyphicon glyphicon-search"></span>
 	        	Search: 
 	        </label>
       		<input type="text" ng-model="searchBoxReviewsList" class="form-control" style="width:300px; display: inline-block; vertical-align: bottom;"/>
         </fieldset>
-        <fieldset style="margin-top:20px;"> 	
- 	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: 1500px;">
-	       		<li ng-repeat="review in reviews | filter:searchBoxReviewsList" class="thumbnail col-sm-3" style=" margin:20px; padding: 20px; width:450px; text-align:left;" 
+        
+        <fieldset style="margin-top:20px; "> 	
+ 	        <ul style="list-item-style:none; margin-left:0px; padding-left:0px; width: {{frameWidth}};">
+	       		<li data-ng-repeat="review in reviews | filter:searchBoxReviewsList" class="thumbnail col-sm-3" style="margin:20px; padding: 10px; width:400px; cursor: pointer; background-color:#b3e0ff; border-color:#003d66" 
 	       			ng-model="getCHReviewsList.selection" ng-value="review.data" id="{{review.data}}">	        	
-	        		<span class="glyphicon glyphicon-trash" style="float:right;" ng-click="delReview(review.email, review.chCode)"></span>   
-	        		<h4 review.user="selection">      		
-	        			User: {{ review.email }}
-	        		</h4>
-	        		<h4 review.data="selection">      		
-	        			"{{ review.review }}"
-	        		</h4>	
-	        		<h4 review.likes="selection">      		
-	        			<span class="glyphicon glyphicon-thumbs-up"></span> Likes: {{ review.likes }}
-	        		</h4>
-	        		<h4 review.dislikes="selection">      		
-	        			<span class="glyphicon glyphicon-thumbs-down"></span> Dislikes: {{ review.dislikes }}
-	        		</h4>
+	        		<span class="glyphicon glyphicon-trash" style="float:right;" ng-click="delReview(review.email, review.chCode)"></span>  
+
+	        		<fieldset style="width:390px;"> 	
+	        			<h5 review.user="selection" style="width:390px;">      		
+		        			<h5 style="width:70px; display: inline-block;"><b>Player:</b></h5>
+		        			<input type="text" name="player" id="player" ng-model="review.email" class="form-control" style="width:300px; display: inline-block; cursor: pointer; background-color:white; border-color:#003d66" 
+		        			ng-readonly="true" ng-init={{review.email}} />	
+		        		</h5>
+	        		 
+		        		<h5 review.data="selection" >      		
+		        			<h5 style="width:70px; display: inline-block; vertical-align: top;"><b>Review:</b></h5>
+		        			<textarea class="form-control" style="resize:none; display:inline-block; width:300px; height: 80px; background-color: white; cursor: pointer; border-color:#003d66" ng-readonly="true">{{ review.review }}
+		        			</textarea>
+		        		</h5>	
+		        		
+						<h5 review.likes="selection" style="width:20px; display:inline-block; margin-top:20px;"> 		
+							<span class="glyphicon glyphicon-thumbs-up" style="color:#00b300;"></span>
+							<h5 style="display: inline-block; width: 50px;"><b>Likes:</b></h5>	
+							<input type="text" name="likes" id="likes" ng-model="review.likes" class="form-control" style="width:85px; display: inline-block; cursor: pointer; background-color: white; border-color:#003d66" 
+								ng-readonly="true" ng-init="{{ review.likes }}" />	
+		
+							<span class="glyphicon glyphicon-thumbs-down" style="color:#ff3333; margin-left:40px;"></span>
+							<h5 style="display: inline-block; width: 65px;"><b>Dislikes:</b></h5>	
+							<input type="text" name="likes" id="likes" ng-model="review.dislikes" class="form-control" style="width:85px; display: inline-block; cursor: pointer; background-color: white; border-color:#003d66" 
+								ng-readonly="true" ng-init="{{ review.dislikes }}" />	
+		        		</h5>
+
+		        	</fieldset>
 	       		</li>
 	        </ul>  
         </fieldset>	
-        <fieldset style="margin-top:100px; margin-bottom:30px; margin-left:20px;"> 			
+        
+        <fieldset style="margin-top:75px; margin-bottom:30px; margin-left:20px;"> 			
 			<a href="Reviews_CHs.html" target="_self">Cancel</a>
 		</fieldset>	
+        
 	</div>
 </body>
 </html>
 <script>
 	var app = angular.module("GoPoleis", []);
 	app.controller('getReviewsListController', function($scope, $http, $window) {
+		
+		$scope.frameWidth = ($window.innerWidth - 35) + "px";     
+		angular.element($window).bind('resize', function(){    
+			$scope.frameWidth = ($window.innerWidth - 35) + "px";
+			$scope.$digest();
+		});
 		
 		var chCode = parent.window.getCode();	
 

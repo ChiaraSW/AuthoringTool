@@ -20,13 +20,14 @@
             return JSON.parse(localStorage.user);
         }
 
-        function setUser(email, password, role, code) {
+        function setUser(email, password, role, code, codeNellaTabellaDelRuolo) {
         	var user = {};
             user.id = 0;
             user.email = email;
             user.password = password;
             user.role = role;
             user.code = code;
+            user.codeNellaTabellaDelRuolo = codeNellaTabellaDelRuolo;
 
             localStorage.user = JSON.stringify(user);
         }
